@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+/*
+Para arrancar la aplicación con nodemon vamos al directorio del proyecto y ejecutamos el
+siguiente comando:
+nodemon .\bin\www -e twig,js,json
+ */
+
 /**
  * Module dependencies.
  */
