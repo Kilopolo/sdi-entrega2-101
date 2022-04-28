@@ -13,7 +13,8 @@ nodemon .\bin\www -e twig,js,json
 var app = require('../app');
 var debug = require('debug')('socialnetwork:server');
 var http = require('http');
-
+let fs = require('fs');
+let https = require('https');
 /**
  * Get port from environment and store in Express.
  */
@@ -24,8 +25,12 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
+let privateKey = fs.readFileSync('certificates/alice.key', 'utf8');
+let certificate = fs.readFileSync('certificates/alice.crt', 'utf8');
+let credentials = {key: privateKey, cert: certificate};
 var server = http.createServer(app);
+let httpsServer = https.createServer(credentials, app);
+httpsServer.listen(4000);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -93,4 +98,8 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  const baseAddress = 'https://localhost:' + "4000";
+  console.log(baseAddress + "/users/login");
+  console.log(baseAddress + "/users/signup");
+
 }

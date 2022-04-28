@@ -1,10 +1,101 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>{{ title }}</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    {% block body %}{% endblock %}
-  </body>
+<html lang="en">
+<head>
+  <title>{% block title %} uoMusic {% endblock %}</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  {% block scripts %} {% endblock %}
+</head>
+<body>
+
+<!-- Barra de Navegación superior -->
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <img src="/images/logo.png" alt="logo"/>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+
+        <li class="nav-item ">
+          <a class="nav-link" href="/home" >Home<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item dropdown"  sec:authorize="hasRole('ROLE_USER')">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+             aria-haspopup="true" aria-expanded="false"  > Opciones
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="../user/list"  >Lista de Usuarios</a>
+            <a class="dropdown-item" href="../peticiones/list"  >Lista de Peticiones</a>
+            <a class="dropdown-item" href="../amistades/list"  >Lista de Amistades</a>
+            <a class="dropdown-item" href="../publicaciones/list"  >Ver Publicaciones</a>
+            <a class="dropdown-item" href="../publicaciones/add"  >Crear Publicaciones</a>
+          </div>
+        </li>
+
+        <li class="nav-item dropdown"  sec:authorize="hasRole('ROLE_ADMIN')">
+          <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdown" role="button" data-toggle="dropdown"
+             aria-haspopup="true" aria-expanded="false"  > Gestión de usuarios
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="../user/adminList"  >Lista de Usuarios</a>
+            <a class="dropdown-item" href="../publicaciones/adminList"  >Lista de Publicaciones</a>
+            <a class="dropdown-item" href="../logger/list"  >Lista de Logs</a>
+          </div>
+        </li>
+
+        <li class="nav-item dropdown"  sec:authorize="hasRole('ROLE_ADMIN')">
+          <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdownLog" role="button" data-toggle="dropdown"
+             aria-haspopup="true" aria-expanded="false"  > Logger
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="../logger/list"  >Lista de Logs</a>
+            <a class="dropdown-item" href="../logger/PET"  >Lista de PET</a>
+            <a class="dropdown-item" href="../logger/ALTA"  >Lista de ALTA</a>
+            <a class="dropdown-item" href="../logger/LOGINEX"  >Lista de LOGIN-EX</a>
+            <a class="dropdown-item" href="../logger/LOGINERR"  >Lista de LOGIN-ERR</a>
+            <a class="dropdown-item" href="../logger/LOGOUT"  >Lista de LOGOUT</a>
+            <a class="dropdown-item" href="../logger/delete" id="borrar-logs" >Borrar logs</a>
+          </div>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/users/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
+        <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<div class="container">
+  <script>
+    let params = new URLSearchParams(location.search);
+    let message = params.get("message");
+    let messageType = params.get("messageType");
+    if (message != null && message != "") {
+      if (messageType == "") {
+        messageType = 'alert-info';
+      }
+      $(".container")
+              .append("<div class='alert " + messageType + "'>" + message + " </div>");
+    }
+  </script>
+  <!-- Contenido -->
+  {% block main_container %}
+    <!-- Posible contenido por defecto -->
+  {% endblock %}
+</div>
+
+
+</body>
 </html>

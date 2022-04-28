@@ -1,0 +1,15 @@
+{% extends "layout.twig" %}
+
+{% block title %} Registrar usuario {% endblock %}
+
+{% block main_container %}
+    <div th:id="user-list" class="container" style="text-align: center">
+        <h2>Bienvenidos a la página principal</h2>
+        <p>
+
+            <b th:inline="text" sec:authentication="principal.username"></b>
+            <b th:inline="text" sec:authorize="hasRole('ROLE_ADMIN')">ROLE_ADMIN</b>
+            <b th:inline="text" sec:authorize="hasRole('ROLE_USER')">ROLE_USER</b>
+        </p>
+    </div>
+{% endblock %}

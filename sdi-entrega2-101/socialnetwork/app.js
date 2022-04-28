@@ -1,3 +1,6 @@
+const {MongoClient} = require("mongodb");
+const url = 'mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -9,15 +12,63 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+let rest = require('request');
+app.set('rest', rest);
 
-app.get("/songs", function (req, res) {
-  console.log("depurar aqui")
-  res.send("Lista de canciones")
+let jwt = require('jsonwebtoken');
+app.set('jwt', jwt);
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+// Debemos especificar todas las headers que se aceptan. Content-Type , token
+  next();
 });
-app.get("/singers", function (req, res) {
-  console.log("depurar aqui")
-  res.send("Lista de cantantes")
-});
+
+
+let expressSession = require('express-session');
+app.use(expressSession({
+  secret: 'abcdefg',
+  resave: true,
+  saveUninitialized: true
+}));
+
+let crypto = require('crypto');
+
+let fileUpload = require('express-fileupload');
+app.use(fileUpload({
+  limits: {fileSize: 50 * 1024 * 1024},
+  createParentPath: true
+}));
+
+
+app.set('uploadPath', __dirname)
+app.set('clave', 'abcdefg');
+app.set('crypto', crypto);
+app.set('connectionStrings', url);
+
+let bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
+const usersRepository = require("./repositories/usersRepository.js");
+usersRepository.init(app, MongoClient);
+
+
+
+require("./routes/users.js")(app, usersRepository);
+
+
+
+const userSessionRouter = require('./routes/userSessionRouter');
+
+app.use("/songs/add", userSessionRouter);
+
+
+const userTokenRouter = require('./routes/userTokenRouter');
+app.use("/api/v1.0/songs/", userTokenRouter);
 
 
 // view engine setup
