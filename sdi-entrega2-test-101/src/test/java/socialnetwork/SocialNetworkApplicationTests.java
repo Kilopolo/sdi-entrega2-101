@@ -55,11 +55,7 @@ class SocialNetworkApplicationTests {
         driver.quit();
     }
 
-    @Test
-    @Order(1)
-    void Prueba00() {
-        PO_HomeView.checkWelcomeToPage(driver, PO_Properties.getSPANISH());
-    }
+
 
     /**
      * [Prueba1] Registro de Usuario con datos válidos.
