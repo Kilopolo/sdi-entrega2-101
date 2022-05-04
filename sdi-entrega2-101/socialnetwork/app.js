@@ -60,6 +60,9 @@ usersRepository.init(app, MongoClient);
 
 require("./routes/users.js")(app, usersRepository);
 
+const amistadesRepository = require("./repositories/amistadesRepository.js");
+amistadesRepository.init(app, MongoClient);
+require("./routes/friends.js")(app, amistadesRepository,usersRepository);
 
 
 const userSessionRouter = require('./routes/userSessionRouter');
