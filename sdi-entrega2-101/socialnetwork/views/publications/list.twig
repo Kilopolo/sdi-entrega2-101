@@ -1,13 +1,23 @@
-{% extends 'layout.twig' %}
+{% extends '../layout.twig' %}
+{% block title %} Lista de publicaciones {% endblock %}
 
-{% block title %} Lista amigos usuario {% endblock %}
 {% block main_container %}
+    <h2>Lista de publicaciones</h2>
     <div class="table-responsive">
         <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Título</th>
+                <th>Texto</th>
+                <th>Fecha</th>
+            </tr>
+            </thead>
             <tbody>
-            {% for amistad in amistades %}
+            {% for publications in publications %}
                 <tr>
-                    <td>{{ amistad.user2 }}</td>
+                    <td>{{ publication.titulo }}</td>
+                    <td>{{ publication.texto }}</td>
+                    <td>{{ publication.fechaCreacion }}</td>
                 </tr>
             {% endfor %}
             </tbody>
