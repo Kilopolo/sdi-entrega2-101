@@ -1,6 +1,7 @@
 module.exports = {
     mongoClient: null,
     app: null,
+
     init: function (app, mongoClient) {
         this.mongoClient = mongoClient;
         this.app = app;
@@ -11,7 +12,7 @@ module.exports = {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("socialNetwork");
             const publicationsCollection = database.collection('publications');
-            const publications = await publicationsCollection.find(filter, options);
+            const publications = await publicationsCollection.find(filter, options).toArray();
             return publications;
         } catch (error) {
             throw (error);

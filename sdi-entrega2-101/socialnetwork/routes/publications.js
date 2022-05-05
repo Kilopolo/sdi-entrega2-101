@@ -2,7 +2,7 @@ module.exports = function(app, publicationsRepository) {
 
     app.get("/publications", function (req, res) {
 
-        let filter = {user : {email : req.session.user} };
+        let filter = {email: req.session.user };
         let options = {};
 
         publicationsRepository.findPublications(filter, options).then(publications => {
@@ -20,13 +20,12 @@ module.exports = function(app, publicationsRepository) {
     app.post('/publications/add', function (req, res) {
       let publication = {
         email: req.session.user,
-        name: req.body.titulo,
-        surname: req.body.texto,
+        titulo: req.body.titulo,
+        texto: req.body.texto,
         fechaCreacion: formattedDate()
       }
         publicationsRepository.insertPublication(publication).then((publicationId) => {
-        res.send("Publicación añadida " + publicationId);
-        //res.redirect("/publications");
+        res.redirect("/publications");
       }).catch(() => {
         res.send("Error al añadir la publicación");
       });
