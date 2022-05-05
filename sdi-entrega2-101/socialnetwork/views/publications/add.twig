@@ -1,0 +1,28 @@
+{% extends "layout.twig" %}
+
+{% block title %} Añadir nueva publicación {% endblock %}
+
+{% block main_container %}
+    <h2>Añadir nueva publicación</h2>
+    <form class="form-horizontal" method="post" action="/publications/add">
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="titulo">Título:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="titulo" name="titulo"
+                       placeholder="Mi publicación"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="texto">Texto:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="texto" name="texto"
+                       th:placeholder="¡Estoy usando SocialNetwork!"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Publicar</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
