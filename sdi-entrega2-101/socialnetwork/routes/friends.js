@@ -1,24 +1,42 @@
 module.exports = function(app, amistadesRepository,usersRepository) {
 
     app.get("/friends", function (req, res) {
-        let filter = {user1 : {email : req.session.user} };
+        let filter = {user1 : req.session.user};
         let options = {};
-        usersRepository.findUser({email: "prueba1@email.com"},{}).then(user1 => {
-            usersRepository.findUser({email: "Mike@email.com"},{}).then(user2 => {
-                let amistad = {
-                    user1: user1,
-                    user2: user2
-                }
-                amistadesRepository.insertAmistad(amistad, {});
-                amistadesRepository.findAmistadesByEmail(filter, options).then(amistades => {
-                    //TODO ambos emails
-                    res.render("friends/list.twig", {amistades: amistades});
-                }).catch(error => {
-                    res.send("Se ha producido un error al listar los amigos:" + error)
-                });
-            });
+        //amistadesRepository.insertAmistad(amistad, {});
+        amistadesRepository.findAmistadesByEmail(filter, options).then(amistades => {
+            getUserFromAmistades(req,amistades).then(p => {
+                //TODO ambos emails
+                res.render("friends/list.twig", {amistades:p});
+            }).catch(error=> "Se ha producido un error al encontrar algun usuario de las amistades" + error);
+           // }).catch(error => "Se ha producido un error al encontrar algun usuario de las amistades" + error);
+        }).catch(error => {
+            res.send("Se ha producido un error al listar los amigos:" + error)
         });
-
-
     });
+
+    function getEmailFromAmistad(req, amistad) {
+            if(amistad.user1 === req.session.user){
+                return amistad.user2;
+            }
+            return  amistad.user1;
+        }
+
+
+    async function getUserFromAmistades(req,amistades) {
+        if (amistades == null || amistades.length == 0) {
+            return [];
+        } else {
+            let usuarios = [];
+            let userEmail = "";
+            for (let i = 0; i < amistades.length; i++) {
+                userEmail = getEmailFromAmistad(req,amistades[i]);
+                await usersRepository.findUser({email: userEmail},{}).then(async user => {
+                    let a = await user;
+                    usuarios.push(user);
+                });
+            }
+            return usuarios;
+        }
+    };
 };
