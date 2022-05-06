@@ -16,7 +16,7 @@
     <h2>Bienvenidos a la página principal</h2>
     <p>
 
-        <b th:inline="text" sec:authentication="principal.username"></b>
+        <b>{{ user.name }}</b>
         {% endif %}
         {% if role == 'ADMIN' %}
             <b th:inline="text">ROLE_ADMIN</b>
