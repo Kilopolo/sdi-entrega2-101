@@ -1,12 +1,9 @@
 package socialnetwork.db;
 
-import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Base64;
+import java.math.BigInteger;
 
 public class AES {
 
@@ -14,42 +11,59 @@ public class AES {
     private static byte[] key;
     private static String secret="abcdefg";
 
-    public static void setKey(final String myKey) {
-        MessageDigest sha = null;
-        try {
-            key = myKey.getBytes("UTF-8");
-            sha = MessageDigest.getInstance("SHA-256");
-            key = sha.digest(key);
-            key = Arrays.copyOf(key, 16);
-            secretKey = new SecretKeySpec(key, "AES");
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+
+    public static void main(String[] args) {
+        String pass="I love cupcakes";
+        System.out.println("\tencriptando: " + pass);
+        String encriptado = encrypt(pass);
+        System.out.println("Expected");
+        System.out.println("c0fa1bc00531bd78ef38c628449c5102aeabd49b5dc3a2a516ea6ea959d6658e");
+        System.out.println("Result");
+        System.out.println(encriptado);
+
     }
+
+
 
     public static String encrypt(final String strToEncrypt) {
-        try {
-            setKey(secret);
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            return Base64.getEncoder()
-                    .encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
-        } catch (Exception e) {
-            System.out.println("Error while encrypting: " + e.toString());
-        }
+
+            try {
+                byte[] hmacSha256 = HMAC.calcHmacSha256(secret.getBytes("UTF-8"), strToEncrypt.getBytes("UTF-8"));
+                return String.format("%064x", new BigInteger(1, hmacSha256));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+
         return null;
     }
 
-    public static String decrypt(final String strToDecrypt) {
+//    public static String decrypt(final String strToDecrypt) {
+//        try {
+//            setKey(secret);
+//            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+//            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+//            return new String(cipher.doFinal(Base64.getDecoder()
+//                    .decode(strToDecrypt)));
+//        } catch (Exception e) {
+//            System.out.println("Error while decrypting: " + e.toString());
+//        }
+//        return null;
+//    }
+
+
+}
+class HMAC {
+    static public byte[] calcHmacSha256(byte[] secretKey, byte[] message) {
+        byte[] hmacSha256 = null;
         try {
-            setKey(secret);
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            return new String(cipher.doFinal(Base64.getDecoder()
-                    .decode(strToDecrypt)));
+            Mac mac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey, "HmacSHA256");
+            mac.init(secretKeySpec);
+            hmacSha256 = mac.doFinal(message);
         } catch (Exception e) {
-            System.out.println("Error while decrypting: " + e.toString());
+            throw new RuntimeException("Failed to calculate hmac-sha256", e);
         }
-        return null;
+        return hmacSha256;
     }
 }

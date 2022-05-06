@@ -20,7 +20,8 @@ public class InitDB {
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
         initDB();
         showDataOfDB();
-        deleteTestUsers();
+        // deleteTestUsers();
+        //idb.createUsers();
     }
 
     private static void initDB() {
@@ -40,6 +41,7 @@ public class InitDB {
             String rol = "USER";
             String password = "user" + numero;
             String securePassword = AES.encrypt(password);
+//            System.out.println(securePassword);
             users.add(new Document("email", userEmail)
                     .append("password", securePassword)
                     .append("name", name)
