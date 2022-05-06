@@ -1,13 +1,12 @@
 module.exports = function(app, amistadesRepository,usersRepository) {
 
-    app.get("/friends", function (req, res) {
+    app.get("/amistades", function (req, res) {
         let filter = {$or: [{user1 : req.session.user}, {user2: req.session.user}]};
         let options = {};
         amistadesRepository.findAmistadesByEmail(filter, options).then(amistades => {
             getUserFromAmistades(req,amistades).then(p => {
-                res.render("friends/list.twig", {amistades:p});
+                res.render("amistades/list.twig", {amistades:p});
             }).catch(error=> "Se ha producido un error al encontrar algun usuario de las amistades" + error);
-           // }).catch(error => "Se ha producido un error al encontrar algun usuario de las amistades" + error);
         }).catch(error => {
             res.send("Se ha producido un error al listar los amigos:" + error)
         });

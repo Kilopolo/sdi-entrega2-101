@@ -57,13 +57,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 
-
-
 require("./routes/users.js")(app, usersRepository);
 
 const amistadesRepository = require("./repositories/amistadesRepository.js");
 amistadesRepository.init(app, MongoClient);
 require("./routes/friends.js")(app, amistadesRepository,usersRepository);
+
+const peticionesRepository = require("./repositories/peticionesRepository.js");
+peticionesRepository.init(app, MongoClient);
+require("./routes/peticiones.js")(app, peticionesRepository, usersRepository);
 
 const publicationsRepository = require("./repositories/publicationsRepository.js");
 publicationsRepository.init(app, MongoClient);
