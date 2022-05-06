@@ -1,5 +1,7 @@
 module.exports = function (app, usersRepository) {
 
+
+
   app.get('/users', function (req, res) {
     res.send('lista de usuarios');
   });
@@ -9,7 +11,8 @@ module.exports = function (app, usersRepository) {
   });
 
   app.post('/users/signup', function (req, res) {
-    let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
+    let securePassword = app.get("crypto")
+        .createHmac('sha256', app.get('clave'))
         .update(req.body.password).digest('hex');
     let user = {
       email: req.body.email,

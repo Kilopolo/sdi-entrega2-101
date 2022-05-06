@@ -72,11 +72,13 @@ require("./routes/publications.js")(app, publicationsRepository);
 
 const userSessionRouter = require('./routes/userSessionRouter');
 
-app.use("/songs/add", userSessionRouter);
+app.use("/friends", userSessionRouter);
+app.use("/publications/add", userSessionRouter);
+app.use("/publications", userSessionRouter);
 
 
 const userTokenRouter = require('./routes/userTokenRouter');
-app.use("/api/v1.0/songs/", userTokenRouter);
+app.use("/api/v1.0/", userTokenRouter);
 
 
 // view engine setup

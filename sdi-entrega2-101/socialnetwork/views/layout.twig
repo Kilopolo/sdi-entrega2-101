@@ -28,7 +28,8 @@
         <li class="nav-item ">
           <a class="nav-link" href="/home" >Home<span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item dropdown"  sec:authorize="hasRole('ROLE_USER')">
+        {% if role == 'USER' %}
+        <li class="nav-item dropdown"  >
           <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
              aria-haspopup="true" aria-expanded="false"  > Opciones
           </a>
@@ -40,8 +41,9 @@
             <a class="dropdown-item" href="../publications/add"  >Crear Publicaciones</a>
           </div>
         </li>
-
-        <li class="nav-item dropdown"  sec:authorize="hasRole('ROLE_ADMIN')">
+        {%endif%}
+        {% if role == 'ADMIN' %}
+        <li class="nav-item dropdown"  >
           <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdown" role="button" data-toggle="dropdown"
              aria-haspopup="true" aria-expanded="false"  > Gestión de usuarios
           </a>
@@ -51,8 +53,9 @@
             <a class="dropdown-item" href="../logger/list"  >Lista de Logs</a>
           </div>
         </li>
-
-        <li class="nav-item dropdown"  sec:authorize="hasRole('ROLE_ADMIN')">
+        {%endif%}
+        {% if role == 'ADMIN' %}
+        <li class="nav-item dropdown"  >
           <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdownLog" role="button" data-toggle="dropdown"
              aria-haspopup="true" aria-expanded="false"  > Logger
           </a>
@@ -66,6 +69,7 @@
             <a class="dropdown-item" href="../logger/delete" id="borrar-logs" >Borrar logs</a>
           </div>
         </li>
+        {%endif%}
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="/users/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
