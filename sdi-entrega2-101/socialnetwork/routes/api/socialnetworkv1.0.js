@@ -13,7 +13,7 @@ module.exports = function (app, usersRepository, amistadesRepository) {
 
     app.get("/api/v1.0/friends/list", function (req, res) {
 
-        let user = req.session.user
+        let user = res.user
         console.log(user)
 
         let filter = {$or: [{user1: req.session.user}, {user2: req.session.user}]};
