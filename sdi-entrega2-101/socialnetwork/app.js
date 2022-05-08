@@ -65,7 +65,7 @@ require("./routes/friends.js")(app, amistadesRepository,usersRepository);
 
 const peticionesRepository = require("./repositories/peticionesRepository.js");
 peticionesRepository.init(app, MongoClient);
-require("./routes/peticiones.js")(app, peticionesRepository, usersRepository);
+require("./routes/peticiones.js")(app, peticionesRepository, usersRepository, amistadesRepository);
 
 const publicationsRepository = require("./repositories/publicationsRepository.js");
 publicationsRepository.init(app, MongoClient);
