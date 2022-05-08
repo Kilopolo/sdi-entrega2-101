@@ -1,6 +1,6 @@
 const usersRepository = require("../repositories/usersRepository");
 //TODO arreglar
-module.exports = function(app, peticionesRepository, usersRepository) {
+module.exports = function(app, peticionesRepository, usersRepository, amistadesRepository) {
 
     app.get("/peticiones", function (req, res) {
         let filter = {user2 : req.session.user};
@@ -19,7 +19,13 @@ module.exports = function(app, peticionesRepository, usersRepository) {
         let options = {};
         peticionesRepository.findPeticionesByEmail(filter, options).then(peticion => {
             let id = {"_id": peticion[0]._id};
-            peticionesRepository.deletePeticion(id);
+            peticionesRepository.deletePeticion(id).then(borrado => {
+                let amistad = {
+                    user1 : req.params.email,
+                    user2: req.session.user
+                }
+                amistadesRepository.insertAmistad(amistad);
+            });
             //creear amistad
             res.redirect("/peticiones");
         });

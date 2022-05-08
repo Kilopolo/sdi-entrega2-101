@@ -19,7 +19,6 @@ app.set('rest', rest);
 let jwt = require('jsonwebtoken');
 app.set('jwt', jwt);
 
-//Cliente JQuery
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", "true");
@@ -37,7 +36,6 @@ app.use(expressSession({
   saveUninitialized: true
 }));
 
-//FileUpload
 let fileUpload = require('express-fileupload');
 app.use(fileUpload({
   limits: {fileSize: 50 * 1024 * 1024},
@@ -67,6 +65,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 //Users.js
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
+
 require("./routes/users.js")(app, usersRepository);
 
 
@@ -77,7 +76,8 @@ require("./routes/friends.js")(app, amistadesRepository,usersRepository);
 //Peticiones.js
 const peticionesRepository = require("./repositories/peticionesRepository.js");
 peticionesRepository.init(app, MongoClient);
-require("./routes/peticiones.js")(app, peticionesRepository, usersRepository);
+require("./routes/peticiones.js")(app, peticionesRepository, usersRepository, amistadesRepository);
+
 //Users.js
 const publicationsRepository = require("./repositories/publicationsRepository.js");
 publicationsRepository.init(app, MongoClient);
