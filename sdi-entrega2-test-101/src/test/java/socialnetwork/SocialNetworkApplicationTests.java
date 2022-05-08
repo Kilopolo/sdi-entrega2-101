@@ -37,17 +37,21 @@ class SocialNetworkApplicationTests {
     }
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         driver.navigate().to(URL);
     }
+
     //Después de cada prueba se borran las cookies del navegador
     @AfterEach
-    public void tearDown(){
+    public void tearDown() {
         driver.manage().deleteAllCookies();
     }
+
     //Antes de la primera prueba
     @BeforeAll
-    static public void begin() {}
+    static public void begin() {
+    }
+
     //Al finalizar la última prueba
     @AfterAll
     static public void end() {
@@ -56,14 +60,15 @@ class SocialNetworkApplicationTests {
     }
 
 
-
     /**
      * [Prueba1] Registro de Usuario con datos válidos.
      */
     @Test
     @Order(1)
     void Prueba01() {
-        PO_RegisterView.registerUser(driver, "email@email.com", "password");
+        String email = "email1@email.com";
+        PO_RegisterView.registerUser(driver, email, "password");
+        PO_DataBase.deleteUserByEmail(email);
 
     }
 
@@ -114,7 +119,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(5)
     void Prueba05() {
+
+
         PO_PrivateView.login(driver, "admin@email.com", "admin", "user-list");
+
+
     }
 
     /**

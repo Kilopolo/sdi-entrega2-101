@@ -11,7 +11,7 @@ public class PO_PrivateView extends PO_NavView {
         clickOption(driver, "login", "class", "btn btn-primary");
         // Rellenamos el formulario
         PO_LoginView.fillLoginForm(driver, email, password);
-        // COmprobamos que entramos en la pagina privada de Alumno
+        // COmprobamos que entramos en la pagina privada
         checkElementBy(driver, "id", check);
     }
 }

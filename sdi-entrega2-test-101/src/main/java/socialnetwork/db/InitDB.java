@@ -95,4 +95,9 @@ public class InitDB {
         }
     }
 
+    public void deleteUserByEmail(String email) {
+        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+            mongoclient.getDatabase(AppDBname).getCollection("users").deleteMany(new Document("email", email));
+        }
+    }
 }

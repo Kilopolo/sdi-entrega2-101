@@ -15,6 +15,7 @@ userTokenRouter.use(function (req, res, next) {
                     authorized: false,
                     error: 'Token inválido o caducado'
                 });
+
             } else {
                 // dejamos correr la petición
                 res.user = infoToken.user;
