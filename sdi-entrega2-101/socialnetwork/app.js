@@ -19,6 +19,7 @@ app.set('rest', rest);
 let jwt = require('jsonwebtoken');
 app.set('jwt', jwt);
 
+//Cliente JQuery
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", "true");
@@ -91,7 +92,7 @@ app.use("/publications", userSessionRouter);
 
 
 const userTokenRouter = require('./routes/userTokenRouter');
-app.use("/api/v1.0/", userTokenRouter);
+app.use("/api/socialnetworkv1.0/users/list", userTokenRouter);
 
 
 // view engine setup

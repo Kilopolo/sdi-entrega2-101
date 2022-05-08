@@ -1,0 +1,121 @@
+<div id="widget-users">
+    <input type="text" class="form-control" placeholder="Filtrar por nombre" id="filter-by-name"/>
+    <button class="btn btn-primary" onclick="widgetAddUser()">Nuevo Usuario</button>
+    <button class="btn" onclick="loadUsers()">Actualizar</button>
+    <table class="table table-hover">
+        <thead>
+
+        <tr>
+            <th><a onclick="sortByEmail()">Email</a></th>
+            <th>Género</th>
+            <th><a onclick="sortByName()">Name</a></th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody id="usersTableBody"></tbody>
+    </table>
+</div>
+<script>
+    window.history.pushState("", "", "/apiclient/client.html?w=songs");
+    var users;
+    var selectedUserId;
+    $('#filter-by-name').on('input', function (e) {
+        let filteredUsers = [];
+        let filterValue = $("#filter-by-name").val();
+        filteredUsers = users.filter(user => user.email.includes(filterValue));
+        updateUsersTable(filteredUsers);
+    });
+
+    var nameDesc = true;
+    function sortByName() {
+        if (nameDesc) {
+            users.sort(function (a, b) {
+                if (a.name > b.name) return 1;
+                if (a.name < b.name) return -1;
+                return 0;
+            });
+        } else {
+            users.sort(function (a, b) {
+                if (a.name > b.name) return -1;
+                if (a.name < b.name) return 1;
+                return 0;
+            });
+        }
+        updateUsersTable(users);
+        nameDesc = !nameDesc //invertir ordenación
+    }
+
+    function sortByEmail() {
+        users.sort(function (a, b) {
+            if (a.title > b.title) return 1;
+            if (a.title < b.title) return -1;
+            return 0;
+        });
+        updateUsersTable(users);
+
+    }
+
+    function loadUsers() {
+        $.ajax({
+            url: URLbase + "/users/list",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (response) {
+                users = response.users;
+                updateUsersTable(users);
+            },
+            error: function (error) {
+                $("#main-container").load("widget-login.html");
+            }
+        });
+    }
+
+    function updateUsersTable(users) {
+        $("#usersTableBody").empty(); // Vaciar la tabla
+        for (let i = 0; i < users.length; i++) {
+            $("#songsTableBody").append(
+                "<tr id=" + users[i]._id + ">" +
+                "<td>" + users[i].email + "</td>" +
+                "<td>" + users[i].rol + "</td>" +
+                "<td>" + users[i].name + "</td>" +
+                "<td>" +
+                "<a onclick=userDetail('" + users[i]._id + "')>Detalles</a><br>" +
+                "<a onclick=userDelete('" + users[i]._id + "')>Eliminar</a>" +
+                "</td>" +
+                "</tr>");
+// Mucho cuidado con las comillas del eliminar users
+//la id tiene que ir entre comillas ' '
+        }
+    }
+
+    function widgetAddUser() {
+        $("#main-container").load("widget-add.html");
+    }
+
+    loadUsers();
+
+    function userDelete(_id) {
+        $.ajax({
+            url: URLbase + "/users/" + _id,
+            type: "DELETE",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (response) {
+                console.log("Usuario eliminada: " + _id);
+                $("#" + _id).remove(); // eliminar el <tr> del user
+            },
+            error: function (error) {
+                $("#main-container").load("widget-login.html");
+            }
+        });
+    }
+
+    function userDetail(_id) {
+        selectedUserId = _id;
+        $("#main-container").load("widget-detail.html");
+    }
+
+</script>
