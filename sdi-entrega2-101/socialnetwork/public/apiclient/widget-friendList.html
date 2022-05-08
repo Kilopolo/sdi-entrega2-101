@@ -28,7 +28,7 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (response) {
-                users = response.users;
+                users = response.friendList;
                 updateUsersTable(users);
             },
             error: function (error) {
@@ -45,9 +45,7 @@
                 "<td>" + users[i].email + "</td>" +
                 "<td>" + users[i].surname + "</td>" +
                 "<td>" + users[i].name + "</td>" +
-                "<td>" +
-                "<a onclick=userMessages('" + users[i]._id + "')>Mensage</a><br>" +
-                "</td>" +
+                "<td>" +                "</td>" +
                 "</tr>" +
 
                 "<tr id=" + users[i]._id + ">" +

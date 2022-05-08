@@ -21,7 +21,7 @@ module.exports = function (app, usersRepository, amistadesRepository) {
         amistadesRepository.findAmistadesByEmail(filter, options).then(amistades => {
             getUserFromAmistades(req, amistades).then(p => {
                 res.status(200);
-                res.send({users: p})
+                res.send({friendList: p})
             }).catch(error => {
                 res.status(500);
                 res.json({error: "Se ha producido un error al encontrar algún usuario de las amistades" + error});
