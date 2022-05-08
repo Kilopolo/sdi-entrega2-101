@@ -3,7 +3,7 @@ const usersRepository = require("../repositories/usersRepository");
 module.exports = function(app, peticionesRepository, usersRepository, amistadesRepository) {
 
     app.get("/peticiones", function (req, res) {
-        let filter = {user2 : req.session.user};
+        let filter = {user2 : req.session.user.email};
         let options = {};
         peticionesRepository.findPeticionesByEmail(filter, options).then(peticiones => {
             getUserFromPeticiones(peticiones).then(usersPeticiones => {
@@ -15,14 +15,14 @@ module.exports = function(app, peticionesRepository, usersRepository, amistadesR
     });
 
     app.get("/peticiones/aceptar/:email", function (req, res) {
-        let filter = {$and: [{user1 : req.params.email}, {user2: req.session.user}]};
+        let filter = {$and: [{user1 : req.params.email}, {user2: req.session.user.email}]};
         let options = {};
         peticionesRepository.findPeticionesByEmail(filter, options).then(peticion => {
             let id = {"_id": peticion[0]._id};
             peticionesRepository.deletePeticion(id).then(borrado => {
                 let amistad = {
                     user1 : req.params.email,
-                    user2: req.session.user
+                    user2: req.session.user.email
                 }
                 amistadesRepository.insertAmistad(amistad);
             });

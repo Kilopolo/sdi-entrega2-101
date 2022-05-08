@@ -12,13 +12,16 @@ module.exports = function (app, usersRepository, logger) {
 
 
     app.get('/users', function (req, res) {
-        let user = res.session.user
+        let user = req.session.user;
         renderUserList(req,res,user);
 
     });
 
     function renderUserList(req,res,user) {
-        let filter = {rol: 'USER'};
+        let filter = {
+            rol: 'USER',
+            email:{$ne:req.session.user.email}
+        };
         let options = {};
         usersRepository.findUsers(filter, options).then(users => {
             if (users == null) {
