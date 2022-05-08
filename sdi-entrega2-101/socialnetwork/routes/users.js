@@ -1,21 +1,36 @@
-module.exports = function (app, usersRepository,logger) {
+module.exports = function (app, usersRepository, logger) {
 
     app.get('/home', function (req, res) {
         let user = req.session.user
-        if (user == undefined){
-          user.name = 'ANONIMO'
-          user.rol = 'ANONIMO'
+        if (user == undefined) {
+            user.name = 'ANONIMO'
+            user.rol = 'ANONIMO'
         }
-        res.render("home.twig",{user:user});//
+        res.render("home.twig", {user: user});//
 
     });
+
 
     app.get('/users', function (req, res) {
-        res.send('lista de usuarios');
+        let user = res.session.user
+        renderUserList(req,res,user);
+
     });
 
+    function renderUserList(req,res,user) {
+        let filter = {rol: 'USER'};
+        let options = {};
+        usersRepository.findUsers(filter, options).then(users => {
+            if (users == null) {
+                //algun error
+            } else {
+                res.render("users/list.twig", {users: users, user: user});//
+            }
+        });
+    }
+
     app.get('/users/signup', function (req, res) {
-        res.render("signup.twig");
+        res.render("users/signup.twig");
     });
 
     app.post('/users/signup', function (req, res) {
@@ -36,19 +51,19 @@ module.exports = function (app, usersRepository,logger) {
                 rol: "USER"
             }
 
-            let filter = {email:user.email}
+            let filter = {email: user.email}
             let options = {}
-            usersRepository.findUser(filter,options).then(userFound => {
-                if (userFound == null){
+            usersRepository.findUser(filter, options).then(userFound => {
+                if (userFound == null) {
                     //si no hay ninguno se puede registrar
                     usersRepository.insertUser(user).then(userId => {
                         //res.send('Usuario registrado ' + userId);
-                        res.render("home.twig",{user:user});
+                        res.render("home.twig", {user: user});
 
                     }).catch(error => {
                         res.send("Error al insertar el usuario");
                     });
-                }else{
+                } else {
                     //Si ya hay un email en la BDD lanzamos el error
                     res.redirect("/users/signup" +
                         "?message=Ya existe un usuario registrado con ese email" +
@@ -58,12 +73,11 @@ module.exports = function (app, usersRepository,logger) {
             })
 
 
-
         }
     });
 
     app.get('/users/login', function (req, res) {
-        res.render("login.twig");
+        res.render("users/login.twig");
     });
 
     app.post('/users/login', function (req, res) {
@@ -76,6 +90,8 @@ module.exports = function (app, usersRepository,logger) {
         let options = {};
 
         usersRepository.findUser(filter, options).then(user => {
+
+
             if (user == null) {
                 req.session.user = null;
                 //res.send('Usuario no identificado');
@@ -86,9 +102,10 @@ module.exports = function (app, usersRepository,logger) {
 
             } else {
                 req.session.user = user;
-                res.render("home.twig",{user:user});
+                renderUserList(req,res,user);
 
             }
+
 
         }).catch(error => {
             req.session.user = null;
@@ -100,7 +117,7 @@ module.exports = function (app, usersRepository,logger) {
 
     app.get('/users/logout', function (req, res) {
         req.session.user = null;
-        res.send("El usuario se ha desconectado correctamente");
+        res.render("index.twig");
     })
 
 }

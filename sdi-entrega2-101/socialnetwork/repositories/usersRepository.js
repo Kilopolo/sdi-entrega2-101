@@ -17,6 +17,17 @@ module.exports = {
             throw (error);
         }
     },
+    findUsers: async function (filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const publicationsCollection = database.collection('users');
+            const publications = await publicationsCollection.find(filter, options).toArray();
+            return publications;
+        } catch (error) {
+            throw (error);
+        }
+    },
     insertUser: async function (user) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));

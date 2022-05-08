@@ -121,7 +121,7 @@ class SocialNetworkApplicationTests {
     void Prueba05() {
 
 
-        PO_PrivateView.login(driver, "admin@email.com", "admin", "home");
+        PO_PrivateView.login(driver, "admin@email.com", "admin", "user-list");
 
 
     }
@@ -132,7 +132,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(6)
     void Prueba06() {
-        PO_PrivateView.login(driver, "user01@email.com", "user01", "home");
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
     }
 
     /**
@@ -164,7 +164,7 @@ class SocialNetworkApplicationTests {
     @Order(9)
     void Prueba09() {
         //Login como usuario
-        PO_PrivateView.login(driver, "user01@email.com", "user01", "home");
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
         //Nos desconectamos
         PO_HomeView.desconect(driver);
 
