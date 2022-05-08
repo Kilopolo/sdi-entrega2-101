@@ -36,36 +36,48 @@ app.use(expressSession({
   saveUninitialized: true
 }));
 
-let crypto = require('crypto');
-
+//FileUpload
 let fileUpload = require('express-fileupload');
 app.use(fileUpload({
   limits: {fileSize: 50 * 1024 * 1024},
   createParentPath: true
 }));
-
-
 app.set('uploadPath', __dirname)
+
+//Ctrypto
+let crypto = require('crypto');
 app.set('clave', 'abcdefg');
 app.set('crypto', crypto);
+
+//Mongo
 app.set('connectionStrings', url);
 
+//BodyParser
 let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+//Logger
+// let log4js = require("log4js");
+// let logger = log4js.getLogger();
+// logger.level = "debug";
+
+
+//Users.js
 const usersRepository = require("./repositories/usersRepository.js");
-usersRepository.init(app, MongoClient);
+usersRepository.init(app, MongoClient,logger);
 require("./routes/users.js")(app, usersRepository);
 
+
+//Amistades.js
 const amistadesRepository = require("./repositories/amistadesRepository.js");
 amistadesRepository.init(app, MongoClient);
 require("./routes/friends.js")(app, amistadesRepository,usersRepository);
-
+//Peticiones.js
 const peticionesRepository = require("./repositories/peticionesRepository.js");
 peticionesRepository.init(app, MongoClient);
 require("./routes/peticiones.js")(app, peticionesRepository, usersRepository);
-
+//Users.js
 const publicationsRepository = require("./repositories/publicationsRepository.js");
 publicationsRepository.init(app, MongoClient);
 require("./routes/publications.js")(app, publicationsRepository);
