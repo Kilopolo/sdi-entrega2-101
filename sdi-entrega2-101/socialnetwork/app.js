@@ -82,6 +82,11 @@ require("./routes/peticiones.js")(app, peticionesRepository, usersRepository);
 const publicationsRepository = require("./repositories/publicationsRepository.js");
 publicationsRepository.init(app, MongoClient);
 require("./routes/publications.js")(app, publicationsRepository);
+//Messages.js
+const messagesRepository = require("./repositories/messagesRepository.js");
+messagesRepository.init(app, MongoClient);
+
+
 
 //Seguridad
 const userSessionRouter = require('./routes/userSessionRouter');
@@ -92,7 +97,7 @@ app.use("/publications", userSessionRouter);
 //JQuery Client
 const userTokenRouter = require('./routes/userTokenRouter');
 //app.use("/api/v1.0/users/list", userTokenRouter);
-const jQueryClient = require("./routes/api/socialnetworkv1.0.js")(app,usersRepository);
+const jQueryClient = require("./routes/api/socialnetworkv1.0.js")(app,usersRepository,amistadesRepository,messagesRepository);
 
 
 // view engine setup
