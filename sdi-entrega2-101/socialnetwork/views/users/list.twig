@@ -10,6 +10,11 @@
             {% for user in users %}
                 <tr>
                     <td>{{ user.email }}</td>
+                    <td>
+                        <a class="page-link" href="/peticiones/enviar/{{ user.email }}">
+                            Enviar solicitud
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

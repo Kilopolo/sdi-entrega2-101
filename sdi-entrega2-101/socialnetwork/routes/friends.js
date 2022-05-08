@@ -1,7 +1,7 @@
 module.exports = function(app, amistadesRepository,usersRepository) {
 
     app.get("/amistades", function (req, res) {
-        let filter = {$or: [{user1 : req.session.user}, {user2: req.session.user}]};
+        let filter = {$or: [{user1 : req.session.user.email}, {user2: req.session.user.email}]};
         let options = {};
         amistadesRepository.findAmistadesByEmail(filter, options).then(amistades => {
             getUserFromAmistades(req,amistades).then(p => {
@@ -13,7 +13,7 @@ module.exports = function(app, amistadesRepository,usersRepository) {
     });
 
     function getEmailFromAmistad(req, amistad) {
-            if(amistad.user1 === req.session.user){
+            if(amistad.user1 === req.session.user.email){
                 return amistad.user2;
             }
             return  amistad.user1;
