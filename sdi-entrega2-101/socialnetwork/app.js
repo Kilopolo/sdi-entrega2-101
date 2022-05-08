@@ -36,8 +36,6 @@ app.use(expressSession({
   saveUninitialized: true
 }));
 
-let crypto = require('crypto');
-
 let fileUpload = require('express-fileupload');
 app.use(fileUpload({
   limits: {fileSize: 50 * 1024 * 1024},
