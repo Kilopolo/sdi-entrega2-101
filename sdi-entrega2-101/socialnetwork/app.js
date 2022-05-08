@@ -66,7 +66,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //Users.js
 const usersRepository = require("./repositories/usersRepository.js");
-usersRepository.init(app, MongoClient,logger);
+usersRepository.init(app, MongoClient);
 require("./routes/users.js")(app, usersRepository);
 
 
@@ -83,16 +83,16 @@ const publicationsRepository = require("./repositories/publicationsRepository.js
 publicationsRepository.init(app, MongoClient);
 require("./routes/publications.js")(app, publicationsRepository);
 
-
+//Seguridad
 const userSessionRouter = require('./routes/userSessionRouter');
-
 app.use("/friends", userSessionRouter);
 app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
 
-
+//JQuery Client
 const userTokenRouter = require('./routes/userTokenRouter');
-app.use("/api/socialnetworkv1.0/users/list", userTokenRouter);
+//app.use("/api/v1.0/users/list", userTokenRouter);
+const jQueryClient = require("./routes/api/socialnetworkv1.0.js")(app,usersRepository);
 
 
 // view engine setup

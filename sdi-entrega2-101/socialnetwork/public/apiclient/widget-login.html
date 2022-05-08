@@ -6,6 +6,7 @@
                    placeholder="email@email.com" id="email"/>
         </div>
     </div>
+    <br>
     <div className="form-group">
         <label className="control-label col-sm-2" htmlFor="password">Password:</label>
         <div className="col-sm-10">
@@ -13,6 +14,7 @@
                    placeholder="contraseña" id="password"/>
         </div>
     </div>
+    <br>
     <div className="form-group">
         <div className="col-sm-offset-2 col-sm-10">
             <button type="button" id="boton-login">Aceptar</button>
@@ -31,7 +33,9 @@
             },
             dataType: "json",
             success: function success(response) {
+                //deberia devolver el token por consola
                 console.log(response.token);
+
                 token = response.token;
                 Cookies.set('token', response.token);
                 $("#main-container").load("widget-users.html");

@@ -103,8 +103,13 @@ function onListening() {
     console.log(baseAddress + "/users/login");
     console.log(baseAddress + "/users/signup");
     console.log("Servidor API");
-    console.log('http://localhost:8081/api/socialnetworkv1.0/users/login');
+    console.log('http://localhost:8081/api/v1.0/users/login');
     console.log("Cliente JQuery");
     console.log("http://localhost:8081/apiclient/client.html");
 
 }
+/*
+user02@email.com
+user02
+
+ */
