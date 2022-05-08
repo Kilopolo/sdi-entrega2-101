@@ -1,6 +1,14 @@
 module.exports = function (app, usersRepository) {
 
-
+  app.get('/home',function (req,res) {
+    // let user = req.session.user
+    // if (user == undefined){
+    //   user.name = 'ANONIMO'
+    //   user.rol = 'ANONIMO'
+    // }
+    res.render("home.twig");//,{user:user}
+    // res.send('home');
+  });
 
   app.get('/users', function (req, res) {
     res.send('lista de usuarios');
@@ -23,7 +31,7 @@ module.exports = function (app, usersRepository) {
     }
     usersRepository.insertUser(user).then(userId => {
       //res.send('Usuario registrado ' + userId);
-      res.redirect("/users/login");
+      res.redirect("/home");
 
     }).catch(error => {
       res.send("Error al insertar el usuario");

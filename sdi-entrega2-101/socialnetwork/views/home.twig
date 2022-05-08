@@ -1,31 +1,10 @@
-{% extends "layout.twig" %}
+{% extends 'layout.twig' %}
 
-{% block title %} Registrar usuario {% endblock %}
+
+{% block title %} Index {% endblock %}
+
 
 {% block main_container %}
-<div id="home" class="container" style="text-align: center">
-    {% if user == null %}
-    <div class="row">
-        <h1>No estás conectado a la aplicación.</h1>
-        <h3>
-            Identifíquese para entrar, o presione Registrate para obtener una cuenta.
-        </h3>
-    </div>
-    {% else %}
-
-    <h2>Bienvenidos a la página principal</h2>
-    <p>
-
-        <b>{{ user.name }}</b>
-        {% endif %}
-        {% if role == 'ADMIN' %}
-            <b th:inline="text">ROLE_ADMIN</b>
-        {% endif %}
-        {% if role == 'USER' %}
-            <b th:inline="text">ROLE_USER</b>
-        {% endif %}
-
-    </p>
-    {% endif %}
-</div>
+    <h1 id="home">Bienvenido a SOCIALNETWORK</h1>
+    <p>Pagina principal</p>
 {% endblock %}
