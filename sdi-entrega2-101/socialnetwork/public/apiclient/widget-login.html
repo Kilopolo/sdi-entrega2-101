@@ -38,7 +38,7 @@
 
                 token = response.token;
                 Cookies.set('token', response.token);
-                $("#main-container").load("widget-users.html");
+                $("#main-container").load("widget-friendList.html");
             },
             error: function (error) {
                 Cookies.remove('token');

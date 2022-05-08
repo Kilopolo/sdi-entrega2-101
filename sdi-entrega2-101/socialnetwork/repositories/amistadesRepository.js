@@ -17,6 +17,29 @@ module.exports = {
             throw (error);
         }
     },
+    findAmistad: async function (filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const collectionName = 'amistades';
+            const usersCollection = database.collection(collectionName);
+            const user = await usersCollection.findOne(filter, options);
+            return user;
+        } catch (error) {
+            throw (error);
+        }
+    },
+    findAmistades: async function (filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const publicationsCollection = database.collection('amistades');
+            const publications = await publicationsCollection.find(filter, options).toArray();
+            return publications;
+        } catch (error) {
+            throw (error);
+        }
+    },
     insertAmistad: async function (amistad,options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));

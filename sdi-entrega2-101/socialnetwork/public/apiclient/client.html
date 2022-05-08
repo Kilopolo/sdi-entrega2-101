@@ -45,14 +45,18 @@
     function widgetUsers(){
         if ( Cookies.get('token') != null ){
             token = Cookies.get('token');
-            $( "#main-container" ).load("widget-songs.html");
+
+            $( "#main-container" ).load("widget-friendList.html");
             let url = new URL(window.location.href);
             let w = url.searchParams.get("w");
             if (w == "login") {
                 $("#main-container").load("widget-login.html");
             }
-            if (w == "users") {
-                $("#main-container").load("widget-users.html");
+            if (w == "friendList") {
+                $("#main-container").load("widget-friendList.html");
+            }
+            if (w == "messages") {
+                $("#main-container").load("widget-messages.html");
             }
         }else {
             $( "#main-container" ).load("widget-login.html");
