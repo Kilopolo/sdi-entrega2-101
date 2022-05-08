@@ -28,5 +28,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },insertPeticion: async function (peticion,options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const collectionName = 'peticiones';
+            const peticionesCollection = database.collection(collectionName);
+            const result = await peticionesCollection.insertOne(peticion);
+            return result.insertedId;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

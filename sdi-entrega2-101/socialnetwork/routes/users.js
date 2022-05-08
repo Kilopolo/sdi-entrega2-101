@@ -105,7 +105,8 @@ module.exports = function (app, usersRepository, logger) {
 
             } else {
                 req.session.user = user;
-                renderUserList(req,res,user);
+                /*renderUserList(req,res,user);*/
+                res.redirect("/users");
 
             }
 

@@ -30,6 +30,16 @@ module.exports = function(app, peticionesRepository, usersRepository, amistadesR
             res.redirect("/peticiones");
         });
     });
+
+    app.get("/peticiones/enviar/:email", function (req, res) {
+        let peticion = {
+          user1: req.session.user.email,
+          user2: req.params.email
+        };
+        peticionesRepository.insertPeticion(peticion,{}).then(peticion => {
+
+        });
+    });
 };
 
 
