@@ -28,13 +28,13 @@ module.exports = {
             throw (error);
         }
     },
-    insertMessage: async function (user) {
+    insertMessage: async function (message) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("socialNetwork");
             const collectionName = 'messages';
             const usersCollection = database.collection(collectionName);
-            const result = await usersCollection.insertOne(user);
+            const result = await usersCollection.insertOne(message);
             return result.insertedId;
         } catch (error) {
             throw (error);
