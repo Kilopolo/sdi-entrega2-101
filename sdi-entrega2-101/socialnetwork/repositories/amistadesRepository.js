@@ -40,6 +40,18 @@ module.exports = {
             throw (error);
         }
     },
+    deleteAmistades: async function (filter,options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const collectionName = 'amistades';
+            const amistadesCollection = database.collection(collectionName);
+            const result = await amistadesCollection.remove(filter,options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
     insertAmistad: async function (amistad,options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
