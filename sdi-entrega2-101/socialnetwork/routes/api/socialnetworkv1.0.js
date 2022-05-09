@@ -10,21 +10,29 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
         res.redirect("/apiclient/client.html");
     });
 
-    app.get("/api/v1.0/messages/",function (req, res) {
+    app.get("/api/v1.0/messages/:id", function (req, res) {
         let user = res.user;
-        let list = []
+        // let list = []
         // list.push({email:"aaaa",text:"aaaaaaaaaaaaaa"})
         // list.push({email:"bbbb",text:"bbbbbbbbbbbbbb"})
+        let mssgId = ObjectId(req.params.id)
+        let filter = {amistadId: mssgId};
+        let options = {};
+        messageRepository.findMessages(filter, options).then(messages => {
 
 
-        messageRepository.
+            res.status(200);
+            res.json({
+                message: "Lista de amistades con ultimo mensaje de la conversación.",
+                chatList: messages,
+                userLoggedIn: user
+            });
+        }).catch(e => {
+            res.status(500);
+            res.json({error: "Se ha producido un error al recuperar los mensajes."})
+        });
 
 
-        // res.status(200);
-        // res.json({
-        //     message: "Lista de amistades con ultimo mensaje de la conversación.",
-        //     chatList: list
-        // });
     });
 
 
@@ -38,79 +46,100 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
             usersRepository.findUsers({}, {}).then(userList => {
                 messageRepository.findMessages({}, {}).then(messageList => {
                     let userWithLastMssg = {
+                        friendshipId: "",
                         userEmail: "",
                         userName: "",
                         userSurname: "",
                         mssgDate: "",
                         mssgText: ""
                     };
-
+                    // console.log(friendList)
+                    let conversaciones = [];
                     let friendListObjects = [];
                     for (let i = 0; i < friendList.length; i++) {
                         let friendUserEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
                         for (let j = 0; j < userList.length; j++) {
                             let userMongo = userList[j];
                             let friend = (friendUserEmail == userMongo.email) ? userMongo : null;
-                            if (friend!=null)friendListObjects.push(friend);
+                            if (friend != null) friendListObjects.push(friend);
                         }
+
+                        let conversacion = []
+                        let conversacionID = "";
+                        let flID = flID = (friendList[i]._id.toString());
+                        if (flID != conversacionID) {
+                            for (let j = 0; j < messageList.length; j++) {
+                                conversacionID = flID;
+                                if (flID == messageList[j].amistadId) {
+                                    console.log(flID + "   " + j + "   " + messageList[j].amistadId)
+
+                                    conversacion.push(messageList[j]);
+                                }
+                            }
+                        }
+                        conversaciones.push(conversacion);
                     }
 
                     for (let i = 0; i < friendListObjects.length; i++) {
-                        let lastMessage;
-                        let fecha = new Date(null);
-                        //recorremos los mensajes
-                        for (let j = 0; j < messageList.length; j++) {
-                            let friend = friendListObjects[i];
-                            let message = messageList[j];
-                            //si el emisor o el destinatario son el amigo
-                            if (message.emisor == friend.email ||
-                                message.destinatario == friend.email) {
-                                //ponemos el usuario
-                                userWithLastMssg.userEmail = friend.email;
-                                userWithLastMssg.userSurname = friend.surname;
-                                userWithLastMssg.userName = friend.name;
-                                //falta fecha, hora y texto del último mensaje
+                        let friend = friendListObjects[i];
+                        //ponemos el usuario
+                        userWithLastMssg.userEmail = friend.email;
+                        userWithLastMssg.userSurname = friend.surname;
+                        userWithLastMssg.userName = friend.name;
+                        //comprobamos las conversaciones
+                        for (let j = 0; j < conversaciones.length; j++) {
+                            let conversacion = conversaciones[j];
+                            if (conversacion.length == 0) {
+                                //conversacion vacia
+                            } else {
+                                let lastMessage;
+                                let fecha = new Date(null);
+                                //por cada conversacion
+                                for (let k = 0; k < conversacion.length; k++) {
+                                    let mensaje = conversacion[k];
 
-                                //cojemos el ultimo mensaje cronologicament
-                                let fechaParsed = parseDateFromMssg(message.fecha);
-                                if (fecha.getTime() < fechaParsed.getTime()) {
-                                    lastMessage = message;
-                                    fecha = fechaParsed;
+
+                                    //cogemos el último mensaje cronológicamente
+                                    let fechaParsed = parseDateFromMssg(mensaje.fecha);
+                                    if (fecha.getTime() < fechaParsed.getTime()) {
+                                        lastMessage = mensaje;
+                                        fecha = fechaParsed;
+                                    }
+                                    if (lastMessage != undefined) {
+                                        // actualizamos el usuario que vamos a enviar
+                                        userWithLastMssg.friendshipId = lastMessage.amistadId;
+                                        userWithLastMssg.mssgDate = lastMessage.fecha;
+                                        userWithLastMssg.mssgText = lastMessage.textoMensaje;
+                                    }
                                 }
-                                if (lastMessage != undefined) {
-                                    // actualizamos el usuario que vamos a enviar
-                                    userWithLastMssg.mssgDate = lastMessage.fecha;
-                                    userWithLastMssg.mssgText = lastMessage.textoMensaje;
-                                }
-                                userJoinMssg.push(userWithLastMssg);
                             }
-
                         }
+                        //pusheamos con o sin conversacion
+                        userJoinMssg.push(userWithLastMssg);
                     }
 
-                    console.log(userJoinMssg);
+
                     res.status(200);
                     res.json({
                         message: "Lista de amistades con ultimo mensaje de la conversación.",
                         users: userJoinMssg
                     });
 
-                }).catch(e=>{
+                }).catch(e => {
                     res.status(500);
                     res.json({error: "Se ha producido un error al recuperar los mensajes."})
                 });
-            }).catch(e=>{
+            }).catch(e => {
                 res.status(500);
                 res.json({error: "Se ha producido un error al encontrar algún usuario"});
             });
-        }).catch(e=>{
+        }).catch(e => {
             res.status(500);
             res.json({error: "Se ha producido un error al recuperar las amistades."})
         });
 
 
     });
-
 
 
     function parseDateFromMssg(fechaStr) {

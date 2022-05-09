@@ -1,5 +1,6 @@
 <div id="widget-friendList">
     <h1>Lista de amistades</h1>
+    <input type="text" class="form-control" placeholder="Filtrar por nombre" id="filter-by-name"/>
 
     <button onclick="loadUsers()" class="btn" >Actualizar</button>
     <table class="table table-hover">
@@ -19,7 +20,12 @@
     window.history.pushState("", "", "/apiclient/client.html?w=friendList");
     let friends;
     let selectedMessageId;
-
+    $('#filter-by-name').on('input', function (e) {
+        let filteredUsers = [];
+        let filterValue = $("#filter-by-name").val();
+        filteredUsers = friends.filter(friend => friend.userName.includes(filterValue));
+        updateUsersTable(filteredUsers);
+    });
     function loadUsers() {
         $.ajax({
             url: URLbase + "/friends/list",
@@ -41,19 +47,19 @@
         $("#friendsTableBody").empty(); // Vaciar la tabla
         for (let i = 0; i < friends.length; i++) {
             $("#friendsTableBody").append(
-                "<tr id=" + friends[i]._id + ">" +
+                "<tr id=" + friends[i].friendshipId + ">" +
                 "<td>" + friends[i].userEmail + "</td>" +
                 "<td>" + friends[i].userName + "</td>" +
                 "<td>" + friends[i].userSurname + "</td>" +
                 "<td>" +                "</td>" +
                 "</tr>" +
 
-                "<tr id=" + friends[i]._id + ">" +
+                "<tr id=" + friends[i].friendshipId + ">" +
                 "<td>" + friends[i].mssgDate + "</td>" +
                 "<td>" + friends[i].mssgText + "</td>" +
                 "<td>" + "</td>" +
                 "<td>" +
-                "<a onclick=userMessages('" + friends[i]._id + "')>Ir a la conversación</a><br>" +
+                "<a onclick=userMessages('" + friends[i].friendshipId + "')>Ir a la conversación</a><br>" +
                 "</td>" +
                 "</tr>"
             );
