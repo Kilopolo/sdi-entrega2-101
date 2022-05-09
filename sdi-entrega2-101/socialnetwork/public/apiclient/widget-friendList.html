@@ -1,23 +1,23 @@
 <div id="widget-friendList">
     <h1>Lista de amistades</h1>
 
-
+    <button onclick="loadUsers()" class="btn" >Actualizar</button>
     <table class="table table-hover">
         <thead>
 
         <tr>
             <th>Email</th>
+            <th>Nombre</th>
             <th>Apellido</th>
-            <th>Name</th>
             <th class="col-md-1"></th>
         </tr>
         </thead>
-        <tbody id="usersTableBody"></tbody>
+        <tbody id="friendsTableBody"></tbody>
     </table>
 </div>
 <script>
     window.history.pushState("", "", "/apiclient/client.html?w=friendList");
-    let users;
+    let friends;
     let selectedMessageId;
 
     function loadUsers() {
@@ -28,8 +28,8 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (response) {
-                users = response.users;
-                updateUsersTable(users);
+                friends = response.users;
+                updateUsersTable(friends);
             },
             error: function (error) {
                 $("#main-container").load("widget-login.html");
@@ -37,25 +37,23 @@
         });
     }
 
-    function updateUsersTable(users) {
+    function updateUsersTable(friends) {
         $("#usersTableBody").empty(); // Vaciar la tabla
-        for (let i = 0; i < users.length; i++) {
-            $("#songsTableBody").append(
-                "<tr id=" + users[i]._id + ">" +
-                "<td>" + users[i].email + "</td>" +
-                "<td>" + users[i].surname + "</td>" +
-                "<td>" + users[i].name + "</td>" +
-                "<td>" +
-                "<a onclick=userMessages('" + users[i]._id + "')>Mensage</a><br>" +
-                "</td>" +
+        for (let i = 0; i < friends.length; i++) {
+            $("#friendsTableBody").append(
+                "<tr id=" + friends[i]._id + ">" +
+                "<td>" + friends[i].userEmail + "</td>" +
+                "<td>" + friends[i].userName + "</td>" +
+                "<td>" + friends[i].userSurname + "</td>" +
+                "<td>" +                "</td>" +
                 "</tr>" +
 
-                "<tr id=" + users[i]._id + ">" +
-                "<td>" + users[i].email + "</td>" +
-                "<td>" + users[i].surname + "</td>" +
-                "<td>" + users[i].name + "</td>" +
+                "<tr id=" + friends[i]._id + ">" +
+                "<td>" + friends[i].mssgDate + "</td>" +
+                "<td>" + friends[i].mssgText + "</td>" +
+                "<td>" +                     + "</td>" +
                 "<td>" +
-                "<a onclick=userMessages('" + users[i]._id + "')>Mensage</a><br>" +
+                "<a onclick=userMessages('" + friends[i]._id + "')>Ir al Mensaje</a><br>" +
                 "</td>" +
                 "</tr>"
             );
@@ -71,4 +69,5 @@
 
 
     loadUsers();
+
 </script>

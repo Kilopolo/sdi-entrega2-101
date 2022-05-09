@@ -105,11 +105,15 @@ function onListening() {
     console.log("Servidor API");
     console.log('http://localhost:8081/api/v1.0/users/login');
     console.log("Cliente JQuery");
-    console.log("http://localhost:8081/apiclient/client.html");
+    let URLClienteJQuery = "http://localhost:8081/apiclient/client.html";
+    console.log(URLClienteJQuery);
+    console.log(URLClienteJQuery + "?w=login");
+    console.log(URLClienteJQuery + "?w=friendList");
+    console.log(URLClienteJQuery + "?w=messages");
 
 }
 /*
-user02@email.com
-user02
+user01@email.com
+user01
 
  */

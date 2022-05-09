@@ -96,7 +96,9 @@ app.use("/publications", userSessionRouter);
 
 //JQuery Client
 const userTokenRouter = require('./routes/userTokenRouter');
-//app.use("/api/v1.0/users/list", userTokenRouter);
+app.use("/api/v1.0/friends/list", userTokenRouter);
+app.use("/api/v1.0/messages", userTokenRouter);
+
 const jQueryClient = require("./routes/api/socialnetworkv1.0.js")(app,usersRepository,amistadesRepository,messagesRepository);
 
 
