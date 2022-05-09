@@ -47,117 +47,106 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
             usersRepository.findUsers({}, {}).then(userList => {
                 messageRepository.findMessages({}, {}).then(messageList => {
 
+                        let userJoinMssg = [];
+                        try {
 
-                    // if (friendList == null || friendList.length == 0) {
-                    //     //error
-                    // }
-                    // if (userList == null || userList.length== 0) {
-                    //     //error
-                    // }
-                    // if (messageList == null || messageList.length== 0) {
-                    //     //error
-                    // }
-
-
-                    let userJoinMssg = [];
-                    try {
-
-                        // console.log(friendList)
-                        let conversaciones = [];
-                        let friendListObjects = [];
-                        for (let i = 0; i < friendList.length; i++) {
-                            let friendUserEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
-                            for (let j = 0; j < userList.length; j++) {
-                                let userMongo = userList[j];
-                                let friend = (friendUserEmail == userMongo.email) ? userMongo : null;
-                                if (friend != null) friendListObjects.push(friend);
-                            }
-
-                            let conversacion = []
-                            let conversacionID = "";
-                            let flID = (friendList[i]._id.toString());
-                            if (flID != conversacionID) {
-                                for (let j = 0; j < messageList.length; j++) {
-                                    conversacionID = flID;
-                                    if (flID == messageList[j].amistadId) {
-                                        // console.log(flID + "   " + j + "   " + messageList[j].amistadId)
-
-                                        conversacion.push(messageList[j]);
+                            let conversaciones = [];
+                            let friendListObjects = [];
+                            for (let i = 0; i < friendList.length; i++) {
+                                let friendUserEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
+                                for (let j = 0; j < userList.length; j++) {
+                                    let userMongo = userList[j];
+                                    let friend = (friendUserEmail == userMongo.email) ? userMongo : null;
+                                    if (friend != null) friendListObjects.push(friend);
+                                }
+                                let conversacion = []
+                                let conversacionID = "";
+                                let flID = (friendList[i]._id.toString());
+                                if (flID != conversacionID) {
+                                    for (let j = 0; j < messageList.length; j++) {
+                                        conversacionID = flID;
+                                        if (flID == messageList[j].amistadId) {
+                                            // console.log(flID + "   " + j + "   " + messageList[j].amistadId)
+                                            conversacion.push(messageList[j]);
+                                        }
                                     }
                                 }
+                                conversaciones.push(conversacion);
                             }
-                            conversaciones.push(conversacion);
-                        }
 
 
+                            //ya tenga o no algo la conversacion hay que mostrar las amistades
+                            for (let i = 0; i < friendListObjects.length; i++) {
+                                let userWithLastMssg = {
+                                    friendshipId: "",
+                                    userEmail: "",
+                                    userName: "",
+                                    userSurname: "",
+                                    mssgDate: "",
+                                    mssgText: ""
+                                };
+                                let friend = friendListObjects[i];
+                                //ponemos el usuario
+                                userWithLastMssg.userEmail = friend.email;
+                                userWithLastMssg.userSurname = friend.surname;
+                                userWithLastMssg.userName = friend.name;
 
 
-                        //ya tenga o no algo la conversacion hay que mostrar las amistades
-                        for (let i = 0; i < friendListObjects.length; i++) {
-                            let userWithLastMssg = {
-                                friendshipId: "",
-                                userEmail: "",
-                                userName: "",
-                                userSurname: "",
-                                mssgDate: "",
-                                mssgText: ""
-                            };
-                            let friend = friendListObjects[i];
-                            //ponemos el usuario
-                            userWithLastMssg.userEmail = friend.email;
-                            userWithLastMssg.userSurname = friend.surname;
-                            userWithLastMssg.userName = friend.name;
+                                //comprobamos las conversaciones
+                                for (let j = 0; j < conversaciones.length; j++) {
+                                    let conversacion = conversaciones[j];
+                                    if (conversacion.length == 0) {
+                                        //conversacion vacia
+                                    } else {
 
-                            //comprobamos las conversaciones
-                            for (let j = 0; j < conversaciones.length; j++) {
-                                let conversacion = conversaciones[j];
-                                if (conversacion.length == 0) {
-                                    //conversacion vacia
-                                } else {
-                                    let lastMessage;
-                                    let fecha = new Date(null);
-                                    //por cada conversacion recorro los mensajes
-                                    for (let k = 0; k < conversacion.length; k++) {
-                                        let mensaje = conversacion[k];
+                                        //si la conversacion se corresponde a la amistad
+                                        if (conversacion[0].emisor == friend.email && conversacion[0].destinatario == user ||
+                                            conversacion[0].emisor == user && conversacion[0].destinatario == friend.email) {
 
-                                        //cogemos el último mensaje cronológicamente
-                                        let fechaParsed = parseDateFromMssg(mensaje.fecha);
-                                        if (fecha.getTime() < fechaParsed.getTime()) {
-                                            lastMessage = mensaje;
-                                            fecha = fechaParsed;
-                                        }
-                                        if (lastMessage != undefined) {
-                                            // actualizamos el usuario que vamos a enviar
-                                            userWithLastMssg.friendshipId = lastMessage.amistadId;
-                                            userWithLastMssg.mssgDate = lastMessage.fecha;
-                                            userWithLastMssg.mssgText = lastMessage.textoMensaje;
+                                            let lastMessage;
+                                            let fecha = new Date(null);
+                                            //por cada conversacion recorro los mensajes
+                                            for (let k = 0; k < conversacion.length; k++) {
+                                                let mensaje = conversacion[k];
+                                                //cogemos el último mensaje cronológicamente
+                                                let fechaParsed = parseDateFromMssg(mensaje.fecha);
+                                                if (fecha.getTime() < fechaParsed.getTime()) {
+                                                    lastMessage = mensaje;
+                                                    fecha = fechaParsed;
+                                                }
+                                                if (lastMessage != undefined) {
+                                                    // actualizamos el usuario que vamos a enviar
+                                                    userWithLastMssg.friendshipId = lastMessage.amistadId;
+                                                    userWithLastMssg.mssgDate = lastMessage.fecha;
+                                                    userWithLastMssg.mssgText = lastMessage.textoMensaje;
+                                                }
+
+
+                                            }
                                         }
                                     }
                                 }
 
+                                console.log(userWithLastMssg.friendshipId)
+                                //pusheamos con o sin conversacion
+                                userJoinMssg.push(userWithLastMssg);
                             }
+                            console.log(userJoinMssg)
 
-                            console.log(userWithLastMssg.friendshipId)
-                            //pusheamos con o sin conversacion
-                            userJoinMssg.push(userWithLastMssg);
+
+                        } catch
+                            (e) {
+                            console.log(e);
                         }
-                        console.log(userJoinMssg)
 
+                        res.status(200);
+                        res.json({
+                            message: "Lista de amistades con ultimo mensaje de la conversación.",
+                            users: userJoinMssg
+                        });
 
-
-
-
-                    } catch (e) {
-                        console.log(e);
                     }
-
-                    res.status(200);
-                    res.json({
-                        message: "Lista de amistades con ultimo mensaje de la conversación.",
-                        users: userJoinMssg
-                    });
-
-                }).catch(e => {
+                ).catch(e => {
                     res.status(500);
                     res.json({error: "Se ha producido un error al recuperar los mensajes."})
                 });
