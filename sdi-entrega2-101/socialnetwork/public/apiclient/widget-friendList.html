@@ -38,7 +38,7 @@
     }
 
     function updateUsersTable(friends) {
-        $("#usersTableBody").empty(); // Vaciar la tabla
+        $("#friendsTableBody").empty(); // Vaciar la tabla
         for (let i = 0; i < friends.length; i++) {
             $("#friendsTableBody").append(
                 "<tr id=" + friends[i]._id + ">" +
@@ -51,9 +51,9 @@
                 "<tr id=" + friends[i]._id + ">" +
                 "<td>" + friends[i].mssgDate + "</td>" +
                 "<td>" + friends[i].mssgText + "</td>" +
-                "<td>" +                     + "</td>" +
+                "<td>" + "</td>" +
                 "<td>" +
-                "<a onclick=userMessages('" + friends[i]._id + "')>Ir al Mensaje</a><br>" +
+                "<a onclick=userMessages('" + friends[i]._id + "')>Ir a la conversación</a><br>" +
                 "</td>" +
                 "</tr>"
             );

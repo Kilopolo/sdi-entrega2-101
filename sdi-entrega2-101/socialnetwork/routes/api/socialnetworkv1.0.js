@@ -10,6 +10,24 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
         res.redirect("/apiclient/client.html");
     });
 
+    app.get("/api/v1.0/messages/",function (req, res) {
+        let user = res.user;
+        let list = []
+        // list.push({email:"aaaa",text:"aaaaaaaaaaaaaa"})
+        // list.push({email:"bbbb",text:"bbbbbbbbbbbbbb"})
+
+
+        messageRepository.
+
+
+        // res.status(200);
+        // res.json({
+        //     message: "Lista de amistades con ultimo mensaje de la conversación.",
+        //     chatList: list
+        // });
+    });
+
+
     app.get("/api/v1.0/friends/list", function (req, res) {
 
         let user = res.user;
