@@ -21,10 +21,12 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
         let options = {};
         amistadesRepository.findAmistades(filter, options).then(friendList => {
             //dame la lista de amigos modificada
-            getFriendListWithLastMssg(user, friendList).then(x => {
+            getFriendListWithLastMssg(user, friendList).then(async x => {
+                let lista = await x;
+
                 res.status(200);
                 res.json({message: "Lista de amistades con ultimo mensaje de la conversación.",
-                            users:x});
+                            users:lista});
             }).catch(err => {
                 res.status(500);
                 res.json({error: "Se ha producido un error al encontrar algún usuario de las amistades" + error});
