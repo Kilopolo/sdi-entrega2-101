@@ -62,13 +62,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 // logger.level = "debug";
 
 
-//Users.js
+
+
 const usersRepository = require("./repositories/usersRepository.js");
-usersRepository.init(app, MongoClient);
-
-require("./routes/users.js")(app, usersRepository);
-
-
 //Amistades.js
 const amistadesRepository = require("./repositories/amistadesRepository.js");
 amistadesRepository.init(app, MongoClient);
@@ -77,7 +73,11 @@ require("./routes/friends.js")(app, amistadesRepository,usersRepository);
 const peticionesRepository = require("./repositories/peticionesRepository.js");
 peticionesRepository.init(app, MongoClient);
 require("./routes/peticiones.js")(app, peticionesRepository, usersRepository, amistadesRepository);
+//Users.js
 
+usersRepository.init(app, MongoClient);
+
+require("./routes/users.js")(app, usersRepository,amistadesRepository,peticionesRepository);
 //Users.js
 const publicationsRepository = require("./repositories/publicationsRepository.js");
 publicationsRepository.init(app, MongoClient);

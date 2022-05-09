@@ -10,10 +10,11 @@
             {% for user in users %}
                 <tr>
                     <td>{{ user.email }}</td>
-                    <td>
+                    <td> {% if (user.email in emailsAmistades or user.email in emailsPeticiones) == false %}
                         <a class="page-link" href="/peticiones/enviar/{{ user.email }}">
                             Enviar solicitud
                         </a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

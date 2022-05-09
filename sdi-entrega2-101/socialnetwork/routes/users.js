@@ -1,4 +1,5 @@
-module.exports = function (app, usersRepository, logger) {
+
+module.exports = function (app, usersRepository, amistadesRepository, peticionesRepository, logger) {
 
     app.get('/home', function (req, res) {
         let user = req.session.user
@@ -27,7 +28,17 @@ module.exports = function (app, usersRepository, logger) {
             if (users == null) {
                 //algun error
             } else {
-                res.render("users/list.twig", {users: users, user: user});//
+                //TODO {user1 : req.session.user.email},{user2:1, _id:0} forma de hacerlo mejor?
+                amistadesRepository.findAmistadesByEmail({$or: [{user1 : req.session.user.email}, {user2: req.session.user.email}]},{}).then(amistades=>{
+                    peticionesRepository.findPeticionesByEmail({user2 : req.session.user.email},{}).then(peticiones => {
+                        let emailsAmistades = getEmailFromList(amistades,req);
+                        let emailsPeticiones = getEmailFromList(peticiones,req);
+                        let a = emailsAmistades.includes("user01@email.com");
+                        res.render("users/list.twig", {users: users, emailsAmistades: emailsAmistades, emailsPeticiones, emailsPeticiones, user: user});
+                    }).catch(error => "Sucedió un error buscando las peticiones"+error);
+                }).catch(error => "Sucedió un error buscando las amistades" + error);
+
+
             }
         });
     }
@@ -124,4 +135,16 @@ module.exports = function (app, usersRepository, logger) {
         res.render("index.twig");
     })
 
+}
+
+function getEmailFromList(list,req) {
+    let resultList = [];
+    for (let i = 0; i< list.length; i++){
+        if(list[i].user1 === req.session.user.email){
+            resultList.push(list[i].user2);
+        } else {
+            resultList.push(list[i].user1);
+        }
+    }
+    return resultList;
 }
