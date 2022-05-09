@@ -32,7 +32,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                         let friendUserEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
                         for (let j = 0; j < userList.length; j++) {
                             let userMongo = userList[j];
-                            let friend = (friendUserEmail.email == userMongo.email) ? friend = userMongo : null;
+                            let friend = (friendUserEmail == userMongo.email) ? userMongo : null;
                             if (friend!=null)friendListObjects.push(friend);
                         }
                     }
@@ -93,140 +93,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
     });
 
-    app.get("NOTWORKING/api/v1.0/friends/list/NOTWORKING", function (req, res) {
 
-        let user = res.user;
-        console.log(user);
-
-
-        let filter = {$or: [{user1: user}, {user2: user}]};
-        let options = {};
-        amistadesRepository.findAmistades(filter, options).then(async friendList => {
-
-
-            //dame la lista de amigos modificada
-            getFriendListWithLastMssg(user, await friendList).then(async x => {
-                let lista = await x;
-                console.log(lista);
-                res.status(200);
-                res.json({
-                    message: "Lista de amistades con ultimo mensaje de la conversación.",
-                    users: lista
-                });
-            }).catch(err => {
-                res.status(500);
-                res.json({error: "Se ha producido un error al encontrar algún usuario de las amistades" + error});
-            });
-
-
-        }).catch(err => {
-            res.status(500);
-            res.json({error: "Se ha producido un error al recuperar las amistades."})
-        })
-
-
-    });
-
-    /**
-     * Devuelve la lista de amigos en join con el último mensaje de la conversación.
-     * @param user usuario que realiza la petición
-     * @param friendList lista de amigos del usuario
-     * @returns {Promise<void>} lista de amistades joinUserLastmessage
-     */
-    async function getFriendListWithLastMssg(user, friendList) {
-
-        if (friendList == null || friendList.length == 0) {
-            //No se han encontrado amigos
-        } else {
-            //Si tiene amigos se buscan los usuarios correspondientes
-
-            let userEmail = "";
-            for (let i = 0; i < friendList.length; i++) {
-                //seleccionamos el amigo
-                userEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
-                let filter = {email: userEmail};
-                await usersRepository.findUser(filter, {}).then(async u => {
-                    //espero por el usuario porque la programacion funcional no mola
-                    let friendOfUser = await u;
-                    let users = [];
-                    getMessageFromUser(user, friendOfUser).then(async x => {
-
-                        let joinUserMensaje = await x;
-                        console.log(joinUserMensaje);
-                        users.push(joinUserMensaje);
-
-                    });
-                    // return new Promise((resolve,reject) => {
-                    //     resolve(users);
-                    // })
-                    return users
-
-                });
-            }
-        }
-    }
-
-    /**
-     * Función asíncrona que devuelve un join entre usuario y último mensaje de una conversación
-     * @param user usuario que hace la petición
-     * @param friendOfUser amigo del usuario
-     * @returns {Promise<void>} async joinUserMensaje
-     */
-    async function getMessageFromUser(user, friendOfUser) {
-        let userWithLastMssg = {
-            userEmail: "",
-            userName: "",
-            userSurname: "",
-            mssgDate: "",
-            mssgText: ""
-        };
-        //ponemos el usuario
-        userWithLastMssg.userEmail = friendOfUser.email;
-        userWithLastMssg.userSurname = friendOfUser.surname;
-        userWithLastMssg.userName = friendOfUser.name;
-        //falta fecha, hora y texto del último mensaje
-
-
-        //todos los mensajes en los que el emisor o el destinatario sea el usuario
-        let filter = {$or: [{emisor: user}, {destinatario: user}]};
-        await messageRepository.findMessages(filter, {}).then(messages => {
-            console.log("await messageRepository.findMessages");
-            if (messages == null || messages.length == 0) {
-                //No se han encontrado messages
-                return userWithLastMssg;
-            } else {
-                let lastMessage;
-                let fecha = new Date(null);
-                let fechaStr;
-                //recorremos los mensajes
-                for (let i = 0; i < messages.length; i++) {
-                    //si el emisor o el destinatario son el amigo
-                    if (messages[i].emisor == friendOfUser.email ||
-                        messages[i].destinatario == friendOfUser.email) {
-                        //cojemos el ultimo mensaje cronologicamente
-
-                        let fechaParsed = parseDateFromMssg(messages[i].fecha);
-
-                        if (fecha.getTime() < fechaParsed.getTime()) {
-                            lastMessage = messages[i];
-                            fecha = fechaParsed;
-                        }
-                    }
-                }
-                if (lastMessage != undefined) {
-                    // actualizamos el usuario que vamos a enviar
-                    userWithLastMssg.mssgDate = lastMessage.fecha;
-                    userWithLastMssg.mssgText = lastMessage.textoMensaje;
-                }
-
-            }
-            //haya o no mensajes hay que devolver la lista de amistades
-            return userWithLastMssg;
-
-
-        });
-
-    }
 
     function parseDateFromMssg(fechaStr) {
         let a = fechaStr.split(" ");
