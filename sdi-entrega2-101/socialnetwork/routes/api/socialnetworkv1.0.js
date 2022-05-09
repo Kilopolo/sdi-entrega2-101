@@ -10,8 +10,90 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
         res.redirect("/apiclient/client.html");
     });
 
-
     app.get("/api/v1.0/friends/list", function (req, res) {
+
+        let user = res.user;
+        console.log(user);
+        let userJoinMssg = [];
+
+        amistadesRepository.findAmistades({$or: [{user1: user}, {user2: user}]}, {}).then(friendList => {
+            usersRepository.findUsers({}, {}).then(userList => {
+                messageRepository.findMessages({}, {}).then(messageList => {
+                    let userWithLastMssg = {
+                        userEmail: "",
+                        userName: "",
+                        userSurname: "",
+                        mssgDate: "",
+                        mssgText: ""
+                    };
+
+                    let friendListObjects = [];
+                    for (let i = 0; i < friendList.length; i++) {
+                        let friendUserEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
+                        for (let j = 0; j < userList.length; j++) {
+                            let userMongo = userList[j];
+                            let friend = (friendUserEmail.email == userMongo.email) ? friend = userMongo : null;
+                            if (friend!=null)friendListObjects.push(friend);
+                        }
+                    }
+
+                    for (let i = 0; i < friendListObjects.length; i++) {
+                        let lastMessage;
+                        let fecha = new Date(null);
+                        //recorremos los mensajes
+                        for (let j = 0; j < messageList.length; j++) {
+                            let friend = friendListObjects[i];
+                            let message = messageList[j];
+                            //si el emisor o el destinatario son el amigo
+                            if (message.emisor == friend.email ||
+                                message.destinatario == friend.email) {
+                                //ponemos el usuario
+                                userWithLastMssg.userEmail = friend.email;
+                                userWithLastMssg.userSurname = friend.surname;
+                                userWithLastMssg.userName = friend.name;
+                                //falta fecha, hora y texto del último mensaje
+
+                                //cojemos el ultimo mensaje cronologicament
+                                let fechaParsed = parseDateFromMssg(message.fecha);
+                                if (fecha.getTime() < fechaParsed.getTime()) {
+                                    lastMessage = message;
+                                    fecha = fechaParsed;
+                                }
+                                if (lastMessage != undefined) {
+                                    // actualizamos el usuario que vamos a enviar
+                                    userWithLastMssg.mssgDate = lastMessage.fecha;
+                                    userWithLastMssg.mssgText = lastMessage.textoMensaje;
+                                }
+                                userJoinMssg.push(userWithLastMssg);
+                            }
+
+                        }
+                    }
+
+                    console.log(userJoinMssg);
+                    res.status(200);
+                    res.json({
+                        message: "Lista de amistades con ultimo mensaje de la conversación.",
+                        users: userJoinMssg
+                    });
+
+                }).catch(e=>{
+                    res.status(500);
+                    res.json({error: "Se ha producido un error al recuperar los mensajes."})
+                });
+            }).catch(e=>{
+                res.status(500);
+                res.json({error: "Se ha producido un error al encontrar algún usuario"});
+            });
+        }).catch(e=>{
+            res.status(500);
+            res.json({error: "Se ha producido un error al recuperar las amistades."})
+        });
+
+
+    });
+
+    app.get("NOTWORKING/api/v1.0/friends/list/NOTWORKING", function (req, res) {
 
         let user = res.user;
         console.log(user);
@@ -19,14 +101,18 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
         let filter = {$or: [{user1: user}, {user2: user}]};
         let options = {};
-        amistadesRepository.findAmistades(filter, options).then(friendList => {
-            //dame la lista de amigos modificada
-            getFriendListWithLastMssg(user, friendList).then(async x => {
-                let lista = await x;
+        amistadesRepository.findAmistades(filter, options).then(async friendList => {
 
+
+            //dame la lista de amigos modificada
+            getFriendListWithLastMssg(user, await friendList).then(async x => {
+                let lista = await x;
+                console.log(lista);
                 res.status(200);
-                res.json({message: "Lista de amistades con ultimo mensaje de la conversación.",
-                            users:lista});
+                res.json({
+                    message: "Lista de amistades con ultimo mensaje de la conversación.",
+                    users: lista
+                });
             }).catch(err => {
                 res.status(500);
                 res.json({error: "Se ha producido un error al encontrar algún usuario de las amistades" + error});
@@ -39,8 +125,6 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
         })
 
 
-
-
     });
 
     /**
@@ -49,7 +133,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
      * @param friendList lista de amigos del usuario
      * @returns {Promise<void>} lista de amistades joinUserLastmessage
      */
-     async function getFriendListWithLastMssg(user, friendList) {
+    async function getFriendListWithLastMssg(user, friendList) {
 
         if (friendList == null || friendList.length == 0) {
             //No se han encontrado amigos
@@ -61,19 +145,21 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                 //seleccionamos el amigo
                 userEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
                 let filter = {email: userEmail};
-
-                usersRepository.findUser(filter, {}).then(async u => {
+                await usersRepository.findUser(filter, {}).then(async u => {
                     //espero por el usuario porque la programacion funcional no mola
                     let friendOfUser = await u;
                     let users = [];
                     getMessageFromUser(user, friendOfUser).then(async x => {
 
                         let joinUserMensaje = await x;
+                        console.log(joinUserMensaje);
                         users.push(joinUserMensaje);
 
                     });
-
-                    return users;
+                    // return new Promise((resolve,reject) => {
+                    //     resolve(users);
+                    // })
+                    return users
 
                 });
             }
@@ -101,16 +187,16 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
         //falta fecha, hora y texto del último mensaje
 
 
-
         //todos los mensajes en los que el emisor o el destinatario sea el usuario
         let filter = {$or: [{emisor: user}, {destinatario: user}]};
-        messageRepository.findMessages(filter, {}).then(messages => {
+        await messageRepository.findMessages(filter, {}).then(messages => {
+            console.log("await messageRepository.findMessages");
             if (messages == null || messages.length == 0) {
                 //No se han encontrado messages
                 return userWithLastMssg;
             } else {
                 let lastMessage;
-                let fecha = 0;
+                let fecha = new Date(null);
                 let fechaStr;
                 //recorremos los mensajes
                 for (let i = 0; i < messages.length; i++) {
@@ -118,25 +204,51 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                     if (messages[i].emisor == friendOfUser.email ||
                         messages[i].destinatario == friendOfUser.email) {
                         //cojemos el ultimo mensaje cronologicamente
-                        fechaStr = messages[i].fecha;
-                        if(fecha > Date.parse( fechaStr)){
+
+                        let fechaParsed = parseDateFromMssg(messages[i].fecha);
+
+                        if (fecha.getTime() < fechaParsed.getTime()) {
                             lastMessage = messages[i];
-                            fecha = Date.parse( fechaStr);
+                            fecha = fechaParsed;
                         }
                     }
                 }
-                // actualizamos el usuario que vamos a enviar
-                userWithLastMssg.mssgDate = lastMessage.fecha;
-                userWithLastMssg.mssgText = lastMessage.textoMensaje;
+                if (lastMessage != undefined) {
+                    // actualizamos el usuario que vamos a enviar
+                    userWithLastMssg.mssgDate = lastMessage.fecha;
+                    userWithLastMssg.mssgText = lastMessage.textoMensaje;
+                }
+
             }
             //haya o no mensajes hay que devolver la lista de amistades
-            users.push(userWithLastMssg);
+            return userWithLastMssg;
 
 
         });
 
     }
 
+    function parseDateFromMssg(fechaStr) {
+        let a = fechaStr.split(" ");
+        let dia = a[0];
+        let hora = a[1];
+        let b = dia.split("/");
+        let c = hora.split(":");
+
+        let diaMMDDYYYY = parseInt(b[1]) + "/" + parseInt(b[2]) + "/" + parseInt(b[0]);
+
+        let date = new Date(diaMMDDYYYY);
+
+        date.setHours(parseInt(c[0]));
+        date.setMinutes(parseInt(c[1]));
+        date.setSeconds(parseInt(c[2]));
+
+
+        // date = new Date();
+        //  console.log(date);
+
+        return date;
+    }
 
 
     /**

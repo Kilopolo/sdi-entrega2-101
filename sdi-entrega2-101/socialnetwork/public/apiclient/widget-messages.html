@@ -25,7 +25,7 @@
 <script>
     window.history.pushState("", "", "/apiclient/client.html?w=messages");
     $.ajax({
-        url: URLbase + "/songs/" + selectedSongId,
+        url: URLbase + "/messages/" + selectedSongId,
         type: "GET",
         data: {},
         dataType: 'json',
