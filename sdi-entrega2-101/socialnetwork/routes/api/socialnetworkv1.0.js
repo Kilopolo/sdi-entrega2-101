@@ -240,9 +240,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                 message: "Se ha producido un error en la petición.",
                 authenticated: false
             })
-
         }
-
 
     });
 
