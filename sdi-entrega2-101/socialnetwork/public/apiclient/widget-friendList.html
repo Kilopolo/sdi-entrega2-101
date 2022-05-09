@@ -18,6 +18,7 @@
 </div>
 <script>
     window.history.pushState("", "", "/apiclient/client.html?w=friendList");
+    token = Cookies.get('token');
     let friends;
     let selectedMessageId;
     $('#filter-by-name').on('input', function (e) {
@@ -74,6 +75,6 @@
     }
 
 
-    loadUsers();
+    updateUsersTable(friends);
 
 </script>
