@@ -18,11 +18,17 @@ public class InitDB {
 
     public static void main(String[] args) {
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-        initDB();
-        showDataOfDB();
-        // deleteTestUsers();
+
+
+//        initDB();
+//        deleteTestUsers();
+insertUser("admin@email.com","admin", "admin", "ADMIN", "admin");
+
         //idb.createUsers();
+
+        showDataOfDB();
     }
+
 
     private static void initDB() {
 
@@ -48,6 +54,25 @@ public class InitDB {
                     .append("surname", surname)
                     .append("rol", rol)
                     .append("test", true));
+        }
+
+    }
+
+    private static void insertUser(String userEmail, String name, String surname, String rol, String password) {
+
+        String securePassword = AES.encrypt(password);
+//            System.out.println(securePassword);
+        Document user = new Document("email", userEmail)
+                .append("password", securePassword)
+                .append("name", name)
+                .append("surname", surname)
+                .append("rol", rol)
+                .append("test", true);
+
+        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+
+            mongoclient.getDatabase(AppDBname).getCollection("users").insertOne(user);
+
         }
 
     }

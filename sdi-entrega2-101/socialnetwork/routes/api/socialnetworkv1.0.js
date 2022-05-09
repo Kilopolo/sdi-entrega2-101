@@ -13,11 +13,41 @@ module.exports = function (app, usersRepository, amistadesRepository) {
 
     app.get("/api/v1.0/friends/list", function (req, res) {
 
-        let user = res.user
-        console.log(user)
-
-        let filter = {$or: [{user1: req.session.user}, {user2: req.session.user}]};
+        let user = res.user;
+        console.log(user);
+        let filter = {$or: [{user1: user}, {user2: user}]};
         let options = {};
+
+        amistadesRepository.findAmistades(filter, options).then(friendList => {
+            if (friendList == null || friendList.length == 0) {
+                //No se han encontrado amigos
+            } else {
+                //Si tiene amigos se buscan los usuarios correspondientes
+                let usuarios = [];
+                let userEmail = "";
+                for (let i = 0; i < friendList.length; i++) {
+                    //seleccionamos el amigo
+                    userEmail = friendList[i].user1 === user ? friendList[i].user2 : friendList[i].user1;
+                    filter = {email: userEmail};
+                    usersRepository.findUser(filter, options).then(friendOfUser => {
+                        //metemos el usuario en la lista de amigos
+                        usuarios.push(friendOfUser);
+
+
+                    }).catch(err => {
+                        res.status(500);
+                        res.json({error: "Se ha producido un error al encontrar algún usuario de las amistades" + error});
+                    })
+                }
+            }
+
+
+        }).catch(err => {
+            res.status(500);
+            res.json({error: "Se ha producido un error al recuperar las amistades."})
+        })
+
+
         amistadesRepository.findAmistadesByEmail(filter, options).then(amistades => {
             getUserFromAmistades(req, amistades).then(p => {
                 res.status(200);
@@ -34,30 +64,6 @@ module.exports = function (app, usersRepository, amistadesRepository) {
 
     });
 
-    function getEmailFromAmistad(req, amistad) {
-        if (amistad.user1 === req.session.user) {
-            return amistad.user2;
-        }
-        return amistad.user1;
-    }
-
-
-    async function getUserFromAmistades(req, amistades) {
-        if (amistades == null || amistades.length == 0) {
-            return [];
-        } else {
-            let usuarios = [];
-            let userEmail = "";
-            for (let i = 0; i < amistades.length; i++) {
-                userEmail = getEmailFromAmistad(req, amistades[i]);
-                await usersRepository.findUser({email: userEmail}, {}).then(async user => {
-                    let a = await user;
-                    usuarios.push(user);
-                });
-            }
-            return usuarios;
-        }
-    };
 
     /**
      * Función que autentica a un usuario en la aplicacion, comprueba si esta en la base de datos, si es asi, marca al usuario como autenticado.
