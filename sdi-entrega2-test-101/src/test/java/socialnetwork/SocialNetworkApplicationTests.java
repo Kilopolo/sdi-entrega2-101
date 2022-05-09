@@ -181,6 +181,57 @@ class SocialNetworkApplicationTests {
         Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
 
+    /**
+     * [Prueba32] Inicio de sesión con datos válidos.
+     */
+    @Test
+    @Order(32)
+    void Prueba32() {
+
+        Assertions.fail("Not yet implemented");
+    }
+
+    /**
+     * [Prueba33] Inicio de sesión con datos inválidos (usuario no existente en la aplicación).
+     */
+    @Test
+    @Order(33)
+    void Prueba33() {
+
+        Assertions.fail("Not yet implemented");
+    }
+
+    /**
+     * [Prueba34] Acceder a la lista de amigos de un usuario, que al menos tenga tres amigos.
+     */
+    @Test
+    @Order(34)
+    void Prueba34() {
+
+        Assertions.fail("Not yet implemented");
+    }
+
+    /**
+     * [Prueba35] Acceder a la lista de amigos de un usuario, y realizar un filtrado para encontrar a un amigo
+     * concreto, el nombre a buscar debe coincidir con el de un amigo.
+     */
+    @Test
+    @Order(35)
+    void Prueba35() {
+
+        Assertions.fail("Not yet implemented");
+    }
+
+    /**
+     * [Prueba36] Acceder a la lista de mensajes de un amigo, la lista debe contener al menos tres mensajes.
+     */
+    @Test
+    @Order(36)
+    void Prueba36() {
+
+        Assertions.fail("Not yet implemented");
+    }
+
 
 //
 //    @Test
