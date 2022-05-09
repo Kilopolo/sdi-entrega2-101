@@ -2,23 +2,98 @@
 
 {% block title %} Lista usuarios {% endblock %}
 {% block main_container %}
+    <div class="row">
+        <div id="custom-search-input ">
+            <form method="get" action="/users">
+                <div class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-right">
+                    <input id="search" type="text"
+                           class="search-query form-control"
+                           placeholder="Buscar..."
+                           name="search"/>
+                    <span class="input-group-btn">
+                        <button class="btn" type="submit">
+                            <span class="glyphicon glyphicon-search">
+                            </span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
     <div id="user-list" class="table-responsive">
+        <form action="/users/delete" method="post">
         <h2 > Lista de usuarios </h2>
 
-        <table class="table table-hover">
-            <tbody>
-            {% for user in users %}
+        <div class="table-responsive">
+            <table class="table table-hover" id="tableUsers">
+                <thead>
                 <tr>
-                    <td>{{ user.email }}</td>
-                    <td> {% if (user.email in emailsAmistades or user.email in emailsPeticiones) == false %}
-                        <a class="page-link" href="/peticiones/enviar/{{ user.email }}">
-                            Enviar solicitud
-                        </a>
-                        {% endif %}
-                    </td>
+                    {% if userRol != "ADMIN" %}
+                        <th></th>
+                    {% else %}
+                        <th>Delete</th>
+                    {% endif %}
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    {% if userRol == "USER" %}
+                        <th>Send friend request</th>
+                    {% else %}
+                        <th></th>
+                    {% endif %}
+                    <th class="col-md-1"></th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr>
+                    {% if userRol != "ADMIN" %}
+                        <td></td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.surname }}</td>
+                        <td>
+                            <div name="invitar"><a class="invitar" href="/request/send/{{ user._id }}">Enviar
+                                    Invitacion</a></div>
+                        </td>
+
+                    {% else %}
+                        {% if user.rol != "ADMIN" %}
+                            <td><input type="checkbox" name="checkEliminar" value="{{ user.email}}"></td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.surname }}</td>
+                        {% else %}
+                            <td></td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.surname }}</td>
+                        {% endif %}
+                    {% endif %}
+
+
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
     </div>
+    {% if userRol == "ADMIN"%}
+        <button type="submit" name="eliminar">Eliminar</button>
+    {% endif %}
+    </form>
+    {% if userRol != "ADMIN"%}
+        <div class="row text-center">
+            <ul class="pagination">
+                {% for page in pages %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link" href="\users\?page={{ page }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+                <script>
+                    $("#pi-" + "{{ currentPage }}").addClass("active");
+                </script>
+            </ul>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -11,48 +11,125 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
     });
 
-
-    app.get('/users', function (req, res) {
-        let user = req.session.user;
-        renderUserList(req,res,user);
-
-    });
-
-    function renderUserList(req,res,user) {
-        let filter = {
-            rol: 'USER',
-            email:{$ne:req.session.user.email}
-        };
-        let options = {};
-        usersRepository.findUsers(filter, options).then(users => {
-            if (users == null) {
-                //algun error
-            } else {
-                //TODO {user1 : req.session.user.email},{user2:1, _id:0} forma de hacerlo mejor?
-                amistadesRepository.findAmistadesByEmail({$or: [{user1 : req.session.user.email}, {user2: req.session.user.email}]},{}).then(amistades=>{
-                    peticionesRepository.findPeticionesByEmail({user2 : req.session.user.email},{}).then(peticiones => {
-                        let emailsAmistades = getEmailFromList(amistades,req);
-                        let emailsPeticiones = getEmailFromList(peticiones,req);
-                        let a = emailsAmistades.includes("user01@email.com");
-                        res.render("users/list.twig", {users: users, emailsAmistades: emailsAmistades, emailsPeticiones, emailsPeticiones, user: user});
-                    }).catch(error => "Sucedió un error buscando las peticiones"+error);
-                }).catch(error => "Sucedió un error buscando las amistades" + error);
-
-
-            }
-        });
-    }
-
     app.get('/users/signup', function (req, res) {
         res.render("users/signup.twig");
     });
+    app.get('/users', function (req, res) {
+        let filter = {};
 
+        if (req.query.search != null && typeof (req.query.search) != "undefined" &&
+            req.query.search != "") {
+            filter = {
+                "$or": [
+                    {"name": {$regex: ".*" + req.query.search + ".*"}},
+                    {"surname": {$regex: ".*" + req.query.search + ".*"}},
+                    {"email": {$regex: ".*" + req.query.search + ".*"}}
+                ]
+            };
+        }
+
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
+        usersRepository.findUsers(filter, {}, page).then(result => {
+            let lastPage = result.length / 5;
+            if (result.total % 5 > 0) {
+                lastPage = lastPage + 1;
+            }
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+
+            usersRepository.findUsers(filter,{}).then(users => {
+                let filter2 = {
+                    email : req.session.user.email,
+                }
+
+                usersRepository.findUser(filter2, {}).then(user=>{
+                    if (users == null || users.length===0 ) {
+                        res.redirect("/users/login" + "?message=Usuario no logeado"+ "&messageType=alert-danger ");
+
+                    } else {
+                        let roleUserSession = user.rol;
+                        res.render("users/list.twig",
+                            {
+                                users: result,
+                                user: req.session.user,
+                                pages: pages,
+                                currentPage: page,
+                                userRol: roleUserSession
+                            });
+                    }
+                }).catch(err=>{
+                    res.render("error.twig", {
+                        mensaje : "Se ha producido un error al recuperar el usuario",
+                        elError : err
+                    });
+                });
+            }).catch(err => {
+                res.render("error.twig", {
+                    mensaje : "Se ha producido un error al obtener los usuarios del sistema",
+                    elError : err
+                });
+            });
+        }).catch(err => {
+            res.render("error.twig", {
+                mensaje : "Se ha producido un error al obtener los usuarios del sistema",
+                elError : err
+            });
+        });
+    })
+    app.post("/users/delete", function (req, res) {
+        let toDeleteUsers = req.body.checkEliminar;
+        if (!Array.isArray(toDeleteUsers)) {
+            let aux = toDeleteUsers;
+            toDeleteUsers = [];
+            toDeleteUsers.push(aux);
+        }
+        let filter = {email: {$in: toDeleteUsers}};
+        let filter2 = { $or : [{"user1" :{$in: toDeleteUsers}}, {"user2":{$in: toDeleteUsers}}]};
+        peticionesRepository.deletePeticiones(filter2,{}).then(peticion=>{
+            if(peticion==null){
+                res.redirect("/users" + "?message=Se ha producido un error al eliminar envitaciones" + "&messageType=alert-danger");
+            }
+            else{
+                amistadesRepository.deleteAmistades(filter2,{}).then(amistades=>{
+                    if(amistades==null){
+                        res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
+                    }
+                    else{
+                        usersRepository.deleteUsers(filter,{}).then(users => {
+                            res.redirect("/users");
+                        }).catch(error => {
+                            res.render("error.twig", {
+                                mensaje : "Se ha producido un error al listar los usuarios del sistema",
+                                elError : error
+                            });
+                        });
+                    }
+                }).catch(error => {
+                    res.render("error.twig", {
+                        mensaje : "Se ha producido un error al eliminar los amigos",
+                        elError : error
+                    });
+                });
+            }
+        }).catch(error => {
+            res.render("error.twig", {
+                mensaje : "Se ha producido un error al eliminar las invitaciones del sistema",
+                elError : error
+            });
+        });
+    })
     app.post('/users/signup', function (req, res) {
         if (req.body.password != req.body.passwordConfirm) {
             res.redirect("/users/signup" +
                 "?message=La contraseña no se ha repetido correctamente" +
                 "&messageType=alert-danger ");
-            // logger.error("El usuario que va a registrarse ha introducido mal su contraseña");
         } else {
             let securePassword = app.get("crypto")
                 .createHmac('sha256', app.get('clave'))
@@ -66,23 +143,17 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             }
 
             let filter = {email: user.email}
-            let options = {}
-            usersRepository.findUser(filter, options).then(userFound => {
+            usersRepository.findUser(filter, {}).then(userFound => {
                 if (userFound == null) {
-                    //si no hay ninguno se puede registrar
                     usersRepository.insertUser(user).then(userId => {
-                        //res.send('Usuario registrado ' + userId);
                         res.render("home.twig", {user: user});
-
-                    }).catch(error => {
+                    }).catch(err => {
                         res.send("Error al insertar el usuario");
                     });
                 } else {
-                    //Si ya hay un email en la BDD lanzamos el error
                     res.redirect("/users/signup" +
                         "?message=Ya existe un usuario registrado con ese email" +
                         "&messageType=alert-danger ");
-                    // logger.error("El usuario que va a registrarse ha introducido mal su contraseña");
                 }
             })
 
@@ -101,14 +172,12 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             email: req.body.email,
             password: securePassword
         }
-        let options = {};
 
-        usersRepository.findUser(filter, options).then(user => {
+        usersRepository.findUser(filter, {}).then(user => {
 
 
             if (user == null) {
                 req.session.user = null;
-                //res.send('Usuario no identificado');
                 res.redirect("/users/login" +
                     "?message=Email o password incorrecto" +
                     "&messageType=alert-danger ");
@@ -116,13 +185,12 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
             } else {
                 req.session.user = user;
-                /*renderUserList(req,res,user);*/
                 res.redirect("/users");
 
             }
 
 
-        }).catch(error => {
+        }).catch(err => {
             req.session.user = null;
             res.redirect("/users/login" +
                 "?message=Se ha producido un error al buscar el usuario" +
@@ -136,7 +204,6 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
     })
 
 }
-
 function getEmailFromList(list,req) {
     let resultList = [];
     for (let i = 0; i< list.length; i++){
