@@ -32,10 +32,10 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
-        usersRepository.findUsers(filter, {}, page).then(result => {
-            let lastPage = result.length / 5;
-            if (result.total % 5 > 0) {
-                lastPage = lastPage + 1;
+        usersRepository.getUsersPage(filter, {}, page,4).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0) {
+                lastPage++;
             }
             let pages = [];
             for (let i = page - 2; i <= page + 2; i++) {
@@ -51,34 +51,46 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
                 usersRepository.findUser(filter2, {}).then(user=>{
                     if (users == null || users.length===0 ) {
-                        res.redirect("/users/login" + "?message=Usuario no logeado"+ "&messageType=alert-danger ");
+                        res.redirect("/users/login" + "?message=Usuario no identificado"+ "&messageType=alert-danger ");
 
                     } else {
                         let roleUserSession = user.rol;
-                        res.render("users/list.twig",
-                            {
-                                users: result,
-                                user: req.session.user,
-                                pages: pages,
-                                currentPage: page,
-                                userRol: roleUserSession
-                            });
+                        if(roleUserSession === "ADMIN"){
+                            res.render("users/list.twig",
+                                {
+                                    users: users,
+                                    user: req.session.user,
+                                    pages: pages,
+                                    currentPage: page,
+                                    userRol: roleUserSession
+                                });
+                        }
+                        else {
+                            res.render("users/list.twig",
+                                {
+                                    users: result.users,
+                                    user: req.session.user,
+                                    pages: pages,
+                                    currentPage: page,
+                                    userRol: roleUserSession
+                                });
+                        }
                     }
                 }).catch(err=>{
                     res.render("error.twig", {
-                        mensaje : "Se ha producido un error al recuperar el usuario",
+                        mensaje : "Se ha producido un error al bucar el usuario",
                         elError : err
                     });
                 });
             }).catch(err => {
                 res.render("error.twig", {
-                    mensaje : "Se ha producido un error al obtener los usuarios del sistema",
+                    mensaje : "Se ha producido un error al buscar los usuarios",
                     elError : err
                 });
             });
         }).catch(err => {
             res.render("error.twig", {
-                mensaje : "Se ha producido un error al obtener los usuarios del sistema",
+                mensaje : "Se ha producido un error al buscar los usuarios",
                 elError : err
             });
         });
