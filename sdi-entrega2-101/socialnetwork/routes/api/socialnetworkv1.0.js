@@ -12,15 +12,19 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
     app.get("/api/v1.0/messages/:id", function (req, res) {
         let user = res.user;
+        console.log(user);
         // let list = []
         // list.push({email:"aaaa",text:"aaaaaaaaaaaaaa"})
         // list.push({email:"bbbb",text:"bbbbbbbbbbbbbb"})
         let mssgId = ObjectId(req.params.id)
+        console.log(req.params.id)
+        console.log(mssgId)
+
         let filter = {amistadId: mssgId};
         let options = {};
         messageRepository.findMessages(filter, options).then(messages => {
 
-
+            console.log(messages)
             res.status(200);
             res.json({
                 message: "Lista de amistades con ultimo mensaje de la conversación.",
