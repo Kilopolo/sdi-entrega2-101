@@ -36,13 +36,18 @@ module.exports = function(app, publicationsRepository, amistadesRepository) {
                 {user1: req.params.email, user2: req.session.user.email}]};
         let options = {};
         amistadesRepository.findAmistad(filter, options).then( amistad => {
-            filter = { email: req.params.email };
-            console.log(req.params.email)
-            publicationsRepository.findPublications(filter, options).then(publications => {
-                res.render("publications/friendList.twig", {friend: req.params.email, publications: publications});
-            }).catch(() => {
-                res.send("Error al listar las publicaciones");
-            });
+            if (amistad !== null && amistad.length !== 0) {
+                filter = { email: req.params.email };
+                console.log(req.params.email)
+                publicationsRepository.findPublications(filter, options).then(publications => {
+                    res.render("publications/friendList.twig", {friend: req.params.email, publications: publications});
+                }).catch(() => {
+                    res.send("Error al listar las publicaciones");
+                });
+            }
+            else {
+                res.redirect("/amistades");
+            }
         }).catch(() => {
             res.send("Error al obtener relación de amistad");
         });

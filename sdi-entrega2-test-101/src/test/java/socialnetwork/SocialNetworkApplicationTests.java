@@ -182,6 +182,105 @@ class SocialNetworkApplicationTests {
     }
 
     /**
+     * [Prueba24] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
+     * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
+     *
+     * IMPORTANTE: borrar publicación tras ejecutar las pruebas
+     */
+    @Test
+    @Order(24)
+    void Prueba24() {
+        // Entramos con datos válidos
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+
+        //Navegamos al formulario de creación de publicación
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/publications/add").get(0).click();
+
+        // Creamos la publicación de prueba PR24
+        PO_Publicaciones.fillForm(driver, "PR24", "Contenido de test para PR24");
+
+        // Comprobamos que se nos envía a la lista de publicaciones
+        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+
+        // Comprobamos que la nueva publicación aparece
+        PO_NavView.checkElementBy(driver, "text", "PR24");
+    }
+
+    /**
+     * [Prueba25] Ir al formulario de crear publicaciones, rellenarla con datos inválidos (campo título vacío) y
+     * pulsar el botón Submit. Comprobar que se muestra el mensaje de campo obligatorio.
+     */
+    @Test
+    @Order(25)
+    void Prueba25() {
+        // Entramos con datos válidos
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+
+        //Navegamos al formulario de creación de publicación
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/publications/add").get(0).click();
+
+        // Rellenamos el formulario con un título en blanco
+        PO_Publicaciones.fillForm(driver, "   ", "Contenido de test para PR25");
+
+        // Comprobamos que seguimos en el formulario de creacion
+        PO_View.checkElementBy(driver, "text", "Añadir nueva publicación");
+    }
+
+    /**
+     * [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las que
+     * existen para dicho usuario.
+     */
+    void Prueba26() {
+        // Entramos con datos válidos
+        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+
+        //Navegamos al listad de publicaciones
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/publications").get(0).click();
+
+        // Comprobamos que accedemos la página correcta
+        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+
+        // Recuperamos una lista de tr
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "id", "publiCount",
+                PO_View.getTimeout());
+
+        //Contamos el numero de filas de los usuarios
+        int count = 0;
+        for (WebElement each : elementos) {
+            count++;
+        }
+
+        //comprobamos que existen 2
+        assertEquals(3, count);
+    }
+
+    /**
+     * [Prueba27] Mostrar el listado de publicaciones de un usuario amigo y comprobar que se muestran todas
+     * las que existen para dicho usuario.
+     *
+     * AVISO: su correcto funcionamiento depende de la prueba 24
+     */
+    @Test
+    @Order(27)
+    public void Prueba27() {
+        PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
+
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/amistades").get(0).click();
+
+        // Accede a un amigo con publicaciones, user01
+        PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
+
+        // Se debería ver 1 fila (la cantidad de publicaciones de user01)
+        List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
+                "/html/body/div[1]/div[1]/table/tbody/tr");
+        assertEquals(1, elementos.size());
+    }
+
+    /**
      * [Prueba32] Inicio de sesión con datos válidos.
      */
     @Test
