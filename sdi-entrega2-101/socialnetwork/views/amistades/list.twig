@@ -20,7 +20,11 @@
                 <tbody>
     {% for amistad in amistades %}
                 <tr>
-                    <td>{{ amistad.name}}</td>
+                    <td>
+                        <a class="page-link" href="/publications/list/{{ amistad.email }}">
+                            {{ amistad.name }}
+                        </a>
+                    </td>
                     <td>{{ amistad.surname }}</td>
                     <td>{{ amistad.email }}</td>
                 </tr>

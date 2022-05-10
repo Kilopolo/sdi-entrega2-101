@@ -184,14 +184,14 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
 
         // date = new Date();
-        //  console.log(date);
+        // console.log(date);
 
         return date;
     }
 
 
     /**
-     * Función que autentica a un usuario en la aplicacion, comprueba si esta en la base de datos, si es asi, marca al usuario como autenticado.
+     * Función que autentica a un usuario en la aplicación, comprueba si esta en la base de datos, si es asi, marca al usuario como autenticado.
      */
     app.post("/api/v1.0/users/login", function (req, res) {
 
@@ -244,11 +244,37 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                 message: "Se ha producido un error en la petición.",
                 authenticated: false
             })
-
         }
-
 
     });
 
+    /**
+     * Función que permite crear un mensaje aun usuario autenticado
+     */
+    app.post('/api/v1.0/message/add', function (req, res) {
+        try {
+            let song = {
+                emisor: req.body.emisor,
+                destinatario: req.body.destinatario,
+                textoMensaje: req.body.texto,
+                leido: false
+            }
+            messageRepository.insertOne(message, function (insertedId) {
+                if (insertedId === null) {
+                    res.status(409);
+                    res.json({error: "No se ha podido crear el mensaje"});
+                } else {
+                    res.status(201);
+                    res.json({
+                        message: "Mensaje añadido correctamente",
+                        _id: insertedId
+                    })
+                }
+            });
+        } catch (err) {
+            res.status(500);
+            res.json({error: "Se ha producido un error al intentar añadir el mensaje: " + err})
+        }
+    });
 
 };

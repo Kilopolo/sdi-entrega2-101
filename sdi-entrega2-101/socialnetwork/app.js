@@ -74,14 +74,14 @@ const peticionesRepository = require("./repositories/peticionesRepository.js");
 peticionesRepository.init(app, MongoClient);
 require("./routes/peticiones.js")(app, peticionesRepository, usersRepository, amistadesRepository);
 //Users.js
-
 usersRepository.init(app, MongoClient);
-
 require("./routes/users.js")(app, usersRepository,amistadesRepository,peticionesRepository);
-//Users.js
+
+//Publications.js
 const publicationsRepository = require("./repositories/publicationsRepository.js");
 publicationsRepository.init(app, MongoClient);
-require("./routes/publications.js")(app, publicationsRepository);
+require("./routes/publications.js")(app, publicationsRepository, amistadesRepository);
+
 //Messages.js
 const messagesRepository = require("./repositories/messagesRepository.js");
 messagesRepository.init(app, MongoClient);
