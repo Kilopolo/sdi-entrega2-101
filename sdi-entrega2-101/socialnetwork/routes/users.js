@@ -30,10 +30,9 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             } else {
                 //TODO {user1 : req.session.user.email},{user2:1, _id:0} forma de hacerlo mejor?
                 amistadesRepository.findAmistadesByEmail({$or: [{user1 : req.session.user.email}, {user2: req.session.user.email}]},{}).then(amistades=>{
-                    peticionesRepository.findPeticionesByEmail({user2 : req.session.user.email},{}).then(peticiones => {
+                    peticionesRepository.findPeticionesByEmail({user1 : req.session.user.email},{}).then(peticiones => {
                         let emailsAmistades = getEmailFromList(amistades,req);
                         let emailsPeticiones = getEmailFromList(peticiones,req);
-                        let a = emailsAmistades.includes("user01@email.com");
                         res.render("users/list.twig", {users: users, emailsAmistades: emailsAmistades, emailsPeticiones, emailsPeticiones, user: user});
                     }).catch(error => "Sucedió un error buscando las peticiones"+error);
                 }).catch(error => "Sucedió un error buscando las amistades" + error);
