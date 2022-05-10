@@ -16,6 +16,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
     app.get('/users', function (req, res) {
         let filter = {};
+
         if (req.query.search != null && typeof (req.query.search) != "undefined" &&
             req.query.search != "") {
             filter = {
@@ -26,88 +27,115 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 ]
             };
         }
+
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
-        usersRepository.findUsers(filter, {}, page).then(result => {
-            let lastPage = result.length / 5;
-            if (result.total % 5 > 0) {
-                lastPage = lastPage + 1;
-                usersRepository.getUsersPage(filter, {}, page, 4).then(result => {
-                    let lastPage = result.total / 4;
-                    if (result.total % 4 > 0) {
-                        lastPage++;
-                    }
-                    let pages = [];
-                    for (let i = page - 2; i <= page + 2; i++) {
-                        if (i > 0 && i <= lastPage) {
-                            pages.push(i);
+        usersRepository.getUsersPage(filter, {}, page,4).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0) {
+                lastPage++;
+            }
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+
+            usersRepository.findUsers(filter,{}).then(users => {
+                let filter2 = {
+                    email : req.session.user.email,
+                }
+
+                usersRepository.findUser(filter2, {}).then(user=>{
+                    if (users == null || users.length===0 ) {
+                        res.redirect("/users/login" + "?message=Usuario no identificado"+ "&messageType=alert-danger ");
+
+                    } else {
+                        let roleUserSession = user.rol;
+                        if(roleUserSession === "ADMIN"){
+                            res.render("users/list.twig",
+                                {
+                                    users: users,
+                                    user: req.session.user,
+                                    pages: pages,
+                                    currentPage: page,
+                                    userRol: roleUserSession
+                                });
+                        }
+                        else {
+                            res.render("users/list.twig",
+                                {
+                                    users: result.users,
+                                    user: req.session.user,
+                                    pages: pages,
+                                    currentPage: page,
+                                    userRol: roleUserSession
+                                });
                         }
                     }
-                    usersRepository.findUsers(filter, {}).then(users => {
-                        let filter2 = {
-                            email: req.session.user.email,
-                        }
-
-                        usersRepository.findUser(filter2, {}).then(user => {
-                            if (users == null || users.length === 0) {
-                                res.redirect("/users/login" + "?message=Usuario no logeado" + "&messageType=alert-danger ");
-                                res.redirect("/users/login" + "?message=Usuario no identificado" + "&messageType=alert-danger ");
-
-                            } else {
-                                let roleUserSession = user.rol;
-                                res.render("users/list.twig",
-                                    {
-                                        users: result,
-                                        user: req.session.user,
-                                        pages: pages,
-                                        currentPage: page,
-                                        userRol: roleUserSession
-                                    });
-                                if (roleUserSession === "ADMIN") {
-                                    res.render("users/list.twig",
-                                        {
-                                            users: users,
-                                            user: req.session.user,
-                                            pages: pages,
-                                            currentPage: page,
-                                            userRol: roleUserSession
-                                        });
-                                } else {
-                                    res.render("users/list.twig",
-                                        {
-                                            users: result.users,
-                                            user: req.session.user,
-                                            pages: pages,
-                                            currentPage: page,
-                                            userRol: roleUserSession
-                                        });
-                                }
-                            }
-                        }).catch(err => {
+                }).catch(err=>{
+                    res.render("error.twig", {
+                        mensaje : "Se ha producido un error al bucar el usuario",
+                        elError : err
+                    });
+                });
+            }).catch(err => {
+                res.render("error.twig", {
+                    mensaje : "Se ha producido un error al buscar los usuarios",
+                    elError : err
+                });
+            });
+        }).catch(err => {
+            res.render("error.twig", {
+                mensaje : "Se ha producido un error al buscar los usuarios",
+                elError : err
+            });
+        });
+    })
+    app.post("/users/delete", function (req, res) {
+        let toDeleteUsers = req.body.checkEliminar;
+        if (!Array.isArray(toDeleteUsers)) {
+            let aux = toDeleteUsers;
+            toDeleteUsers = [];
+            toDeleteUsers.push(aux);
+        }
+        let filter = {email: {$in: toDeleteUsers}};
+        let filter2 = { $or : [{"user1" :{$in: toDeleteUsers}}, {"user2":{$in: toDeleteUsers}}]};
+        peticionesRepository.deletePeticiones(filter2,{}).then(peticion=>{
+            if(peticion==null){
+                res.redirect("/users" + "?message=Se ha producido un error al eliminar envitaciones" + "&messageType=alert-danger");
+            }
+            else{
+                amistadesRepository.deleteAmistades(filter2,{}).then(amistades=>{
+                    if(amistades==null){
+                        res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
+                    }
+                    else{
+                        usersRepository.deleteUsers(filter,{}).then(users => {
+                            res.redirect("/users");
+                        }).catch(error => {
                             res.render("error.twig", {
-                                mensaje: "Se ha producido un error al recuperar el usuario",
-                                mensaje: "Se ha producido un error al bucar el usuario",
-                                elError: err
+                                mensaje : "Se ha producido un error al listar los usuarios del sistema",
+                                elError : error
                             });
                         });
-                    }).catch(err => {
-                        res.render("error.twig", {
-                            mensaje: "Se ha producido un error al obtener los usuarios del sistema",
-                            mensaje: "Se ha producido un error al buscar los usuarios",
-                            elError: err
-                        });
-                    });
-                }).catch(err => {
+                    }
+                }).catch(error => {
                     res.render("error.twig", {
-                        mensaje: "Se ha producido un error al obtener los usuarios del sistema",
-                        mensaje: "Se ha producido un error al buscar los usuarios",
-                        elError: err
+                        mensaje : "Se ha producido un error al eliminar los amigos",
+                        elError : error
                     });
                 });
             }
-        })
+        }).catch(error => {
+            res.render("error.twig", {
+                mensaje : "Se ha producido un error al eliminar las invitaciones del sistema",
+                elError : error
+            });
+        });
     })
 
 
