@@ -1,14 +1,14 @@
-module.exports = function(app, publicationsRepository) {
+module.exports = function(app, publicationsRepository, amistadesRepository) {
 
     app.get("/publications", function (req, res) {
 
-        let filter = {email: req.session.user };
+        let filter = {email: req.session.user.email };
         let options = {};
 
         publicationsRepository.findPublications(filter, options).then(publications => {
             res.render("publications/list.twig", {publications: publications});
         }).catch(() => {
-            res.send("Error al insertar el usuario");
+            res.send("Error al listar las publicaciones");
         });
 
     });
@@ -18,17 +18,39 @@ module.exports = function(app, publicationsRepository) {
     });
 
     app.post('/publications/add', function (req, res) {
-      let publication = {
-        email: req.session.user,
-        titulo: req.body.titulo,
-        texto: req.body.texto,
-        fechaCreacion: formattedDate()
-      }
+        let publication = {
+            email: req.session.user.email,
+            titulo: req.body.titulo,
+            texto: req.body.texto,
+            fechaCreacion: formattedDate()
+        }
         publicationsRepository.insertPublication(publication).then((publicationId) => {
-        res.redirect("/publications");
-      }).catch(() => {
-        res.send("Error al añadir la publicación");
-      });
+            res.redirect("/publications");
+        }).catch(() => {
+            res.send("Error al añadir la publicación");
+        });
+    });
+
+    app.get("/publications/list/:email", function (req, res) {
+        let filter = {$or: [{user1 : req.session.user.email, user2: req.params.email},
+                {user1: req.params.email, user2: req.session.user.email}]};
+        let options = {};
+        amistadesRepository.findAmistad(filter, options).then( amistad => {
+            if (amistad !== null && amistad.length !== 0) {
+                filter = { email: req.params.email };
+                console.log(req.params.email)
+                publicationsRepository.findPublications(filter, options).then(publications => {
+                    res.render("publications/friendList.twig", {friend: req.params.email, publications: publications});
+                }).catch(() => {
+                    res.send("Error al listar las publicaciones");
+                });
+            }
+            else {
+                res.redirect("/amistades");
+            }
+        }).catch(() => {
+            res.send("Error al obtener relación de amistad");
+        });
     });
 
     function formattedDate() {

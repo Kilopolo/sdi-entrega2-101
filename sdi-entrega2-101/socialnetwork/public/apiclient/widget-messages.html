@@ -1,44 +1,102 @@
 <div id="widget-messages">
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="title">Nombre:</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" name="title"
-                   placeholder="Título de la canción" id="title" readonly/>
+
+    <h2>Chat</h2>
+    <button onclick="updateChatList()" type="button"
+            class="btn btn-info btn-rounded float-end">Actualizar
+    </button>
+
+    <section style="background-color: #eee;">
+        <div class="container py-5">
+
+            <div class="row">
+
+                <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
+
+                    <h5 class="font-weight-bold mb-3 text-center text-lg-start">Member</h5>
+
+                    <div class="card">
+                        <div class="card-body">
+
+                            <ul class="list-unstyled mb-0">
+
+
+                                <li id="chat-table" class="d-flex justify-content-between mb-4">
+                                    <!--Contenido-->
+                                </li>
+                                <li class="bg-white mb-3">
+                                    <div class="form-outline">
+                                        <textarea class="form-control" id="textAreaExample2" rows="4"></textarea>
+                                        <label class="form-label" for="textAreaExample2">Message</label>
+                                    </div>
+                                </li>
+                                <button onclick="sendMessage()" type="button"
+                                        class="btn btn-info btn-rounded float-end">Send
+                                </button>
+                            </ul>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
         </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="kind">Género:</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" name="kind"
-                   placeholder="Género de la canción" id="kind" readonly/>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="price">Precio (€):</label>
-        <div class="col-sm-10">
-            <input type="number" step="0.01" class="form-control" name="price"
-                   placeholder="2.50" id="price" readonly/>
-        </div>
-    </div>
-    <button onclick="widgetSongs()" class="btn" >Volver</button>
+    </section>
+
+
 </div>
 <script>
+
     window.history.pushState("", "", "/apiclient/client.html?w=messages");
-    $.ajax({
-        url: URLbase + "/messages/" + selectedSongId,
-        type: "GET",
-        data: {},
-        dataType: 'json',
-        headers: {
-            "token": token
-        },
-        success: function (response) {
-            $("#title").val(response.song.title);
-            $("#kind").val(response.song.kind);
-            $("#price").val(response.song.price);
-        },
-        error: function (error) {
-            $("#main-container").load("widget-login.html");
+    // token = Cookies.get('token');
+
+    let chatList;
+    let userLoggedIn;
+
+    function updateChatList(chatList) {
+        $("#chat-table").empty(); // Vaciar la tabla
+        if (chatList!=null)
+        for (let i = 0; i < chatList.length; i++) {
+            $("#chat-table").append(
+                "<img src=\"https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp\" alt=\"avatar\" className=\"rounded-circle d-flex align-self-start me-3 shadow-1-strong\" width=\"60\">" +
+                "            <div class=\"card\">\n" +
+                "              <div class=\"card-header d-flex justify-content-between p-3\">\n" +
+                "                <p class=\"fw-bold mb-0\">" + chatList[i].email + "</p>\n" +
+                "                <p class=\"text-muted small mb-0\"><i class=\"far fa-clock\"></i> 10 mins ago</p>\n" +
+                "              </div>\n" +
+                "              <div class=\"card-body\">\n" +
+                "                <p class=\"mb-0\">\n" + chatList[i].text +
+                "                </p>\n" +
+                "              </div>\n" +
+                "            </div>"
+            );
         }
-    });
+    }
+
+    function sendMessage() {
+
+    }
+
+    function loadChat() {
+        $.ajax({
+            url: URLbase + "/messages/" + selectedMessageId,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {
+                "token": token
+            },
+            success: function (response) {
+                userLoggedIn = response.userLoggedIn;
+                chatList = response.chatList
+                updateChatList(chatList);
+            },
+            error: function (error) {
+                $("#main-container").load("widget-login.html");
+            }
+        });
+    }
+
+    loadChat();
 </script>

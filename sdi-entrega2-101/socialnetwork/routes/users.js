@@ -11,12 +11,38 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
     });
 
-
-    app.get('/users', function (req, res) {
-        let user = req.session.user;
-        renderUserList(req,res,user);
-
+    app.get('/users/signup', function (req, res) {
+        res.render("users/signup.twig");
     });
+    app.get('/users', function (req, res) {
+        let filter = {};
+
+        if (req.query.search != null && typeof (req.query.search) != "undefined" &&
+            req.query.search != "") {
+            filter = {
+                "$or": [
+                    {"name": {$regex: ".*" + req.query.search + ".*"}},
+                    {"surname": {$regex: ".*" + req.query.search + ".*"}},
+                    {"email": {$regex: ".*" + req.query.search + ".*"}}
+                ]
+            };
+        }
+
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
+        usersRepository.getUsersPage(filter, {}, page,4).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0) {
+                lastPage++;
+            }
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
 
     function renderUserList(req,res,user) {
         let filter = {
@@ -38,14 +64,34 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 }).catch(error => "Sucedió un error buscando las amistades" + error);
 
 
-            }
-        });
-    }
-
-    app.get('/users/signup', function (req, res) {
-        res.render("users/signup.twig");
-    });
-
+            } /*else {
+                amistadesRepository.deleteAmistades(filter2,{}).then(amistades=>{
+                    if(amistades==null){
+                        res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
+                    }
+                    else{
+                        usersRepository.deleteUsers(filter,{}).then(users => {
+                            res.redirect("/users");
+                        }).catch(error => {
+                            res.render("error.twig", {
+                                mensaje : "Se ha producido un error al listar los usuarios del sistema",
+                                elError : error
+                            });
+                        });
+                    }
+                }).catch(error => {
+                    res.render("error.twig", {
+                        mensaje : "Se ha producido un error al eliminar los amigos",
+                        elError : error
+                    });
+                });
+            }*/
+        }).catch(error => {
+            res.render("error.twig", {
+                mensaje : "Se ha producido un error al eliminar las invitaciones del sistema",
+                elError : error
+            });
+        });}
     app.post('/users/signup', function (req, res) {
         if (req.body.password != req.body.passwordConfirm) {
             res.redirect("/users/signup" +
@@ -65,15 +111,13 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             }
 
             let filter = {email: user.email}
-            let options = {}
-            usersRepository.findUser(filter, options).then(userFound => {
+            usersRepository.findUser(filter, {}).then(userFound => {
                 if (userFound == null) {
                     //si no hay ninguno se puede registrar
                     usersRepository.insertUser(user).then(userId => {
                         //res.send('Usuario registrado ' + userId);
                         res.render("home.twig", {user: user});
-
-                    }).catch(error => {
+                    }).catch(err => {
                         res.send("Error al insertar el usuario");
                     });
                 } else {
@@ -102,7 +146,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         }
         let options = {};
 
-        usersRepository.findUser(filter, options).then(user => {
+        usersRepository.findUser(filter, {}).then(user => {
 
 
             if (user == null) {
@@ -121,7 +165,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             }
 
 
-        }).catch(error => {
+        }).catch(err => {
             req.session.user = null;
             res.redirect("/users/login" +
                 "?message=Se ha producido un error al buscar el usuario" +

@@ -17,13 +17,41 @@ module.exports = {
             throw (error);
         }
     },
+    getUsersPage:  async function (filter, options,page,limit) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const collectionName = 'users';
+            const usersCollection = database.collection(collectionName);
+            const cursor = usersCollection.find(filter, options).
+            skip((page - 1) * limit).limit(limit)
+            const UsersCollectionCount = await usersCollection.find(filter, options).count();
+            const users = await cursor.toArray();
+            const result = {users: users, total: UsersCollectionCount};
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
     findUsers: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("socialNetwork");
-            const publicationsCollection = database.collection('users');
-            const publications = await publicationsCollection.find(filter, options).toArray();
-            return publications;
+            const usersCollection = database.collection('users');
+            const result = await usersCollection.find(filter, options).toArray();
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
+    deleteUsers: async function (filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const collectionName = 'users';
+            const usersCollection = database.collection(collectionName);
+            const result = await usersCollection.remove(filter,options);
+            return result;
         } catch (error) {
             throw (error);
         }
