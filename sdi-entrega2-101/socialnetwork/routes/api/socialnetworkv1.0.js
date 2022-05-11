@@ -5,29 +5,58 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
     /**
      * Función que te redirige a la ventana de login por defecto
      */
-    app.get('/', function (req, res) {
+    app.get('/apiclient', function (req, res) {
         //TODO index
         res.redirect("/apiclient/client.html");
     });
 
+    app.post("/api/v1.0/messages/agregar/:id/:destinatario", function (req, res) {
+        let emisor = res.user;
+        console.log(user);
+        let date = new Date();
+        let fechaString = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " Hora: " + date.getHours() + ":" + date.getMinutes();
+
+        let mensajeNuevo = {
+            emisor: emisor,
+            destinatario: req.params.destinatario,
+            textoMensaje: req.body.contenido,
+            fecha: fechaString,
+            leido: false,
+            amistadId: req.params.id
+        };
+
+        console.log(mensajeNuevo)
+
+        messageRepository.insertMessage(mensajeNuevo,{}).then(response =>{
+            res.status(200);
+            res.json({
+                message: "Mensaje insertado satisfactoriamente en la conversación.",
+            });
+        }).catch(err => {
+            res.status(500);
+            res.json({error: "Se ha producido un error al insertar el mensaje."})
+        });
+
+
+    });
+
     app.get("/api/v1.0/messages/:id", function (req, res) {
         let user = res.user;
-        console.log(user);
-        // let list = []
-        // list.push({email:"aaaa",text:"aaaaaaaaaaaaaa"})
-        // list.push({email:"bbbb",text:"bbbbbbbbbbbbbb"})
-        let mssgId = ObjectId(req.params.id)
-        console.log(req.params.id)
-        console.log(mssgId)
+        // console.log(user);
 
-        let filter = {amistadId: mssgId};
+        let filter = {amistadId: req.params.id};
         let options = {};
         messageRepository.findMessages(filter, options).then(messages => {
 
-            console.log(messages)
+
+            let mensajes = []
+            for (let i = 0; i < messages.length; i++) {
+
+            }
+
             res.status(200);
             res.json({
-                message: "Lista de amistades con ultimo mensaje de la conversación.",
+                message: "Lista de mensajes de la conversación.",
                 chatList: messages,
                 userLoggedIn: user
             });
@@ -131,11 +160,11 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                                     }
                                 }
 
-                                console.log(userWithLastMssg.friendshipId)
+                                // console.log(userWithLastMssg.friendshipId)
                                 //pusheamos con o sin conversacion
                                 userJoinMssg.push(userWithLastMssg);
                             }
-                            console.log(userJoinMssg)
+                            // console.log(userJoinMssg)
 
 
                         } catch

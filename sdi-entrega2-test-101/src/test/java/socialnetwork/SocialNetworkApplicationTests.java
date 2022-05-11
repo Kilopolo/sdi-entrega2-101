@@ -3,8 +3,14 @@ package socialnetwork;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import socialnetwork.pageobjects.*;
+import socialnetwork.util.*;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 //import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -27,6 +33,8 @@ class SocialNetworkApplicationTests {
 
     //Común a Windows y a MACOSX
     static final String URL = "https://localhost:4000";
+    static final String URLApiClient = "https://localhost:4000/apiclient/client.html";
+
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
@@ -178,7 +186,7 @@ class SocialNetworkApplicationTests {
     @Order(10)
     void Prueba10() {
 
-        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
 
     /**
@@ -317,7 +325,7 @@ class SocialNetworkApplicationTests {
         }
 
         //comprobamos que existen 2
-        assertEquals(3, count);
+        assertEquals(2, count);
     }
 
     /**
@@ -337,10 +345,21 @@ class SocialNetworkApplicationTests {
         // Accede a un amigo con publicaciones, user01
         PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
 
-        // Se debería ver 1 fila (la cantidad de publicaciones de user01)
+        // Se deberían ver 2 filas (la cantidad de publicaciones de user00)
         List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
                 "/html/body/div[1]/div[1]/table/tbody/tr");
-        assertEquals(1, elementos.size());
+        assertEquals(2, elementos.size());
+    }
+
+    /**
+     *
+     */
+    @Test
+    @Order(28)
+    public void Prueba28() {
+        PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
+
+
     }
 
     /**
@@ -349,6 +368,8 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(32)
     void Prueba32() {
+        driver.navigate().to(URLApiClient);
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
 
         Assertions.fail("Not yet implemented");
     }
@@ -390,6 +411,18 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(36)
     void Prueba36() {
+
+        Assertions.fail("Not yet implemented");
+    }
+
+
+    /**
+     * [Prueba37] Acceder a la lista de mensajes de un amigo y crear un nuevo mensaje. Validar que el mensaje
+     * aparece en la lista de mensajes.
+     */
+    @Test
+    @Order(37)
+    void Prueba37() {
 
         Assertions.fail("Not yet implemented");
     }

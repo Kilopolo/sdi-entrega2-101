@@ -41,6 +41,11 @@
     let URLbase = "http://localhost:8081/api/v1.0";
     let autenticado = false;
     $( "#contenedor-principal" ).load( "widget-login.html");
+    if (!autenticado) {
+        console.log("usuario no autenticado")
+        $("#main-container").load("widget-login.html");
+    }
+
 
     function widgetUsers(){
         if ( Cookies.get('token') != null ){

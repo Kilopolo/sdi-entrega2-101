@@ -3,13 +3,13 @@ package socialnetwork.pageobjects;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import socialnetwork.util.SeleniumUtils;
+import socialnetwork.util.*;
 
 import java.util.List;
 
 public class PO_View {
 
-    protected static PO_Properties p = new PO_Properties("messages");
+    public static PO_Properties p = new PO_Properties("messages");
     protected static int timeout = 2;
 
     public static int getTimeout() {
