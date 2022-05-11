@@ -20,8 +20,8 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    static String PathFirefox = "/usr/bin/firefox";
+    static String Geckodriver = "/usr/bin/geckodriver";
 
 
     //Para MACOSX
@@ -286,7 +286,7 @@ class SocialNetworkApplicationTests {
         PO_Publicaciones.fillForm(driver, "PR24", "Contenido de test para PR24");
 
         // Comprobamos que se nos envía a la lista de publicaciones
-        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+        PO_View.checkElementBy(driver, "id", "tablePublications");
 
         // Comprobamos que la nueva publicación aparece
         PO_NavView.checkElementBy(driver, "text", "PR24");
@@ -307,32 +307,35 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "@href", "/publications/add").get(0).click();
 
         // Rellenamos el formulario con un título en blanco
-        PO_Publicaciones.fillForm(driver, "   ", "Contenido de test para PR25");
+        PO_Publicaciones.fillForm(driver, "", "Contenido de test para PR25");
 
         // Comprobamos que seguimos en el formulario de creacion
-        PO_View.checkElementBy(driver, "text", "Añadir nueva publicación");
+        PO_Publicaciones.checkElementBy(driver, "text",
+                "Ni el título ni el contenido de la publicación pueden estar vacíos");
     }
 
     /**
      * [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las que
      * existen para dicho usuario.
      */
+    @Test
+    @Order(26)
     void Prueba26() {
         // Entramos con datos válidos
         PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
 
-        //Navegamos al listad de publicaciones
+        //Navegamos al listado de publicaciones
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/publications").get(0).click();
 
-        // Comprobamos que accedemos la página correcta
-        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+        // Comprobamos que accedemos a la página correcta
+        PO_View.checkElementBy(driver, "id", "tablePublications");
 
         // Recuperamos una lista de tr
         List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "id", "publiCount",
                 PO_View.getTimeout());
 
-        //Contamos el numero de filas de los usuarios
+        //Contamos el número de filas de los usuarios
         int count = 0;
         for (WebElement each : elementos) {
             count++;
