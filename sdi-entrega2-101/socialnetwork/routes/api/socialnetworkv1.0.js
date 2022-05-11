@@ -5,7 +5,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
     /**
      * Función que te redirige a la ventana de login por defecto
      */
-    app.get('/', function (req, res) {
+    app.get('/apiclient', function (req, res) {
         //TODO index
         res.redirect("/apiclient/client.html");
     });

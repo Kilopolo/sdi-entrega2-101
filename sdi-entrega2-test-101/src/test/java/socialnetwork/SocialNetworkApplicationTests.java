@@ -3,9 +3,14 @@ package socialnetwork;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import socialnetwork.pageobjects.*;
-import socialnetwork.util.SeleniumUtils;
+import socialnetwork.util.*;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 //import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -28,6 +33,8 @@ class SocialNetworkApplicationTests {
 
     //Común a Windows y a MACOSX
     static final String URL = "https://localhost:4000";
+    static final String URLApiClient = "https://localhost:4000/apiclient/client.html";
+
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
@@ -179,7 +186,7 @@ class SocialNetworkApplicationTests {
     @Order(10)
     void Prueba10() {
 
-        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
 
     /**
@@ -298,6 +305,8 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(32)
     void Prueba32() {
+        driver.navigate().to(URLApiClient);
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
 
         Assertions.fail("Not yet implemented");
     }
