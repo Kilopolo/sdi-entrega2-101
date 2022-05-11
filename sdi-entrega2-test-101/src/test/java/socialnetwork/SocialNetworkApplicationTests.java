@@ -190,6 +190,69 @@ class SocialNetworkApplicationTests {
     }
 
     /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(19)
+    void Prueba19() {
+
+        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(20)
+    void Prueba20() {
+
+        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(21)
+    void Prueba21() {
+
+        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(22)
+    void Prueba22() {
+
+        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(23)
+    void Prueba23() {
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_LoginView.fillLoginForm(driver, "user04@email.com", "user04");
+        var elements = PO_View.checkElementBy(driver, "text", "user05@email.com");
+        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/sendpeticion?user1email=user04@email.com&&user2email=user05@email.com']");
+        elements.get(0).click();
+        PO_HomeView.desconect(driver);
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_LoginView.fillLoginForm(driver, "user05@email.com", "user05");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        SeleniumUtils.waitSeconds(driver, 5);
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones/list").get(0).click();
+        SeleniumUtils.waitSeconds(driver, 5);
+        String checkText = "user04@email.com";
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", checkText);
+        Assertions.assertEquals(checkText, result.get(0).getText());
+    }
+
+    /**
      * [Prueba24] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
      * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
      *
