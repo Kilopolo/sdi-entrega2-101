@@ -57,6 +57,7 @@ class SocialNetworkApplicationTests {
     //Antes de la primera prueba
     @BeforeAll
     static public void begin() {
+
     }
 
     //Al finalizar la última prueba

@@ -1,5 +1,6 @@
 const {MongoClient} = require("mongodb");
-const url = 'mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+// const url = 'mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+const url = 'mongodb+srv://sdi212210:Pa$$word123@cluster0.zytfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 
 let createError = require('http-errors');
 let express = require('express');
