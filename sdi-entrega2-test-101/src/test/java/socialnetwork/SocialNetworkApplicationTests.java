@@ -3,8 +3,14 @@ package socialnetwork;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import socialnetwork.pageobjects.*;
+import socialnetwork.util.*;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 //import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -27,6 +33,7 @@ class SocialNetworkApplicationTests {
 
     //Común a Windows y a MACOSX
     static final String URL = "https://localhost:4000";
+    static final String URLApiClient = "https://localhost:4000/apiclient/client.html";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
@@ -50,6 +57,7 @@ class SocialNetworkApplicationTests {
     //Antes de la primera prueba
     @BeforeAll
     static public void begin() {
+
     }
 
     //Al finalizar la última prueba
@@ -178,8 +186,85 @@ class SocialNetworkApplicationTests {
     @Order(10)
     void Prueba10() {
 
-        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(19)
+    void Prueba19() {
+        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
+        var elements = PO_View.checkElementBy(driver, "text", "user03@email.com");
+        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/user03@email.com']");
+        elements.get(0).click();
+        PO_HomeView.desconect(driver);
+        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
+        String checkText = "user11@email.com";
+        var result = PO_View.checkElementBy(driver, "text", "user11@email.com");
+        Assertions.assertEquals(checkText, result.get(0).getText());
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(20)
+    void Prueba20() {
+        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/user03@email.com']", PO_View.getTimeout());
+        PO_HomeView.desconect(driver);
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(21)
+    void Prueba21() {
+        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
+        //Esto para la vista nueva
+        PO_Peticiones.checkListaDePeticiones(driver,1);
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(22)
+    void Prueba22() {
+        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
+        //Esto para la vista nueva
+        PO_Peticiones.checkListaDePeticiones(driver,1);
+        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/aceptar/user11@email.com']");
+        elements.get(0).click();
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(23)
+    void Prueba23() {
+        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/amistades").get(0).click();
+
+        //Contamos el numero de filas de los usuarios
+        List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
+        Assertions.assertEquals(1, amistadesList.size());
+    }
+
+
+
 
     /**
      * [Prueba24] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
@@ -254,7 +339,7 @@ class SocialNetworkApplicationTests {
         }
 
         //comprobamos que existen 2
-        assertEquals(3, count);
+        assertEquals(2, count);
     }
 
     /**
@@ -274,10 +359,21 @@ class SocialNetworkApplicationTests {
         // Accede a un amigo con publicaciones, user01
         PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
 
-        // Se debería ver 1 fila (la cantidad de publicaciones de user01)
+        // Se deberían ver 2 filas (la cantidad de publicaciones de user00)
         List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
                 "/html/body/div[1]/div[1]/table/tbody/tr");
-        assertEquals(1, elementos.size());
+        assertEquals(2, elementos.size());
+    }
+
+    /**
+     *
+     */
+    @Test
+    @Order(28)
+    public void Prueba28() {
+        PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
+
+
     }
 
     /**
@@ -286,8 +382,9 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(32)
     void Prueba32() {
-
-        Assertions.fail("Not yet implemented");
+        driver.navigate().to(URLApiClient);
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -296,8 +393,9 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(33)
     void Prueba33() {
-
-        Assertions.fail("Not yet implemented");
+        driver.navigate().to(URLApiClient);
+        PO_PrivateView.loginAPI(driver, "usuarioNOexistente@email.com", "1111111", "friend-list");
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -306,8 +404,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(34)
     void Prueba34() {
-
-        Assertions.fail("Not yet implemented");
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_ClienteAPIFriendList.getCount(driver,user,6);
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -317,8 +418,13 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(35)
     void Prueba35() {
-
-        Assertions.fail("Not yet implemented");
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_ClienteAPIFriendList.filter(driver,"user00@email.com");
+        //2 por que las tr estan duplicadas por la linea de ultimo mensaje
+        PO_ClienteAPIFriendList.getCount(driver,user,2);
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -327,6 +433,22 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(36)
     void Prueba36() {
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
+        PO_ClienteAPIChat.getCountMessages(driver,3);
+        Assertions.fail("Not yet implemented");
+    }
+
+
+    /**
+     * [Prueba37] Acceder a la lista de mensajes de un amigo y crear un nuevo mensaje. Validar que el mensaje
+     * aparece en la lista de mensajes.
+     */
+    @Test
+    @Order(37)
+    void Prueba37() {
 
         Assertions.fail("Not yet implemented");
     }

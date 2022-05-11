@@ -46,43 +46,33 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                     email : req.session.user.email,
                 }*/
                 //usersRepository.findUser(filter2, {}).then(user=>{
-                    if (users == null || users.length===0 ) {
-                        res.redirect("/users/login" + "?message=Usuario no identificado"+ "&messageType=alert-danger ");
+                if (users == null || users.length===0 ) {
+                    res.redirect("/users/login" + "?message=Usuario no identificado"+ "&messageType=alert-danger ");
 
-                    } else {
-                        let roleUserSession = req.session.user.rol;
-                        if(roleUserSession === "ADMIN"){
-                            res.render("users/list.twig",
-                                {
-                                    users: users,
-                                    user: req.session.user,
-                                    pages: pages,
-                                    currentPage: page,
-                                    userRol: roleUserSession
-                                });
-                        }
-                        else {
-                            for (let i = 0; i< result.users.length; i++) {
-                                if (result.users[i].email === req.session.user.email) {
-                                    result.users.splice(i,1);
-                                    i--;
-                                }
-                                if (result.users[i].email === "admin@email.com") {
-                                    result.users.splice(i,1);
-                                    i--;
-                                }
-                            }
-                            renderUserList(req,res,req.session.user,result.users,pages,page);
-                            /*res.render("users/list.twig",
-                                {
-                                    users: result.users,
-                                    user: req.session.user,
-                                    pages: pages,
-                                    currentPage: page,
-                                    userRol: roleUserSession
-                                });*/
-                        }
+                } else {
+                    let roleUserSession = req.session.user.rol;
+                    if(roleUserSession === "ADMIN"){
+                        res.render("users/list.twig",
+                            {
+                                users: users,
+                                user: req.session.user,
+                                pages: pages,
+                                currentPage: page,
+                                userRol: roleUserSession
+                            });
                     }
+                    else {
+                        renderUserList(req,res,req.session.user,users,pages,page);
+                        /*res.render("users/list.twig",
+                            {
+                                users: result.users,
+                                user: req.session.user,
+                                pages: pages,
+                                currentPage: page,
+                                userRol: roleUserSession
+                            });*/
+                    }
+                }
                 /*}).catch(err=>{
                     res.render("error.twig", {
                         mensaje : "Se ha producido un error al bucar el usuario",
@@ -153,28 +143,28 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         };
         let options = {};
         /*usersRepository.findUsers(filter, options).then(users => {*/
-            if (users == null) {
-                //algun error
-            } else {
-                //TODO {user1 : req.session.user.email},{user2:1, _id:0} forma de hacerlo mejor?
-                amistadesRepository.findAmistadesByEmail({$or: [{user1: req.session.user.email}, {user2: req.session.user.email}]}, {}).then(amistades => {
-                    peticionesRepository.findPeticionesByEmail({user1: req.session.user.email}, {}).then(peticiones => {
-                        let emailsAmistades = getEmailFromList(amistades, req);
-                        let emailsPeticiones = getEmailFromList(peticiones, req);
-                        res.render("users/list.twig", {
-                            users: users,
-                            emailsAmistades: emailsAmistades,
-                            emailsPeticiones: emailsPeticiones,
-                            pages: pages,
-                            currentPage: page,
-                            userRol: user.rol,
-                            user: user
-                        });
-                    }).catch(error => "Sucedió un error buscando las peticiones" + error);
-                }).catch(error => "Sucedió un error buscando las amistades" + error);
+        if (users == null) {
+            //algun error
+        } else {
+            //TODO {user1 : req.session.user.email},{user2:1, _id:0} forma de hacerlo mejor?
+            amistadesRepository.findAmistadesByEmail({$or: [{user1: req.session.user.email}, {user2: req.session.user.email}]}, {}).then(amistades => {
+                peticionesRepository.findPeticionesByEmail({user1: req.session.user.email}, {}).then(peticiones => {
+                    let emailsAmistades = getEmailFromList(amistades, req);
+                    let emailsPeticiones = getEmailFromList(peticiones, req);
+                    res.render("users/list.twig", {
+                        users: users,
+                        emailsAmistades: emailsAmistades,
+                        emailsPeticiones: emailsPeticiones,
+                        pages: pages,
+                        currentPage: page,
+                        userRol: user.rol,
+                        user: user
+                    });
+                }).catch(error => "Sucedió un error buscando las peticiones" + error);
+            }).catch(error => "Sucedió un error buscando las amistades" + error);
 
 
-            } /*else {
+        } /*else {
         amistadesRepository.deleteAmistades(filter2,{}).then(amistades=>{
             if(amistades==null){
                 res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
@@ -304,5 +294,4 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
 
 }
-
 

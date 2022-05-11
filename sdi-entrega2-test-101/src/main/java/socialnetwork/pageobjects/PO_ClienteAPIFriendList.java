@@ -9,7 +9,8 @@ import socialnetwork.util.*;
 
 import java.util.List;
 
-public class PO_UserList extends PO_NavView {
+public class PO_ClienteAPIFriendList extends PO_NavView {
+
     public static int getCount(WebDriver driver, String userLogged, int count) {
         //contamos los tr
         List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
@@ -24,5 +25,11 @@ public class PO_UserList extends PO_NavView {
             else Assertions.fail("Esta presente un usuario que no deberia");
         }
         return count;
+    }
+
+    public static void filter(WebDriver driver, String s) {
+    }
+
+    public static void goToConversation(WebDriver driver, String s) {
     }
 }

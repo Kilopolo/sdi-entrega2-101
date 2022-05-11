@@ -24,7 +24,8 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav" id="barra-menu">
-                <li><a onclick=widgetUsers()>Usuarios</a></li>
+                <li><a onclick=widgetFriendList()>Lista de Amistades</a></li>
+                <li><a onclick=loggout()>Desconectarse</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right" id="barra-menu-derecha">
                 <!-- Opciones de menú aqui -->
@@ -40,13 +41,19 @@
     let token;
     let URLbase = "http://localhost:8081/api/v1.0";
     let autenticado = false;
-    $( "#contenedor-principal" ).load( "widget-login.html");
+    $("#main-container").load("widget-login.html");
+    if (!autenticado) {
+        console.log("usuario no autenticado")
+        $("#main-container").load("widget-login.html");
+    }
 
-    function widgetUsers(){
-        if ( Cookies.get('token') != null ){
+    widgetClient()
+
+    function widgetClient() {
+        if (Cookies.get('token') != null) {
             token = Cookies.get('token');
 
-            $( "#main-container" ).load("widget-friendList.html");
+            $("#main-container").load("widget-friendList.html");
             let url = new URL(window.location.href);
             let w = url.searchParams.get("w");
             if (w == "login") {
@@ -58,11 +65,28 @@
             if (w == "messages") {
                 $("#main-container").load("widget-messages.html");
             }
-        }else {
-            $( "#main-container" ).load("widget-login.html");
+        } else {
+            $("#main-container").load("widget-login.html");
         }
     }
 
+    function widgetFriendList() {
+        if (autenticado) {
+            $("#main-container").load("widget-friendList.html");
+        } else {
+            $("#main-container").load("widget-login.html");
+        }
+    }
+
+    function loggout() {
+        if (autenticado) {
+            Cookies.remove('token');
+            autenticado = false;
+            $("#main-container").load("widget-login.html");
+        } else {
+            $("#main-container").load("widget-login.html");
+        }
+    }
 
 </script>
 </body>

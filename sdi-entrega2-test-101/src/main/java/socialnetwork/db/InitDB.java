@@ -14,8 +14,9 @@ import java.util.logging.Logger;
 
 public class InitDB {
 
-
-    private static String connectionString = "mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    //OLD
+//    private static String connectionString = "mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    private static String connectionString = "mongodb+srv://sdi212210:Pa$$word123@cluster0.zytfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     private static String AppDBname = "socialNetwork";
     private static List<Document> users = new ArrayList<Document>();
     private static InitDB idb = new InitDB();
@@ -24,18 +25,18 @@ public class InitDB {
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
 
 
-//        initDB();
+        initDB();
 //        deleteTestUsers();
-//        insertUser("admin@email.com", "admin", "admin", "ADMIN", "admin");
+        insertUser("admin@email.com", "admin", "admin", "ADMIN", "admin");
 //        deleteTestAmistades();
-//        insertAmistades();
+        insertAmistades();
 
         deleteTestMessages();
         insertMessages();
         //idb.createUsers();
 //        deleteTestConversaciones();
-//        createConversaciones();
-//        showDataOfDB();
+        createConversaciones();
+        showDataOfDB();
     }
 
 
@@ -239,7 +240,7 @@ public class InitDB {
                 .append("textoMensaje", textoMensaje)
                 .append("fecha", fecha)
                 .append("leido", leido)
-                .append("amistadId",amistadId)
+                .append("amistadId", amistadId)
                 .append("test", true);
 
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
