@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import socialnetwork.util.SeleniumUtils;
 
+
 import java.util.List;
 
 public class PO_NavView extends PO_View {

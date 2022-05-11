@@ -27,6 +27,17 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
         console.log(mensajeNuevo)
 
+        messageRepository.insertMessage(mensajeNuevo,{}).then(response =>{
+            res.status(200);
+            res.json({
+                message: "Mensaje insertado satisfactoriamente en la conversación.",
+            });
+        }).catch(err => {
+            res.status(500);
+            res.json({error: "Se ha producido un error al insertar el mensaje."})
+        });
+
+
     });
 
     app.get("/api/v1.0/messages/:id", function (req, res) {
@@ -45,7 +56,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
             res.status(200);
             res.json({
-                message: "Lista de amistades con ultimo mensaje de la conversación.",
+                message: "Lista de mensajes de la conversación.",
                 chatList: messages,
                 userLoggedIn: user
             });

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import socialnetwork.pageobjects.*;
+import socialnetwork.util.SeleniumUtils;
 //import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -338,6 +339,18 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(36)
     void Prueba36() {
+
+        Assertions.fail("Not yet implemented");
+    }
+
+
+    /**
+     * [Prueba37] Acceder a la lista de mensajes de un amigo y crear un nuevo mensaje. Validar que el mensaje
+     * aparece en la lista de mensajes.
+     */
+    @Test
+    @Order(37)
+    void Prueba37() {
 
         Assertions.fail("Not yet implemented");
     }
