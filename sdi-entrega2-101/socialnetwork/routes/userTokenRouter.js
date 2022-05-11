@@ -1,15 +1,22 @@
 const jwt = require("jsonwebtoken");
 const express = require('express');
+const log4jslet = require("log4js");
+
 const userTokenRouter = express.Router();
 userTokenRouter.use(function (req, res, next) {
-    // console.log("userTokenRouter");
+
+    let logger = log4jslet.getLogger();
+    logger.level = "debug";
     let token = req.headers['token'] || req.body.token || req.query.token;
+
     if (token != null) {
         // verificar el token
         jwt.verify(token, 'secreto', {}, function (err, infoToken) {
-            // console.log(infoToken);
-            if (err || (Date.now() / 1000 - infoToken.time) > 240) {
-
+            let timeElapsed = Date.now() / 1000 - infoToken.time;
+            let timeOfSession = 1240;
+            let timeLeftOfSession = (timeOfSession - timeElapsed)
+            if (err || (timeLeftOfSession) > 0) {
+                logger.error("Token inválido o caducado: Token Value=" + token+", Time Left Of Session="+timeLeftOfSession)
                 res.status(403); // Forbidden
                 res.json({
                     authorized: false,
@@ -18,11 +25,13 @@ userTokenRouter.use(function (req, res, next) {
 
             } else {
                 // dejamos correr la petición
+                logger.info("Usuario " + infoToken.user + " autenticado, tiempo restante de sesion: " +  timeLeftOfSession + " seconds." )
                 res.user = infoToken.user;
                 next();
             }
         });
     } else {
+        logger.error("No hay Token")
         res.status(403); // Forbidden
         res.json({
             authorized: false,

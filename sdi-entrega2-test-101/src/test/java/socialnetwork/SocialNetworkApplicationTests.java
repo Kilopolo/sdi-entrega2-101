@@ -3,9 +3,14 @@ package socialnetwork;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import socialnetwork.pageobjects.*;
-import socialnetwork.util.SeleniumUtils;
+import socialnetwork.util.*;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 //import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -28,6 +33,8 @@ class SocialNetworkApplicationTests {
 
     //Común a Windows y a MACOSX
     static final String URL = "https://localhost:4000";
+    static final String URLApiClient = "https://localhost:4000/apiclient/client.html";
+
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
@@ -179,7 +186,70 @@ class SocialNetworkApplicationTests {
     @Order(10)
     void Prueba10() {
 
+        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(19)
+    void Prueba19() {
+
         Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(20)
+    void Prueba20() {
+
+        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(21)
+    void Prueba21() {
+
+        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(22)
+    void Prueba22() {
+
+        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+    }
+
+    /**
+     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     */
+    @Test
+    @Order(23)
+    void Prueba23() {
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_LoginView.fillLoginForm(driver, "user04@email.com", "user04");
+        var elements = PO_View.checkElementBy(driver, "text", "user05@email.com");
+        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/sendpeticion?user1email=user04@email.com&&user2email=user05@email.com']");
+        elements.get(0).click();
+        PO_HomeView.desconect(driver);
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_LoginView.fillLoginForm(driver, "user05@email.com", "user05");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        SeleniumUtils.waitSeconds(driver, 5);
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones/list").get(0).click();
+        SeleniumUtils.waitSeconds(driver, 5);
+        String checkText = "user04@email.com";
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", checkText);
+        Assertions.assertEquals(checkText, result.get(0).getText());
     }
 
     /**
@@ -298,8 +368,10 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(32)
     void Prueba32() {
+        driver.navigate().to(URLApiClient);
+        PO_PrivateView.loginAPI(driver, "user01@email.com", "user01", "user-list");
 
-        Assertions.fail("Not yet implemented");
+//        Assertions.fail("Not yet implemented");
     }
 
     /**

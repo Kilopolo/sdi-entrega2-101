@@ -1,18 +1,14 @@
 const {ObjectId} = require("mongodb");
 module.exports = function (app, usersRepository, amistadesRepository, messageRepository) {
 
+    let logger = app.get("log4js")
 
-    /**
-     * Función que te redirige a la ventana de login por defecto
-     */
-    app.get('/', function (req, res) {
-        //TODO index
-        res.redirect("/apiclient/client.html");
-    });
+
+
 
     app.post("/api/v1.0/messages/agregar/:id/:destinatario", function (req, res) {
         let emisor = res.user;
-        console.log(user);
+        //console.log(user);
         let date = new Date();
         let fechaString = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " Hora: " + date.getHours() + ":" + date.getMinutes();
 
@@ -25,14 +21,17 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
             amistadId: req.params.id
         };
 
-        console.log(mensajeNuevo)
+        //console.log(mensajeNuevo)
 
-        messageRepository.insertMessage(mensajeNuevo,{}).then(response =>{
+        messageRepository.insertMessage(mensajeNuevo, {}).then(response => {
+            logger.info("Mensaje insertado satisfactoriamente en la conversación.");
             res.status(200);
             res.json({
                 message: "Mensaje insertado satisfactoriamente en la conversación.",
             });
+
         }).catch(err => {
+            logger.error("Se ha producido un error al insertar el mensaje.")
             res.status(500);
             res.json({error: "Se ha producido un error al insertar el mensaje."})
         });
@@ -53,7 +52,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
             for (let i = 0; i < messages.length; i++) {
 
             }
-
+            logger.info("Lista de mensajes de la conversación.");
             res.status(200);
             res.json({
                 message: "Lista de mensajes de la conversación.",
@@ -61,6 +60,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                 userLoggedIn: user
             });
         }).catch(e => {
+            logger.error("Se ha producido un error al recuperar los mensajes.");
             res.status(500);
             res.json({error: "Se ha producido un error al recuperar los mensajes."})
         });
@@ -73,7 +73,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
 
         let user = res.user;
-        console.log(user);
+        // console.log(user);
 
 
         amistadesRepository.findAmistades({$or: [{user1: user}, {user2: user}]}, {}).then(friendList => {
@@ -171,7 +171,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                             (e) {
                             console.log(e);
                         }
-
+                    logger.info("Lista de amistades con ultimo mensaje de la conversación.");
                         res.status(200);
                         res.json({
                             message: "Lista de amistades con ultimo mensaje de la conversación.",
@@ -180,14 +180,17 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
                     }
                 ).catch(e => {
+                    logger.error("Se ha producido un error al recuperar los mensajes.");
                     res.status(500);
                     res.json({error: "Se ha producido un error al recuperar los mensajes."})
                 });
             }).catch(e => {
+                logger.error("Se ha producido un error al encontrar algún usuario");
                 res.status(500);
                 res.json({error: "Se ha producido un error al encontrar algún usuario"});
             });
         }).catch(e => {
+            logger.error("Se ha producido un error al recuperar las amistades.");
             res.status(500);
             res.json({error: "Se ha producido un error al recuperar las amistades."})
         });
@@ -236,7 +239,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
             usersRepository.findUser(filter, options).then(user => {
                 if (user == null) {
 
-                    //logger.error("usuario no autorizado");
+                    logger.error("usuario no autorizado");
                     res.status(401);//Unauthorized
                     res.json({
                         message: "usuario no autorizado",
@@ -244,10 +247,13 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                     })
 
                 } else {
+                    // console.log(Date.now() / 1000)
                     let token = app.get('jwt').sign(
                         {user: user.email, time: Date.now() / 1000},
                         "secreto");
-                    //logger.info("Usuario autenticado");
+                    logger.info("User logged in succesfully with token: "+token);
+                    // console.log("User logged in succesfully with token: "+token)
+
                     res.status(200);
                     res.json({
                         message: "usuario autorizado",
@@ -258,7 +264,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
                 }
             }).catch(error => {
-                //logger.error("Se ha producido un error al verificar credenciales");
+                logger.error("Se ha producido un error al verificar credenciales");
                 res.status(401);
                 res.json({
                     message: "Se ha producido un error al verificar credenciales",
@@ -267,7 +273,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
             })
         } catch (e) {
-            //logger.error("Se ha producido un error en la petición.");
+            logger.error("Se ha producido un error en la petición.");
             res.status(500);
             res.json({
                 message: "Se ha producido un error en la petición.",
@@ -278,32 +284,9 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
     });
 
     /**
-     * Función que permite crear un mensaje aun usuario autenticado
+     * Función que te redirige a la ventana de login por defecto
      */
-    app.post('/api/v1.0/message/add', function (req, res) {
-        try {
-            let song = {
-                emisor: req.body.emisor,
-                destinatario: req.body.destinatario,
-                textoMensaje: req.body.texto,
-                leido: false
-            }
-            messageRepository.insertOne(message, function (insertedId) {
-                if (insertedId === null) {
-                    res.status(409);
-                    res.json({error: "No se ha podido crear el mensaje"});
-                } else {
-                    res.status(201);
-                    res.json({
-                        message: "Mensaje añadido correctamente",
-                        _id: insertedId
-                    })
-                }
-            });
-        } catch (err) {
-            res.status(500);
-            res.json({error: "Se ha producido un error al intentar añadir el mensaje: " + err})
-        }
+    app.get('/apiclient', function (req, res) {
+        res.redirect("/apiclient/client.html");
     });
-
 };

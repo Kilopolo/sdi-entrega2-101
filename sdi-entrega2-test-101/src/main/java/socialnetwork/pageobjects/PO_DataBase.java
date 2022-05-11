@@ -1,6 +1,6 @@
 package socialnetwork.pageobjects;
 
-import socialnetwork.db.InitDB;
+import socialnetwork.db.*;
 
 public class PO_DataBase {
     private static InitDB idb = new InitDB();

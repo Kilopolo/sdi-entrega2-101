@@ -18,6 +18,7 @@ public class PO_LoginView extends PO_NavView {
 
         // Pulsar el boton de Login.
         By boton = By.className("btn");
+        System.out.println(boton.toString());
         driver.findElement(boton).click();
     }
 

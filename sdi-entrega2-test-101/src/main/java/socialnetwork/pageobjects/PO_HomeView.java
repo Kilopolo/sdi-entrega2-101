@@ -3,7 +3,7 @@ package socialnetwork.pageobjects;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import socialnetwork.util.SeleniumUtils;
+import socialnetwork.util.*;
 
 import java.util.List;
 
