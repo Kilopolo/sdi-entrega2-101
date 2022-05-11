@@ -22,17 +22,17 @@
 </div>
 <script>
 
-    // if (!autenticado) {
-    //     console.log("usuario no autenticado")
-    //     $("#main-container").load("widget-login.html");
-    // } else {
-    //     loadUsers()
-    //     window.history.pushState("", "", "/apiclient/client.html?w=friendList");
-    //
-    // }
-    window.history.pushState("", "", "/apiclient/client.html?w=friendList");
-    console.log(token)
-    loadUsers()
+    if (!autenticado) {
+        console.log("usuario no autenticado")
+        $("#main-container").load("widget-login.html");
+    } else {
+        loadUsers()
+        window.history.pushState("", "", "/apiclient/client.html?w=friendList");
+
+    }
+    // window.history.pushState("", "", "/apiclient/client.html?w=friendList");
+    // console.log(token)
+    // loadUsers()
     friends
     selectedMessageId;
 
