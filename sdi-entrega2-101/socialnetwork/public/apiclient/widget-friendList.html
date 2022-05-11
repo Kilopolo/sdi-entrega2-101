@@ -1,5 +1,5 @@
 <div id="widget-friendList">
-    <h1>Lista de amistades</h1>
+    <h1 id="user-list">Lista de amistades</h1>
     <input type="text" class="form-control" placeholder="Filtrar por nombre" id="filter-by-name"/>
 
     <!--    <button onclick="loadUsers()" class="btn" >Actualizar</button>-->
@@ -50,11 +50,11 @@
             success: function (response) {
                 friends = response.users;
                 updateUsersTable(friends);
-                console.log("LOAD USERS CORRECTO")
+                console.log("LOAD FRIENDS CORRECTO")
             },
             error: function (error) {
                 $("#main-container").load("widget-login.html");
-                console.log("LOAD USERS ERROR")
+                console.log("LOAD FRIENDS ERROR")
             }
         });
     }

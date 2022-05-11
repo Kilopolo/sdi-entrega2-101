@@ -306,9 +306,9 @@ class SocialNetworkApplicationTests {
     @Order(32)
     void Prueba32() {
         driver.navigate().to(URLApiClient);
-        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, "user01@email.com", "user01", "user-list");
 
-        Assertions.fail("Not yet implemented");
+//        Assertions.fail("Not yet implemented");
     }
 
     /**

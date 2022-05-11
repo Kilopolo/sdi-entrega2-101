@@ -39,18 +39,19 @@
 <script>
     let token;
     let URLbase = "http://localhost:8081/api/v1.0";
-    let autenticado = false;
-    $( "#contenedor-principal" ).load( "widget-login.html");
-    if (!autenticado) {
-        console.log("usuario no autenticado")
-        $("#main-container").load("widget-login.html");
-    }
+    let autenticado;
 
+    // if (!autenticado) {
+    //     console.log("usuario no autenticado")
+    //     $("#main-container").load("widget-login.html");
+    // }
 
+    widgetUsers()
     function widgetUsers(){
+        $( "#contenedor-principal" ).load( "widget-login.html");
         if ( Cookies.get('token') != null ){
             token = Cookies.get('token');
-
+            autenticado = true;
             $( "#main-container" ).load("widget-friendList.html");
             let url = new URL(window.location.href);
             let w = url.searchParams.get("w");

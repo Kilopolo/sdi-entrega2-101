@@ -7,6 +7,8 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
+
+
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let publicationsRouter = require('./routes/publications');
@@ -27,6 +29,11 @@ app.use(function (req, res, next) {
 // Debemos especificar todas las headers que se aceptan. Content-Type , token
   next();
 });
+var log4jslet = require("log4js");
+var theAppLog = log4jslet.getLogger();
+theAppLog.level = "debug";
+app.set('log4js',theAppLog);
+theAppLog.log("debug","LOGGER INICIALIZADO")
 
 
 let expressSession = require('express-session');
@@ -96,11 +103,10 @@ app.use("/publications", userSessionRouter);
 
 //JQuery Client
 const userTokenRouter = require('./routes/userTokenRouter');
+
+require("./routes/api/socialnetworkv1.0.js")(app,usersRepository,amistadesRepository,messagesRepository);
 app.use("/api/v1.0/friends/list", userTokenRouter);
 app.use("/api/v1.0/messages", userTokenRouter);
-
-const jQueryClient = require("./routes/api/socialnetworkv1.0.js")(app,usersRepository,amistadesRepository,messagesRepository);
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

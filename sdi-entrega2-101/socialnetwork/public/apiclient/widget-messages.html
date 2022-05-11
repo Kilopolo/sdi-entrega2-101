@@ -53,8 +53,7 @@
         console.log("usuario no autenticado")
         $("#main-container").load("widget-login.html");
     } else {
-        window.history.pushState("", "", "/apiclient/client.html?w=messages");
-        actualizar = false;
+ actualizar = false;
         loadChat();
 
 
@@ -130,6 +129,8 @@
                 updateChatList(chatList);
                 console.log("LOAD CHAT CORRECTO")
                 // setInterval('actualizacion()', 2000);
+                window.history.pushState("", "", "/apiclient/client.html?w=messages");
+
             },
             error: function (error) {
                 actualizar = false;

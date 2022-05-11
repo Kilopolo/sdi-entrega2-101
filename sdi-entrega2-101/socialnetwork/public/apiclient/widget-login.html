@@ -17,7 +17,7 @@
     <br>
     <div className="form-group">
         <div className="col-sm-offset-2 col-sm-10">
-            <button type="button" id="boton-login">Aceptar</button>
+            <button class="btn btn-info btn-rounded float-end" type="button" id="boton-login">Aceptar</button>
         </div>
     </div>
 </div>
@@ -34,6 +34,7 @@
             dataType: "json",
             success: function success(response) {
                 //deberia devolver el token por consola
+                console.log("LOGIN CORRECTO")
                 console.log(response.token);
                 autenticado = true;
                 token = response.token;
@@ -41,6 +42,7 @@
                 $("#main-container").load("widget-friendList.html");
             },
             error: function (error) {
+                console.log("LOGIN ERROR")
                 Cookies.remove('token');
                 autenticado = false;
                 $("#widget-login")
