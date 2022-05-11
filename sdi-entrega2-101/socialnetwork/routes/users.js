@@ -62,7 +62,18 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                                 });
                         }
                         else {
-                            renderUserList(req,res,req.session.user,users,pages,page);
+                            let aux;
+                            for (let i = 0; i< result.users.length; i++) {
+                                if (result.users[i].email === req.session.user.email) {
+                                    result.users.splice(i,1);
+                                    i--;
+                                }
+                                if (result.users[i].email === "admin@email.com") {
+                                    result.users.splice(i,1);
+                                    i--;
+                                }
+                            }
+                            renderUserList(req,res,req.session.user,result.users,pages,page);
                             /*res.render("users/list.twig",
                                 {
                                     users: result.users,
