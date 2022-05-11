@@ -16,6 +16,7 @@ public class PO_PrivateView extends PO_NavView {
     }
 
     public static void loginAPI(WebDriver driver, String email, String password, String check) {
+
         // Rellenamos el formulario
         PO_LoginView.fillLoginForm(driver, email, password);
         // COmprobamos que entramos en la pagina privada
