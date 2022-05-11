@@ -8,6 +8,7 @@ userTokenRouter.use(function (req, res, next) {
     let logger = log4jslet.getLogger();
     logger.level = "debug";
     let token = req.headers['token'] || req.body.token || req.query.token;
+
     if (token != null) {
         // verificar el token
         jwt.verify(token, 'secreto', {}, function (err, infoToken) {
@@ -15,7 +16,7 @@ userTokenRouter.use(function (req, res, next) {
             let timeOfSession = 1240;
             let timeLeftOfSession = (timeOfSession - timeElapsed)
             if (err || (timeLeftOfSession) > 0) {
-                logger.error("Token inválido o caducado")
+                logger.error("Token inválido o caducado: Token Value=" + token+", Time Left Of Session="+timeLeftOfSession)
                 res.status(403); // Forbidden
                 res.json({
                     authorized: false,
@@ -24,7 +25,7 @@ userTokenRouter.use(function (req, res, next) {
 
             } else {
                 // dejamos correr la petición
-                logger.info("Usuario " + infoToken.user + " autenticado, tiempo restante de sesion: " +  timeLeftOfSession )
+                logger.info("Usuario " + infoToken.user + " autenticado, tiempo restante de sesion: " +  timeLeftOfSession + " seconds." )
                 res.user = infoToken.user;
                 next();
             }

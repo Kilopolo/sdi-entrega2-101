@@ -104,9 +104,10 @@ app.use("/publications", userSessionRouter);
 //JQuery Client
 const userTokenRouter = require('./routes/userTokenRouter');
 
-require("./routes/api/socialnetworkv1.0.js")(app,usersRepository,amistadesRepository,messagesRepository);
+
 app.use("/api/v1.0/friends/list", userTokenRouter);
 app.use("/api/v1.0/messages", userTokenRouter);
+require("./routes/api/socialnetworkv1.0.js")(app,usersRepository,amistadesRepository,messagesRepository);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

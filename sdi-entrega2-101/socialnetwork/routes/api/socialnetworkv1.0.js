@@ -251,7 +251,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                     let token = app.get('jwt').sign(
                         {user: user.email, time: Date.now() / 1000},
                         "secreto");
-                    logger.info("Usuario autenticado");
+                    logger.info("User logged in succesfully with token: "+token);
                     // console.log("User logged in succesfully with token: "+token)
 
                     res.status(200);
