@@ -53,8 +53,10 @@
                         <td>{{ user.name }}</td>
                         <td>{{ user.surname }}</td>
                         <td>
-                            <div name="invitar"><a class="invitar" href="/peticiones/enviar/{{ user._email }}">Enviar
+                            {% if (user.email in emailsAmistades or user.email in emailsPeticiones) == false %}
+                            <div name="invitar"><a class="invitar" href="/peticiones/enviar/{{ user.email }}">Enviar
                                     Peticion</a></div>
+                            {% endif %}
                         </td>
 
                     {% else %}
