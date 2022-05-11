@@ -31,7 +31,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
     app.get("/api/v1.0/messages/:id", function (req, res) {
         let user = res.user;
-        console.log(user);
+        // console.log(user);
 
         let filter = {amistadId: req.params.id};
         let options = {};

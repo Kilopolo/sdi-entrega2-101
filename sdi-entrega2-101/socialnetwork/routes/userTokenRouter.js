@@ -2,12 +2,12 @@ const jwt = require("jsonwebtoken");
 const express = require('express');
 const userTokenRouter = express.Router();
 userTokenRouter.use(function (req, res, next) {
-    console.log("userTokenRouter");
+    // console.log("userTokenRouter");
     let token = req.headers['token'] || req.body.token || req.query.token;
     if (token != null) {
         // verificar el token
         jwt.verify(token, 'secreto', {}, function (err, infoToken) {
-            console.log(infoToken);
+            // console.log(infoToken);
             if (err || (Date.now() / 1000 - infoToken.time) > 240) {
 
                 res.status(403); // Forbidden

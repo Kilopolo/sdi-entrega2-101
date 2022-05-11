@@ -53,20 +53,24 @@
         console.log("usuario no autenticado")
         $("#main-container").load("widget-login.html");
     } else {
-        loadChat();
-        actualizar = false;
-        console.log(URLbase + "/messages/" + selectedMessageId + "/" + chatList[0].destinatario)
         window.history.pushState("", "", "/apiclient/client.html?w=messages");
+        actualizar = false;
+        loadChat();
+
+
+
     }
     chatList;
     userLoggedIn;
+    console.log(URLbase + "/messages/" + selectedMessageId + "/" + chatList[0].destinatario);
+    console.log("usuario autenticado como " + userLoggedIn)
 
     //Funcion que se ejecuta al clicar el boton para enviar un mensaje, envia el mensaje
     $("#boton-enviar").click(function () {
         console.log("Enviando mensaje: " + $("#contenido").val())
         if (chatList != null)
             $.ajax({
-                url: URLbase + "/mensaje/agregar/" + selectedMessageId + "/" + chatList[0].destinatario,
+                url: URLbase + "/messages/agregar/" + selectedMessageId + "/" + chatList[0].destinatario,
                 type: "POST",
                 data: {
                     contenido: $("#contenido").val()
@@ -120,10 +124,12 @@
             success: function (response) {
                 userLoggedIn = response.userLoggedIn;
                 chatList = response.chatList;
+                actualizar = true;
                 $("#userName").empty();
                 $("#userName").append("Usuario: " + userLoggedIn);
                 updateChatList(chatList);
                 console.log("LOAD CHAT CORRECTO")
+                setInterval('actualizacion()', 2000);
             },
             error: function (error) {
                 actualizar = false;
