@@ -194,8 +194,17 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(19)
     void Prueba19() {
-
-        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
+        var elements = PO_View.checkElementBy(driver, "text", "user03@email.com");
+        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/user03@email.com']");
+        elements.get(0).click();
+        PO_HomeView.desconect(driver);
+        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
+        String checkText = "user11@email.com";
+        var result = PO_View.checkElementBy(driver, "text", "user11@email.com");
+        Assertions.assertEquals(checkText, result.get(0).getText());
     }
 
     /**
@@ -204,8 +213,9 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(20)
     void Prueba20() {
-
-        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/user03@email.com']", PO_View.getTimeout());
+        PO_HomeView.desconect(driver);
     }
 
     /**
@@ -214,8 +224,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(21)
     void Prueba21() {
-
-        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
+        //Esto para la vista nueva
+        PO_Peticiones.checkListaDePeticiones(driver,1);
     }
 
     /**
@@ -224,8 +237,14 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(22)
     void Prueba22() {
-
-        Assertions.assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
+        //Esto para la vista nueva
+        PO_Peticiones.checkListaDePeticiones(driver,1);
+        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/aceptar/user11@email.com']");
+        elements.get(0).click();
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
     }
 
     /**
@@ -234,21 +253,13 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(23)
     void Prueba23() {
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-        PO_LoginView.fillLoginForm(driver, "user04@email.com", "user04");
-        var elements = PO_View.checkElementBy(driver, "text", "user05@email.com");
-        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/sendpeticion?user1email=user04@email.com&&user2email=user05@email.com']");
-        elements.get(0).click();
-        PO_HomeView.desconect(driver);
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-        PO_LoginView.fillLoginForm(driver, "user05@email.com", "user05");
+        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
-        SeleniumUtils.waitSeconds(driver, 5);
-        PO_HomeView.checkElementBy(driver, "@href", "/peticiones/list").get(0).click();
-        SeleniumUtils.waitSeconds(driver, 5);
-        String checkText = "user04@email.com";
-        List<WebElement> result = PO_View.checkElementBy(driver, "text", checkText);
-        Assertions.assertEquals(checkText, result.get(0).getText());
+        PO_HomeView.checkElementBy(driver, "@href", "/amistades").get(0).click();
+
+        //Contamos el numero de filas de los usuarios
+        List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
+        Assertions.assertEquals(1, amistadesList.size());
     }
 
 
@@ -372,7 +383,7 @@ class SocialNetworkApplicationTests {
     void Prueba32() {
         driver.navigate().to(URLApiClient);
         PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
-        Assertions.fail("Not yet implemented");
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -382,8 +393,8 @@ class SocialNetworkApplicationTests {
     @Order(33)
     void Prueba33() {
         driver.navigate().to(URLApiClient);
-        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
-        Assertions.fail("Not yet implemented");
+        PO_PrivateView.loginAPI(driver, "usuarioNOexistente@email.com", "1111111", "friend-list");
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -392,8 +403,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(34)
     void Prueba34() {
-
-        Assertions.fail("Not yet implemented");
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_ClienteAPIFriendList.getCount(driver,user,6);
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -403,8 +417,13 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(35)
     void Prueba35() {
-
-        Assertions.fail("Not yet implemented");
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_ClienteAPIFriendList.filter(driver,"user00@email.com");
+        //2 por que las tr estan duplicadas por la linea de ultimo mensaje
+        PO_ClienteAPIFriendList.getCount(driver,user,2);
+//        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -413,7 +432,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(36)
     void Prueba36() {
-
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
+        PO_ClienteAPIChat.getCountMessages(driver,3);
         Assertions.fail("Not yet implemented");
     }
 
