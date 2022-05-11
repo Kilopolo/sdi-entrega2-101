@@ -34,7 +34,6 @@ class SocialNetworkApplicationTests {
     //Común a Windows y a MACOSX
     static final String URL = "https://localhost:4000";
     static final String URLApiClient = "https://localhost:4000/apiclient/client.html";
-
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
@@ -252,6 +251,9 @@ class SocialNetworkApplicationTests {
         Assertions.assertEquals(checkText, result.get(0).getText());
     }
 
+
+
+
     /**
      * [Prueba24] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
      * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
@@ -369,9 +371,8 @@ class SocialNetworkApplicationTests {
     @Order(32)
     void Prueba32() {
         driver.navigate().to(URLApiClient);
-        PO_PrivateView.loginAPI(driver, "user01@email.com", "user01", "user-list");
-
-//        Assertions.fail("Not yet implemented");
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+        Assertions.fail("Not yet implemented");
     }
 
     /**
@@ -380,7 +381,8 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(33)
     void Prueba33() {
-
+        driver.navigate().to(URLApiClient);
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
         Assertions.fail("Not yet implemented");
     }
 

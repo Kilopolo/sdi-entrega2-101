@@ -2,9 +2,13 @@ const {ObjectId} = require("mongodb");
 module.exports = function (app, usersRepository, amistadesRepository, messageRepository) {
 
     let logger = app.get("log4js")
-
-
-
+    /**
+     * Función que te redirige a la ventana de login por defecto
+     */
+    app.get('/apiclient', function (req, res) {
+        //TODO index
+        res.redirect("/apiclient/client.html");
+    });
 
     app.post("/api/v1.0/messages/agregar/:id/:destinatario", function (req, res) {
         let emisor = res.user;
@@ -251,9 +255,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                     let token = app.get('jwt').sign(
                         {user: user.email, time: Date.now() / 1000},
                         "secreto");
-                    logger.info("User logged in succesfully with token: "+token);
-                    // console.log("User logged in succesfully with token: "+token)
-
+                    logger.info("Usuario autenticado");
                     res.status(200);
                     res.json({
                         message: "usuario autorizado",
@@ -283,10 +285,33 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
     });
 
-    /**
-     * Función que te redirige a la ventana de login por defecto
-     */
-    app.get('/apiclient', function (req, res) {
-        res.redirect("/apiclient/client.html");
-    });
+    // /**
+    //  * Función que permite crear un mensaje aun usuario autenticado
+    //  */
+    // app.post('/api/v1.0/message/add', function (req, res) {
+    //     try {
+    //         let song = {
+    //             emisor: req.body.emisor,
+    //             destinatario: req.body.destinatario,
+    //             textoMensaje: req.body.texto,
+    //             leido: false
+    //         }
+    //         messageRepository.insertOne(message, function (insertedId) {
+    //             if (insertedId === null) {
+    //                 res.status(409);
+    //                 res.json({error: "No se ha podido crear el mensaje"});
+    //             } else {
+    //                 res.status(201);
+    //                 res.json({
+    //                     message: "Mensaje añadido correctamente",
+    //                     _id: insertedId
+    //                 })
+    //             }
+    //         });
+    //     } catch (err) {
+    //         res.status(500);
+    //         res.json({error: "Se ha producido un error al intentar añadir el mensaje: " + err})
+    //     }
+    // });
+
 };

@@ -40,34 +40,35 @@
 <script>
     let token;
     let URLbase = "http://localhost:8081/api/v1.0";
-    let autenticado;
-
-    // if (!autenticado) {
-    //     console.log("usuario no autenticado")
-    //     $("#main-container").load("widget-login.html");
-    // }
-
-
+    let autenticado = false;
     $("#main-container").load("widget-login.html");
-    if (Cookies.get('token') != null) {
-        token = Cookies.get('token');
-        autenticado = true;
-        $("#main-container").load("widget-friendList.html");
-        let url = new URL(window.location.href);
-        let w = url.searchParams.get("w");
-        if (w == "login") {
-            $("#main-container").load("widget-login.html");
-        }
-        if (w == "friendList") {
-            $("#main-container").load("widget-friendList.html");
-        }
-        if (w == "messages") {
-            $("#main-container").load("widget-messages.html");
-        }
-    } else {
+    if (!autenticado) {
+        console.log("usuario no autenticado")
         $("#main-container").load("widget-login.html");
     }
 
+    widgetClient()
+
+    function widgetClient() {
+        if (Cookies.get('token') != null) {
+            token = Cookies.get('token');
+
+            $("#main-container").load("widget-friendList.html");
+            let url = new URL(window.location.href);
+            let w = url.searchParams.get("w");
+            if (w == "login") {
+                $("#main-container").load("widget-login.html");
+            }
+            if (w == "friendList") {
+                $("#main-container").load("widget-friendList.html");
+            }
+            if (w == "messages") {
+                $("#main-container").load("widget-messages.html");
+            }
+        } else {
+            $("#main-container").load("widget-login.html");
+        }
+    }
 
     function widgetFriendList() {
         if (autenticado) {
@@ -86,7 +87,6 @@
             $("#main-container").load("widget-login.html");
         }
     }
-
 
 </script>
 </body>
