@@ -62,7 +62,6 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                                 });
                         }
                         else {
-                            let aux;
                             for (let i = 0; i< result.users.length; i++) {
                                 if (result.users[i].email === req.session.user.email) {
                                     result.users.splice(i,1);
