@@ -10,21 +10,39 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
         res.redirect("/apiclient/client.html");
     });
 
+    app.post("/api/v1.0/messages/agregar/:id/:destinatario", function (req, res) {
+        let emisor = res.user;
+        console.log(user);
+        let date = new Date();
+        let fechaString = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " Hora: " + date.getHours() + ":" + date.getMinutes();
+
+        let mensajeNuevo = {
+            emisor: emisor,
+            destinatario: req.params.destinatario,
+            textoMensaje: req.body.contenido,
+            fecha: fechaString,
+            leido: false,
+            amistadId: req.params.id
+        };
+
+        console.log(mensajeNuevo)
+
+    });
+
     app.get("/api/v1.0/messages/:id", function (req, res) {
         let user = res.user;
         console.log(user);
-        // let list = []
-        // list.push({email:"aaaa",text:"aaaaaaaaaaaaaa"})
-        // list.push({email:"bbbb",text:"bbbbbbbbbbbbbb"})
-        let mssgId = ObjectId(req.params.id)
-        console.log(req.params.id)
-        console.log(mssgId)
 
-        let filter = {amistadId: mssgId};
+        let filter = {amistadId: req.params.id};
         let options = {};
         messageRepository.findMessages(filter, options).then(messages => {
 
-            console.log(messages)
+
+            let mensajes = []
+            for (let i = 0; i < messages.length; i++) {
+
+            }
+
             res.status(200);
             res.json({
                 message: "Lista de amistades con ultimo mensaje de la conversación.",
@@ -131,11 +149,11 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                                     }
                                 }
 
-                                console.log(userWithLastMssg.friendshipId)
+                                // console.log(userWithLastMssg.friendshipId)
                                 //pusheamos con o sin conversacion
                                 userJoinMssg.push(userWithLastMssg);
                             }
-                            console.log(userJoinMssg)
+                            // console.log(userJoinMssg)
 
 
                         } catch

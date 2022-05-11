@@ -1,9 +1,9 @@
 <div id="widget-messages">
 
     <h2>Chat</h2>
-    <button onclick="updateChatList()" type="button"
-            class="btn btn-info btn-rounded float-end">Actualizar
-    </button>
+<!--    <button onclick="updateChatList()" type="button"-->
+<!--            class="btn btn-info btn-rounded float-end">Actualizar-->
+<!--    </button>-->
 
     <section style="background-color: #eee;">
         <div class="container py-5">
@@ -12,7 +12,7 @@
 
                 <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
 
-                    <h5 class="font-weight-bold mb-3 text-center text-lg-start">Member</h5>
+                    <h5 class="font-weight-bold mb-3 text-center text-lg-start" id="userName"></h5>
 
                     <div class="card">
                         <div class="card-body">
@@ -22,15 +22,16 @@
 
                                 <li id="chat-table" class="d-flex justify-content-between mb-4">
                                     <!--Contenido-->
+                                    <div class="card-header d-flex justify-content-between p-3"><p> Cargando contenido </p></div>
                                 </li>
                                 <li class="bg-white mb-3">
                                     <div class="form-outline">
-                                        <textarea class="form-control" id="textAreaExample2" rows="4"></textarea>
-                                        <label class="form-label" for="textAreaExample2">Message</label>
+                                        <textarea type="text" class="form-control" name="contenido" id="contenido"
+                                                  placeholder="mensaje nuevo" rows="4"></textarea>
                                     </div>
                                 </li>
-                                <button onclick="sendMessage()" type="button"
-                                        class="btn btn-info btn-rounded float-end">Send
+                                <button class="btn btn-info btn-rounded float-end" type="button" id="boton-enviar">
+                                    Enviar
                                 </button>
                             </ul>
 
@@ -48,35 +49,64 @@
 </div>
 <script>
 
-    window.history.pushState("", "", "/apiclient/client.html?w=messages");
-    // token = Cookies.get('token');
+    if (!autenticado) {
+        console.log("usuario no autenticado")
+        $("#main-container").load("widget-login.html");
+    } else {
+        loadChat();
+        actualizar = false;
+        console.log(URLbase + "/messages/" + selectedMessageId + "/" + chatList[0].destinatario)
+        window.history.pushState("", "", "/apiclient/client.html?w=messages");
+    }
+    chatList;
+    userLoggedIn;
 
-    let chatList;
-    let userLoggedIn;
+    //Funcion que se ejecuta al clicar el boton para enviar un mensaje, envia el mensaje
+    $("#boton-enviar").click(function () {
+        console.log("Enviando mensaje: " + $("#contenido").val())
+        if (chatList != null)
+            $.ajax({
+                url: URLbase + "/mensaje/agregar/" + selectedMessageId + "/" + chatList[0].destinatario,
+                type: "POST",
+                data: {
+                    contenido: $("#contenido").val()
+                },
+                dataType: 'json',
+                success: function (respuesta) {
+                    actualizar = true
+                    updateChatList(respuesta);
+                    loadChat();
+                    //Limpia el formulario despues de un mensaje
+                    $('input[type="text"]').val('');
+
+                },
+            });
+    });
 
     function updateChatList(chatList) {
+
         $("#chat-table").empty(); // Vaciar la tabla
-        if (chatList!=null)
-        for (let i = 0; i < chatList.length; i++) {
-            $("#chat-table").append(
-                "<img src=\"https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp\" alt=\"avatar\" className=\"rounded-circle d-flex align-self-start me-3 shadow-1-strong\" width=\"60\">" +
-                "            <div class=\"card\">\n" +
-                "              <div class=\"card-header d-flex justify-content-between p-3\">\n" +
-                "                <p class=\"fw-bold mb-0\">" + chatList[i].email + "</p>\n" +
-                "                <p class=\"text-muted small mb-0\"><i class=\"far fa-clock\"></i> 10 mins ago</p>\n" +
-                "              </div>\n" +
-                "              <div class=\"card-body\">\n" +
-                "                <p class=\"mb-0\">\n" + chatList[i].text +
-                "                </p>\n" +
-                "              </div>\n" +
-                "            </div>"
-            );
-        }
+        if (chatList != null)
+            for (let i = 0; i < chatList.length; i++) {
+                $("#chat-table").append(
+                    "<img src=\"https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp\" alt=\"avatar\" className=\"rounded-circle d-flex align-self-left me-3 shadow-1-strong\" width=\"60\">" +
+                    "            <div class=\"card\">" +
+                    "              <div class=\"card-header d-flex justify-content-between p-3\">" +
+                    "                <p class=\"text-muted small mb-0\">" + "De: " + chatList[i].emisor + " a las" + "</p>" +
+                    "                <p class=\"text-muted small mb-0\"><i class=\"far fa-clock\"></i> " + chatList[i].fecha + "</p>" +
+                    "              </div>\n" +
+                    "              <div class=\"card-body\">" +
+                    "                <p class=\"fw-bold mb-0\">" + "Texto: " + "</p>" +
+                    "                <p class=\"mb-0\">" + chatList[i].textoMensaje +
+                    "                </p>\n" +
+                    "              </div>\n" +
+                    "            </div>"
+                );
+            }
     }
 
-    function sendMessage() {
 
-    }
+
 
     function loadChat() {
         $.ajax({
@@ -89,14 +119,26 @@
             },
             success: function (response) {
                 userLoggedIn = response.userLoggedIn;
-                chatList = response.chatList
+                chatList = response.chatList;
+                $("#userName").empty();
+                $("#userName").append("Usuario: " + userLoggedIn);
                 updateChatList(chatList);
+                console.log("LOAD CHAT CORRECTO")
             },
             error: function (error) {
+                actualizar = false;
                 $("#main-container").load("widget-login.html");
+                console.log("LOAD CHAT ERROR")
             }
         });
     }
 
-    loadChat();
+    function actualizacion() {
+        if (actualizar) {
+            loadChat();
+        }
+    }
+
+    setInterval('actualizacion()', 2000);
+
 </script>
