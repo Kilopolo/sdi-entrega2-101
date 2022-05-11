@@ -27,6 +27,12 @@ app.use(function (req, res, next) {
 // Debemos especificar todas las headers que se aceptan. Content-Type , token
   next();
 });
+//Logger
+var log4jslet = require("log4js");
+var theAppLog = log4jslet.getLogger();
+theAppLog.level = "debug";
+app.set('log4js',theAppLog);
+theAppLog.log("debug","LOGGER INICIALIZADO")
 
 
 let expressSession = require('express-session');
@@ -56,10 +62,6 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-//Logger
-// let log4js = require("log4js");
-// let logger = log4js.getLogger();
-// logger.level = "debug";
 
 
 

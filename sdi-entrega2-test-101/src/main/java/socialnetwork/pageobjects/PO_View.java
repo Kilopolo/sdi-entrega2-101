@@ -3,7 +3,7 @@ package socialnetwork.pageobjects;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import socialnetwork.util.SeleniumUtils;
+import socialnetwork.util.*;
 
 import java.util.List;
 
@@ -24,9 +24,9 @@ public class PO_View {
         return p;
     }
 
-    public static void setP(PO_Properties p) {
-        PO_View.p = p;
-    }
+//    public static void setP(PO_Properties p) {
+//        PO_View.p = p;
+//    }
 
     /**
      * Espera por la visibilidad de un texto correspondiente a la propiedad key en el idioma locale en la vista actualmente cargandose en driver..
