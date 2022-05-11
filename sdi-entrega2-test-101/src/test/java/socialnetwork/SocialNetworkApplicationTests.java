@@ -254,7 +254,7 @@ class SocialNetworkApplicationTests {
         }
 
         //comprobamos que existen 2
-        assertEquals(3, count);
+        assertEquals(2, count);
     }
 
     /**
@@ -274,10 +274,21 @@ class SocialNetworkApplicationTests {
         // Accede a un amigo con publicaciones, user01
         PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
 
-        // Se debería ver 1 fila (la cantidad de publicaciones de user01)
+        // Se deberían ver 2 filas (la cantidad de publicaciones de user00)
         List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
                 "/html/body/div[1]/div[1]/table/tbody/tr");
-        assertEquals(1, elementos.size());
+        assertEquals(2, elementos.size());
+    }
+
+    /**
+     *
+     */
+    @Test
+    @Order(28)
+    public void Prueba28() {
+        PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
+
+
     }
 
     /**
