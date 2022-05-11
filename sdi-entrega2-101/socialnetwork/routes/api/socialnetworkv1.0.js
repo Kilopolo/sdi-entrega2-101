@@ -12,7 +12,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
     app.post("/api/v1.0/messages/agregar/:id/:destinatario", function (req, res) {
         let emisor = res.user;
-        //console.log(user);
+        console.log(user);
         let date = new Date();
         let fechaString = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " Hora: " + date.getHours() + ":" + date.getMinutes();
 
@@ -25,17 +25,14 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
             amistadId: req.params.id
         };
 
-        //console.log(mensajeNuevo)
+        console.log(mensajeNuevo)
 
-        messageRepository.insertMessage(mensajeNuevo, {}).then(response => {
-            logger.info("Mensaje insertado satisfactoriamente en la conversación.");
+        messageRepository.insertMessage(mensajeNuevo,{}).then(response =>{
             res.status(200);
             res.json({
                 message: "Mensaje insertado satisfactoriamente en la conversación.",
             });
-
         }).catch(err => {
-            logger.error("Se ha producido un error al insertar el mensaje.")
             res.status(500);
             res.json({error: "Se ha producido un error al insertar el mensaje."})
         });
@@ -77,7 +74,7 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
 
         let user = res.user;
-        // console.log(user);
+        console.log(user);
 
 
         amistadesRepository.findAmistades({$or: [{user1: user}, {user2: user}]}, {}).then(friendList => {
@@ -251,7 +248,6 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
                     })
 
                 } else {
-                    // console.log(Date.now() / 1000)
                     let token = app.get('jwt').sign(
                         {user: user.email, time: Date.now() / 1000},
                         "secreto");

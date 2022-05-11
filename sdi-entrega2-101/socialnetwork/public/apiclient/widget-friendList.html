@@ -2,7 +2,7 @@
     <h1  id="friend-list">Lista de amistades</h1>
     <input type="text" class="form-control" placeholder="Filtrar por nombre" id="filter-by-name"/>
 
-<!--        <button onclick="loadUsers()" class="btn" >Actualizar</button>-->
+    <!--    <button onclick="loadUsers()" class="btn" >Actualizar</button>-->
     <table class="table table-hover">
         <thead>
 
@@ -22,17 +22,14 @@
 </div>
 <script>
 
-    // if (!autenticado) {
-    //     console.log("usuario no autenticado")
-    //     $("#main-container").load("widget-login.html");
-    // } else {
-    //     loadUsers()
-    //     window.history.pushState("", "", "/apiclient/client.html?w=friendList");
-    //
-    // }
-    window.history.pushState("", "", "/apiclient/client.html?w=friendList");
-    console.log(token)
-    loadUsers()
+    if (!autenticado) {
+        console.log("usuario no autenticado")
+        $("#main-container").load("widget-login.html");
+    } else {
+        loadUsers()
+        window.history.pushState("", "", "/apiclient/client.html?w=friendList");
+
+    }
     friends
     selectedMessageId;
 
@@ -53,12 +50,11 @@
             success: function (response) {
                 friends = response.users;
                 updateUsersTable(friends);
-                console.log("LOAD FRIENDS CORRECTO")
+                console.log("LOAD USERS CORRECTO")
             },
             error: function (error) {
                 $("#main-container").load("widget-login.html");
-                console.log("LOAD FRIENDS ERROR" )
-                console.log(error)
+                console.log("LOAD USERS ERROR")
             }
         });
     }
@@ -94,7 +90,7 @@
         $("#main-container").load("widget-messages.html");
     }
 
-
+    loadUsers()
     updateUsersTable(friends);
 
 </script>

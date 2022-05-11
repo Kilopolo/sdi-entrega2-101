@@ -34,7 +34,6 @@
             dataType: "json",
             success: function success(response) {
                 //deberia devolver el token por consola
-                console.log("LOGIN CORRECTO")
                 console.log(response.token);
                 autenticado = true;
                 token = response.token;
@@ -42,7 +41,6 @@
                 $("#main-container").load("widget-friendList.html");
             },
             error: function (error) {
-                console.log("LOGIN ERROR")
                 Cookies.remove('token');
                 autenticado = false;
                 $("#widget-login")
