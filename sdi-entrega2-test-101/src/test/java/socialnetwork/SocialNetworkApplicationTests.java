@@ -2,9 +2,11 @@ package socialnetwork;
 
 
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import socialnetwork.db.InitDB;
 import socialnetwork.pageobjects.*;
 import socialnetwork.util.*;
 
@@ -191,6 +193,194 @@ class SocialNetworkApplicationTests {
 
         assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
+
+
+    /**
+     * [Prueba11]Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el sistema.
+     */
+    @Test
+    @Order(11)
+    void Prueba11() {
+        PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
+                PO_View.getTimeout());
+
+        int count = 0;
+        for (WebElement each : elementos) {
+            count++;
+        }
+
+        assertEquals(16, count);
+    }
+    /**
+     * [Prueba12]Ir a la lista de usuarios, borrar el primer usuario de la lista,
+     * comprobar que la lista se actualiza y dicho usuario desaparece.
+     */
+    @Test
+    @Order(12)
+    void Prueba12() {
+        InitDB.insertUser("aaa","aaa","aaa","USER","aaa");
+        PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
+        WebElement check = driver.findElement(By.id("checkbox_aaa"));
+        check.click();
+        WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
+        eliminarBtn.click();
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
+                PO_View.getTimeout());
+
+        int count = 0;
+        for (WebElement each : elementos) {
+            count++;
+        }
+
+        assertEquals(16, count);
+    }
+    /**
+     * [Prueba13]Ir a la lista de usuarios, borrar el último usuario de la lista,
+     * comprobar que la lista se actualiza y dicho usuario desaparece.
+     */
+    @Test
+    @Order(13)
+    void Prueba13() {
+        InitDB.insertUser("zzz","zzz","zzz","USER","zzz");
+        PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
+        WebElement check = driver.findElement(By.id("checkbox_zzz"));
+        check.click();
+        WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
+        eliminarBtn.click();
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
+                PO_View.getTimeout());
+
+        int count = 0;
+        for (WebElement each : elementos) {
+            count++;
+        }
+
+        assertEquals(16, count);
+    }
+    /**
+     * [Prueba14]Ir a la lista de usuarios, borrar 3 usuarios,
+     * comprobar que la lista se actualiza y dichos usuarios desaparecen.
+     */
+    @Test
+    @Order(14)
+    void Prueba14() {
+        InitDB.insertUser("zzz","zzz","zzz","USER","zzz");
+        InitDB.insertUser("zzz1","zzz1","zzz1","USER","zzz1");
+        InitDB.insertUser("zzz2","zzz2","zzz2","USER","zzz2");
+        PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
+        WebElement check = driver.findElement(By.id("checkbox_zzz"));
+        check.click();
+        WebElement check1 = driver.findElement(By.id("checkbox_zzz1"));
+        check1.click();
+        WebElement check2 = driver.findElement(By.id("checkbox_zzz2"));
+        check2.click();
+        WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
+        eliminarBtn.click();
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
+                PO_View.getTimeout());
+
+        int count = 0;
+        for (WebElement each : elementos) {
+            count++;
+        }
+
+        assertEquals(16, count);
+    }
+    /**
+     * [Prueba15]Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el sistema,
+     * excepto el propio usuario y aquellos que sean Administradores.
+     */
+    @Test
+    @Order(15)
+    void Prueba15() {
+        PO_PrivateView.login(driver, "user14@email.com", "user14", "searchBtn");
+        WebElement pageBtn;
+        for(int i = 1;i<=4;i++) {
+            pageBtn = driver.findElement(By.id("page"+i));
+            pageBtn.click();
+            List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
+                    PO_View.getTimeout());
+
+            int count = 0;
+            for (WebElement each : elementos) {
+                count++;
+            }
+            if (i != 4) {
+                assertEquals(4, count);
+            } else {
+                assertEquals(2, count);
+            }
+        }
+
+    }
+    /**
+     *[Prueba16]Hacer  una  búsqueda  con  el  campo  vacío  y  comprobar  que  se  muestra  la  página  que corresponde
+     *con el listado usuarios existentes en el sistema.
+     */
+    @Test
+    @Order(16)
+    void Prueba16() {
+        PO_PrivateView.login(driver, "user14@email.com", "user14", "searchBtn");
+        WebElement navBar = driver.findElement(By.id("search"));
+        navBar.click();
+        navBar.clear();
+        WebElement navBarBtn = driver.findElement(By.id("searchBtn"));
+        navBarBtn.click();
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
+                PO_View.getTimeout());
+        int count = 0;
+        for (WebElement each : elementos) {
+            count++;
+        }
+        assertEquals(4, count);
+
+    }
+    /**
+     *[Prueba16]Hacer  una  búsqueda  con  el  campo  vacío  y  comprobar  que  se  muestra  la  página  que corresponde
+     *con el listado usuarios existentes en el sistema.
+     */
+    @Test
+    @Order(17)
+    void Prueba17() {
+        PO_PrivateView.login(driver, "user14@email.com", "user14", "searchBtn");
+        WebElement navBar = driver.findElement(By.id("search"));
+        navBar.click();
+        navBar.clear();
+        navBar.sendKeys("According to all known laws of aviation, there is no way that a bee should be " +
+                "able to fly. Its wings are too small to get its fat little body off the ground." +
+                " The bee, of course, flies anyway");
+        WebElement navBarBtn = driver.findElement(By.id("searchBtn"));
+        navBarBtn.click();
+        PO_PrivateView.checkTextNotInView(driver,"email");
+
+    }
+    /**
+     [Prueba18]Hacer  una  búsqueda  con  un texto  específico y  comprobar  que  se  muestra  la  página
+     que corresponde, con la lista de usuarios en los que el texto
+     especificado sea parte de su nombre, apellidos o de su email.
+     */
+    @Test
+    @Order(18)
+    void Prueba18() {
+        PO_PrivateView.login(driver, "user14@email.com", "user14", "searchBtn");
+        WebElement navBar = driver.findElement(By.id("search"));
+        navBar.click();
+        navBar.clear();
+        navBar.sendKeys("user02");
+        WebElement navBarBtn = driver.findElement(By.id("searchBtn"));
+        navBarBtn.click();
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
+                PO_View.getTimeout());
+        int count = 0;
+        for (WebElement each : elementos) {
+            count++;
+        }
+        assertEquals(1, count);
+
+    }
+
+
 
     /**
      * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
@@ -521,115 +711,5 @@ class SocialNetworkApplicationTests {
         Assertions.fail("Not yet implemented");
     }
 
-
-//
-//    @Test
-//    @Order(11)
-//    public void PR09() {
-//    }
-//
-//    @Test
-//    @Order(12)
-//    public void PR10() {
-//    }
-//
-//    @Test
-//    @Order(13)
-//    public void PR11() {
-//    }
-//
-//    //PR12. Loguearse, comprobar que se visualizan 4 filas de notas y desconectarse usando el rol de
-//    @Test
-//    @Order(14)
-//    public void PR12() {
-//        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-//        PO_LoginView.fillLoginForm(driver, "99999990A", "123456");
-//        String checkText = "Notas del usuario";
-//        List<WebElement> result = PO_View.checkElementBy(driver, "text", checkText);
-//
-//        //Contamos el número de filas de notas
-//        List<WebElement> markList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-//        Assertions.assertEquals(4, markList.size());
-//
-//        //Ahora nos desconectamos comprobamas que aparece el menu de registrarse
-//        String loginText = PO_HomeView.getP().getString("signup.message", PO_Properties.getSPANISH());
-//        PO_PrivateView.clickOption(driver, "logout", "text", loginText);
-//    }
-//
-//    //PR13. Loguearse como estudiante y ver los detalles de la nota con Descripcion = Nota A2.
-//    @Test
-//    @Order(15)
-//    public void PR13() {
-//        //Comprobamos que entramos en la pagina privada de Alumno
-//        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-//        PO_LoginView.fillLoginForm(driver, "99999990A", "123456");
-//        String checkText = "Notas del usuario";
-//
-//        List<WebElement> result = PO_View.checkElementBy(driver, "text", checkText);
-//
-//        //SeleniumUtils.esperarSegundos(driver, 1);
-//        //Contamos las notas
-//        By enlace = By.xpath("//td[contains(text(), 'Nota A2')]/following-sibling::*[2]");
-//        driver.findElement(enlace).click();
-//        //Esperamos por la ventana de detalle
-//
-//        checkText = "Detalles de la nota";
-//        result = PO_View.checkElementBy(driver, "text", checkText);
-//        Assertions.assertEquals(checkText, result.get(0).getText());
-//
-//        //Ahora nos desconectamos comprobamas que aparece el menu de registrarse
-//        String loginText = PO_HomeView.getP().getString("signup.message", PO_Properties.getSPANISH());
-//        PO_PrivateView.clickOption(driver, "logout", "text", loginText);
-//    }
-
-    //P14. Loguearse como profesor y Agregar Nota A2.
-    //P14. Esta prueba podría encapsularse mejor ...
-    @Test
-    @Order(16)
-    public void PR14() {
-//        //Vamos al formulario de login.
-//        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-//            PO_LoginView.fillLoginForm(driver, "99999993D", "123456");
-//        //Cmmprobamos que entramos en la pagina privada del Profesor
-//        PO_View.checkElementBy(driver, "text", "99999993D");
-//
-//        //Pinchamos en la opción de menu de Notas: //li[contains(@id, 'marks-menu')]/a
-//        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//li[contains(@id, 'marks-menu')]/a");
-//        elements.get(0).click();
-//
-//        //Esperamos a aparezca la opción de añadir nota: //a[contains(@href, 'mark/add')]
-//        elements = PO_View.checkElementBy(driver, "free", "//a[contains(@href, 'mark/add')]");
-//        //Pinchamos en agregar Nota.
-//        elements.get(0).click();
-//
-//        //Ahora vamos a rellenar la nota. //option[contains(@value, '4')]
-//        String checkText = "Nota Nueva 3";
-//        PO_PrivateView.fillFormAddMark(driver, 3, checkText, "8");
-//        //Esperamos a que se muestren los enlaces de paginación la lista de notas
-//        elements = PO_View.checkElementBy(driver, "free", "//a[contains(@class, 'page-link')]");
-//        //Nos vamos a la última página
-//        elements.get(3).click();
-//        //Comprobamos que aparece la nota en la pagina
-//        elements = PO_View.checkElementBy(driver, "text", checkText);
-//        Assertions.assertEquals(checkText, elements.get(0).getText());
-//
-//        //Ahora nos desconectamos comprobamas que aparece el menu de registrarse
-//        String loginText = PO_HomeView.getP().getString("signup.message", PO_Properties.getSPANISH());
-//        PO_PrivateView.clickOption(driver, "logout", "text", loginText);
-    }
-
-    //PRN. Loguearse como profesor, vamos a la ultima página y Eliminamos la Nota Nueva 1.
-    //PRN. Ver la lista de Notas.
-    @Test
-    @Order(17)
-    public void PR15() {
-        //Vamos al formulario de logueo.
-        //PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-        //PO_LoginView.fillLoginForm(driver, "99999993D", "123456");
-
-        //Comprobamos que entramos en la pagina privada del Profesor
-        //PO_View.checkElementBy(driver, "text", "99999993D");
-        //Pinchamos en la opción de menu de Notas: //li[contains(@id, 'marks-menu')]/a
-    }
 
 }
