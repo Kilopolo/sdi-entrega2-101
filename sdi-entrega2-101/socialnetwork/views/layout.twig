@@ -1,14 +1,4 @@
-<script>
 
-    let userEmail;
-    let userRol;
-    window.onload = function() {
-        userEmail = getCookie("userEmail");
-        userRol = getCookie("userRol");
-        document.getElementById('userEmail').innerHTML = userEmail ;
-        document.getElementById('userRol').innerHTML = userRol ;
-    };
-</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +8,22 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    {% block scripts %} {% endblock %}
+    <script>
+        console.log("entra en el script");
+        let userEmail = null;
+        let userRol = null;
+        window.addEventListener('load', takeCookies, false);
+        function takeCookies()
+        {
+            console.log("entra en el método");
+            userEmail = getCookie("userEmail");
+            userRol = getCookie("userRol");
+            // document.getElementById('userEmail').innerHTML = userEmail ;
+            // document.getElementById('userRol').innerHTML = userRol ;
+        }
+    </script>
+    {% block scripts %}
+    {% endblock %}
 </head>
 <body>
 {#{% set user = app.session.get('user') %}#}
@@ -47,7 +52,7 @@
                                aria-haspopup="true" aria-expanded="false"> Opciones
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="../user/list">Lista de Usuarios</a><br>
+                                <a class="dropdown-item" href="../users">Lista de Usuarios</a><br>
                                 <a class="dropdown-item" href="../peticiones">Lista de Peticiones</a><br>
                                 <a class="dropdown-item" href="../amistades">Lista de Amistades</a><br>
                                 <a class="dropdown-item" href="../publications">Ver Publicaciones</a><br>
@@ -58,14 +63,10 @@
 
                     {% if userRol == 'ADMIN' %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="users" id="adminDropdown" role="button"
                                data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false"> Gestión de usuarios
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="../user/adminList">Lista de Usuarios</a><br>
-                                <a class="dropdown-item" href="../publications/adminList">Lista de Publicaciones</a><br>
-                            </div>
                         </li>
                     {% endif %}
                 {% endif %}
