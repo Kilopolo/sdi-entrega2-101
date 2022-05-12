@@ -53,24 +53,6 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="../user/adminList">Lista de Usuarios</a><br>
                                 <a class="dropdown-item" href="../publications/adminList">Lista de Publicaciones</a><br>
-                                <a class="dropdown-item" href="../logger/list">Lista de Logs</a><br>
-                            </div>
-                        </li>
-                    {% endif %}
-                    {% if user.rol == 'ADMIN' %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdownLog" role="button"
-                               data-toggle="dropdown"
-                               aria-haspopup="true" aria-expanded="false"> Logger
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="../logger/list">Lista de Logs</a><br>
-                                <a class="dropdown-item" href="../logger/PET">Lista de PET</a><br>
-                                <a class="dropdown-item" href="../logger/ALTA">Lista de ALTA</a><br>
-                                <a class="dropdown-item" href="../logger/LOGINEX">Lista de LOGIN-EX</a><br>
-                                <a class="dropdown-item" href="../logger/LOGINERR">Lista de LOGIN-ERR</a><br>
-                                <a class="dropdown-item" href="../logger/LOGOUT">Lista de LOGOUT</a><br>
-                                <a class="dropdown-item" href="../logger/delete" id="borrar-logs">Borrar logs</a><br>
                             </div>
                         </li>
                     {% endif %}
@@ -79,10 +61,10 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user == null %}
-                    <li><a href="/users/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
-                    <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+                    <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
+                    <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
                 {% else %}
-                    <li><a id="btnDesconectar" href="/users/logout"><span class="glyphicon glyphicon-log-out"></span> Desconectarse</a></li>
+                    <li><a id="btnDesconectar" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Desconectarse</a></li>
                 {% endif %}
             </ul>
         </div>

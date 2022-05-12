@@ -4,8 +4,8 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
     /**
      * Método get para la página de inicio de la aplicación
-     */   
-app.get('/home', function (req, res) {
+     */
+    app.get('/home', function (req, res) {
         logger.info("GET /home");
         let user = req.session.user
         if (user == undefined) {
@@ -15,20 +15,23 @@ app.get('/home', function (req, res) {
         res.render("home.twig", {user: user});//
 
     });
+
     /**
      * Método get para el registro en la aplicación
      */
-    app.get('/users/signup', function (req, res) {
+    app.get('/signup', function (req, res) {
         logger.info("GET /users/signup");
         res.render("users/signup.twig");
     });
+
     /**
      * Método get para el inicio de sesión en la aplicación
      */
-    app.get('/users/login', function (req, res) {
+    app.get('/login', function (req, res) {
         logger.info("GET /users/login");
         res.render("users/login.twig");
     });
+
     /**
      * Método get que devuelve una lista de usuarios
      */
@@ -67,7 +70,7 @@ app.get('/home', function (req, res) {
                 //usersRepository.findUser(filter2, {}).then(user=>{
                 if (users == null || users.length === 0) {
                     logger.error("GET /users => Usuario no identificado");
-                    res.redirect("/users/login" + "?message=Usuario no identificado" + "&messageType=alert-danger ");
+                    res.redirect("/login" + "?message=Usuario no identificado" + "&messageType=alert-danger ");
 
                 } else {
                     let roleUserSession = req.session.user.rol;
@@ -156,6 +159,7 @@ app.get('/home', function (req, res) {
 
         }
     }
+
     /**
      * Método post para borrar a uno o multiples usuarios
      */
@@ -202,14 +206,15 @@ app.get('/home', function (req, res) {
                 elError: error
             });
         });
-    })
+    });
+
     /**
      * Método post para el registro en la aplicación
      */
-    app.post('/users/signup', function (req, res) {
+    app.post('/signup', function (req, res) {
         logger.info("POST /users/signup");
         if (req.body.password != req.body.passwordConfirm) {
-            res.redirect("/users/signup" +
+            res.redirect("/signup" +
                 "?message=La contraseña no se ha repetido correctamente" +
                 "&messageType=alert-danger ");
             // logger.error("El usuario que va a registrarse ha introducido mal su contraseña");
@@ -242,7 +247,7 @@ app.get('/home', function (req, res) {
                 } else {
                     //Si ya hay un email en la BDD lanzamos el error
                     logger.error("Ya existe un usuario registrado con ese email");
-                    res.redirect("/users/signup" +
+                    res.redirect("/signup" +
                         "?message=Ya existe un usuario registrado con ese email" +
                         "&messageType=alert-danger ");
                 }
@@ -259,7 +264,7 @@ app.get('/home', function (req, res) {
     /**
      * Método post para el inicio de sesión en la aplicación
      */
-    app.post('/users/login', function (req, res) {
+    app.post('/login', function (req, res) {
         logger.info("POST /users/login");
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -273,7 +278,7 @@ app.get('/home', function (req, res) {
 
             if (user == null) {
                 req.session.user = null;
-                res.redirect("/users/login" +
+                res.redirect("/login" +
                     "?message=Email o password incorrecto" +
                     "&messageType=alert-danger ");
             } else {
@@ -283,16 +288,17 @@ app.get('/home', function (req, res) {
         }).catch(err => {
             logger.error("Se ha producido un error al buscar el usuario");
             req.session.user = null;
-            res.redirect("/users/login" +
+            res.redirect("/login" +
                 "?message=Se ha producido un error al buscar el usuario" +
                 "&messageType=alert-danger ");
         });
     });
+
     /**
      * Método get para la salida de sesión en la aplicación
      */
-    app.get('/users/logout', function (req, res) {
-        logger.info("GET /users/login");
+    app.get('/logout', function (req, res) {
+        logger.info("GET /users/logout");
         req.session.user = null;
         res.render("index.twig");
     });
