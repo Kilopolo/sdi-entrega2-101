@@ -140,11 +140,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(5)
     void Prueba05() {
-
-
         PO_PrivateView.login(driver, "admin@email.com", "admin", "user-list");
-
-
     }
 
     /**
