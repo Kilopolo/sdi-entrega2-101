@@ -1,7 +1,6 @@
 package socialnetwork.db;
 
 import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import java.time.LocalDateTime;
@@ -12,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class InitDB {
 
@@ -26,8 +27,15 @@ public class InitDB {
 
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
 //            initDB(mongoclient);
+            System.out.println(getPublicacionByEmails(mongoclient,"",""));
         }
 
+    }
+
+    private static Document getPublicacionByEmails(MongoClient mongoclient, String user1, String user2) {
+        Document result = new Document();
+//        final Bson filter = and(eq(ModelDocument.F_ID, ownerId), exists(ModelDocument.F_CONTAINER));
+        return result;
     }
 
     private static void initDB(MongoClient mongoclient) {
@@ -396,7 +404,7 @@ public class InitDB {
 
     public static void deleteTestAmistades(String user1, String user2) {
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteOne(Filters.eq("user1","user"));
+            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteOne(eq("user1","user"));
         }
     }
 
