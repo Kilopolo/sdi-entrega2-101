@@ -322,9 +322,11 @@ class SocialNetworkApplicationTests {
      * [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las que
      * existen para dicho usuario.
      */
+    @Test
+    @Order(26)
     void Prueba26() {
         // Entramos con datos válidos
-        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
 
         //Navegamos al listado de publicaciones
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
@@ -343,8 +345,8 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        //comprobamos que existen 2
-        assertEquals(2, count);
+        //comprobamos que existe 1 (la que hemos añadido)
+        assertEquals(1, count);
     }
 
     /**
@@ -364,14 +366,15 @@ class SocialNetworkApplicationTests {
         // Accede a un amigo con publicaciones, user01
         PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
 
-        // Se deberían ver 2 filas (la cantidad de publicaciones de user00)
+        // Se debería ver 1 filas (la cantidad de publicaciones de user00)
         List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
                 "/html/body/div[1]/div[1]/table/tbody/tr");
-        assertEquals(2, elementos.size());
+        assertEquals(1, elementos.size());
     }
 
     /**
-     *
+     * [Prueba28] Utilizando un acceso vía URL u otra alternativa, tratar de listar las publicaciones de un usuario
+     * que no sea amigo del usuario identificado en sesión. Comprobar que el sistema da un error de autorización.
      */
     @Test
     @Order(28)
@@ -385,6 +388,51 @@ class SocialNetworkApplicationTests {
         // Comprobamos que se nos ha enviado al listado de amistades con el error apropiado
         PO_Publicaciones.checkElementBy(driver, "text",
                 "No tienes permiso para acceder a estas publicaciones");
+    }
+
+    /**
+     * [Prueba29] Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver al
+     * formulario de login.
+     */
+    @Test
+    @Order(29)
+    public void Prueba29() {
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/users");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
+    }
+
+    /**
+     * [Prueba30] Intentar acceder sin estar autenticado a la opción de listado de invitaciones de amistad recibida
+     * de un usuario estándar. Se deberá volver al formulario de login.
+     */
+    @Test
+    @Order(30)
+    public void Prueba30() {
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/peticiones");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
+    }
+
+    /**
+     * [Prueba31] Intentar acceder estando autenticado como usuario standard a la lista de amigos de otro
+     * usuario. Se deberá mostrar un mensaje de acción indebida.
+     */
+    @Test
+    @Order(31)
+    public void Prueba31() {
+        // No es posible acceder a un listado de amistades ajeno, al no contener parámetros en la URL
+        // Por tanto, testeamos aquí el funcionamiento del router de sesión para el listado de amistades
+
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/amistades");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
     }
 
     ///////////////////////////////////////////////////////////////////////////////
