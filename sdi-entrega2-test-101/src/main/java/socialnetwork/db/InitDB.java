@@ -234,7 +234,7 @@ public class InitDB {
         mongoclient.getDatabase(AppDBname).getCollection("users").insertOne(user);
     }
 
-    private static void insertUser(String userEmail, String name, String surname, String rol, String password) {
+    public static void insertUser(String userEmail, String name, String surname, String rol, String password) {
         Document user = getUser(userEmail, name, surname, rol, password);
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
             mongoclient.getDatabase(AppDBname).getCollection("users").insertOne(user);

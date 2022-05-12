@@ -22,7 +22,7 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-   // static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+   //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //PabloRgz
@@ -550,7 +550,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(27)
     public void Prueba27() {
-        PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
+        PO_PrivateView.login(driver, "user00@email.es", "user00", "user-list");
 
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/amistades").get(0).click();
@@ -571,7 +571,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(28)
     public void Prueba28() {
-        PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
+        PO_PrivateView.login(driver, "user00@email.es", "user00", "user-list");
 
         // Intentamos acceder a la lista de publicaciones de un usuario no amigo, y debería impedirse
         driver.navigate().to("http://localhost:4000/publications/list/user07@email.com");
