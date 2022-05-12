@@ -199,11 +199,11 @@ class SocialNetworkApplicationTests {
     @Order(19)
     void Prueba19() {
         PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
-        var elements = PO_View.checkElementBy(driver, "text", "user03@email.com");
-        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/user03@email.com']");
+        var elements = PO_View.checkElementBy(driver, "text", "user00@email.com");
+        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/user00@email.com']");
         elements.get(0).click();
         PO_HomeView.desconect(driver);
-        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         String checkText = "user11@email.com";
@@ -218,7 +218,7 @@ class SocialNetworkApplicationTests {
     @Order(20)
     void Prueba20() {
         PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
-        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/user03@email.com']", PO_View.getTimeout());
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/user00@email.com']", PO_View.getTimeout());
         PO_HomeView.desconect(driver);
     }
 
@@ -228,7 +228,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(21)
     void Prueba21() {
-        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
@@ -241,7 +241,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(22)
     void Prueba22() {
-        PO_PrivateView.login(driver, "user03@email.com", "user03", "user-list");
+        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
@@ -263,8 +263,8 @@ class SocialNetworkApplicationTests {
 
         //Contamos el numero de filas de los usuarios
         List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-        Assertions.assertEquals(3, amistadesList.size());
-        PO_DataBase.deleteAmistadByEmails("user11@email.com","user03@email.com");
+        Assertions.assertEquals(4, amistadesList.size());
+        PO_DataBase.deleteAmistadByEmails("user00@email.com","user11@email.com");
     }
 
 

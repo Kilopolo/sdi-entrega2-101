@@ -33,13 +33,6 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
 
 
         });
-        /*peticionesRepository.findPeticionesByEmail(filter, options).then(peticiones => {
-            getUserFromPeticiones(peticiones).then(usersPeticiones => {
-                res.render("peticiones/list.twig", {peticiones: usersPeticiones});
-            }).catch(error => "Se ha producido un error al encontrar algun usuario de las peticiones" + error);
-        }).catch(error => {
-            res.send("Se ha producido un error al listar las peticiones:" + error)
-        });*/
     });
 
     app.get("/peticiones/aceptar/:email", function (req, res) {
@@ -60,7 +53,7 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
     });
 
     app.get("/peticiones/enviar/:email", function (req, res) {
-        if( req.params.email != req.session.user.email){
+        if( req.params.email != req.session.user.email && req.params.email != "admin@email.com"){
         usersRepository.findUser({email: req.params.email}, {}).then(user => {
             if(user != null) {
             let peticion = {

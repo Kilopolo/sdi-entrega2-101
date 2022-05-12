@@ -72,7 +72,7 @@ app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
 app.use("/peticiones", userSessionRouter);
 app.use("/amistades", userSessionRouter);
-app.use("/users", userSessionRouter);
+//app.use("/users", userSessionRouter);
 
 
 const usersRepository = require("./repositories/usersRepository.js");
