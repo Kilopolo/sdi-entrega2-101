@@ -438,5 +438,12 @@ public class InitDB {
         }
     }
 
+    public static void deletePublicaciones(String titulo) {
+        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+            mongoclient.getDatabase(AppDBname).getCollection("publications").deleteMany(
+                    new Document("titulo", titulo));
+        }
+    }
+
 
 }
