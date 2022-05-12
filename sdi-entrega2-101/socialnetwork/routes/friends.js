@@ -31,7 +31,7 @@ module.exports = function (app, amistadesRepository, usersRepository) {
                     pages: pages,
                     currentPage: page
                 }
-                res.render("amistades/list.twig", {response:response, userInSession: req.session.user});
+                res.render("amistades/list.twig", {response:response, amistades: p, userInSession: req.session.user});
             }).catch(error => "Se ha producido un error al encontrar algun usuario de las amistades" + error);
         }).catch(error => {
             res.send("Se ha producido un error al listar los amigos:" + error)

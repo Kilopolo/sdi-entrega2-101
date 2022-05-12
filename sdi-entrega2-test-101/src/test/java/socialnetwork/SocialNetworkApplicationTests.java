@@ -22,8 +22,8 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "/usr/bin/firefox";
-    static String Geckodriver = "/usr/bin/geckodriver";
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
     //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
@@ -91,14 +91,6 @@ class SocialNetworkApplicationTests {
         WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
         eliminarBtn.click();
 
-        // String email = "email1@email.com";
-        // PO_DataBase.deleteUserByEmail(email);
-//        PO_RegisterView.deleteUser(driver, URL, email );
-//        driver.navigate().to(URL);
-        // PO_RegisterView.registerUser(driver, email, "password");
-//        driver.manage().deleteAllCookies();
-//        PO_RegisterView.deleteUser(driver, URL, email );
-
     }
 
 
@@ -150,11 +142,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(5)
     void Prueba05() {
-
-
         PO_PrivateView.login(driver, "admin@email.com", "admin", "user-list");
-
-
     }
 
     /**
@@ -184,7 +172,7 @@ class SocialNetworkApplicationTests {
     @Order(8)
     void Prueba08() {
         //Compribamos que no hemos entrado
-        PO_PrivateView.login(driver, "user01@email.com", "malapassword", "login");
+        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
 
     /**
@@ -228,7 +216,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
@@ -242,7 +230,7 @@ class SocialNetworkApplicationTests {
         PO_RegisterView.fillForm(driver, "aaa@email.com", "Randall", "Boggs"
                 , "user01", "user01");
         //PO_View.checkElementBy(driver, "id", "signup");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_aaa@email.com"));
         check.click();
@@ -256,7 +244,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
@@ -269,7 +257,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz@email.com", "Randall", "Boggs"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_zzz@email.com"));
         check.click();
@@ -283,7 +271,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
@@ -296,15 +284,15 @@ class SocialNetworkApplicationTests {
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz1@email.com", "Randall1", "Boggs1"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz2@email.com", "Randall2", "Boggs2"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz3@email.com", "Randall3", "Boggs3"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_zzz1@email.com"));
         check.click();
@@ -322,7 +310,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
@@ -429,18 +417,16 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(19)
     void Prueba19() {
-        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+       PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "a1@email.com", "Randall1", "Boggs1"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "a2@email.com", "Randall2", "Boggs2"
                 , "user02", "user02");
-        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "a1@email.com", "user01", "user-list");
         var pageBtn = driver.findElement(By.id("page" + 3));
         pageBtn.click();
-        pageBtn = driver.findElement(By.id("page" + 5));
+        pageBtn = driver.findElement(By.id("page" + 4));
         pageBtn.click();
         var elements = PO_View.checkElementBy(driver, "text", "a2@email.com");
         elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/a2@email.com']");
@@ -466,7 +452,7 @@ class SocialNetworkApplicationTests {
         PO_PrivateView.login(driver, "a1@email.com", "user01", "user-list");
         var pageBtn = driver.findElement(By.id("page" + 3));
         pageBtn.click();
-        pageBtn = driver.findElement(By.id("page" + 5));
+        pageBtn = driver.findElement(By.id("page" + 4));
         pageBtn.click();
         SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/a2@email.com']", PO_View.getTimeout());
         PO_HomeView.desconect(driver);
