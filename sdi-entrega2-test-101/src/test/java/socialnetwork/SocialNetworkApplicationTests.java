@@ -179,6 +179,7 @@ class SocialNetworkApplicationTests {
         //Nos desconectamos
         PO_HomeView.desconect(driver);
 
+
     }
 
     /**
@@ -188,7 +189,7 @@ class SocialNetworkApplicationTests {
     @Order(10)
     void Prueba10() {
 
-       // assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
 
     /**
@@ -289,7 +290,7 @@ class SocialNetworkApplicationTests {
         PO_Publicaciones.fillForm(driver, "PR24", "Contenido de test para PR24");
 
         // Comprobamos que se nos envía a la lista de publicaciones
-        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+        PO_View.checkElementBy(driver, "id", "tablePublications");
 
         // Comprobamos que la nueva publicación aparece
         PO_NavView.checkElementBy(driver, "text", "PR24");
@@ -310,10 +311,11 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "@href", "/publications/add").get(0).click();
 
         // Rellenamos el formulario con un título en blanco
-        PO_Publicaciones.fillForm(driver, "   ", "Contenido de test para PR25");
+        PO_Publicaciones.fillForm(driver, "", "Contenido de test para PR25");
 
         // Comprobamos que seguimos en el formulario de creacion
-        PO_View.checkElementBy(driver, "text", "Añadir nueva publicación");
+        PO_Publicaciones.checkElementBy(driver, "text",
+                "Ni el título ni el contenido de la publicación pueden estar vacíos");
     }
 
     /**
@@ -324,18 +326,18 @@ class SocialNetworkApplicationTests {
         // Entramos con datos válidos
         PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
 
-        //Navegamos al listad de publicaciones
+        //Navegamos al listado de publicaciones
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/publications").get(0).click();
 
-        // Comprobamos que accedemos la página correcta
-        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+        // Comprobamos que accedemos a la página correcta
+        PO_View.checkElementBy(driver, "id", "tablePublications");
 
         // Recuperamos una lista de tr
         List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "id", "publiCount",
                 PO_View.getTimeout());
 
-        //Contamos el numero de filas de los usuarios
+        //Contamos el número de filas de los usuarios
         int count = 0;
         for (WebElement each : elementos) {
             count++;

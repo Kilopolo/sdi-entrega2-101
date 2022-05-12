@@ -38,7 +38,7 @@ module.exports = {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("socialNetwork");
             const usersCollection = database.collection('users');
-            const result = await usersCollection.find(filter, options).toArray();
+            const result = await usersCollection.find(filter, options).sort({"email":1}).toArray();
             return result;
         } catch (error) {
             throw (error);
