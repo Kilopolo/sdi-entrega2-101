@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import socialnetwork.db.InitDB;
+import socialnetwork.db.*;
 import socialnetwork.pageobjects.*;
 import socialnetwork.util.*;
 
