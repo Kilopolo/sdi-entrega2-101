@@ -1,7 +1,9 @@
 module.exports = function (app, publicationsRepository, amistadesRepository) {
 
     let logger = app.get("log4js")
-
+    /**
+     * Método get que devuelve una lista publicaciones
+     */
     app.get("/publications", function (req, res) {
         logger.info("GET /publications");
         let filter = {email: req.session.user.email};
@@ -18,12 +20,16 @@ module.exports = function (app, publicationsRepository, amistadesRepository) {
         });
 
     });
-
+    /**
+     * Método get para añadir publicaciones
+     */
     app.get('/publications/add', function (req, res) {
         logger.info("GET /publications/add");
         res.render("publications/add.twig");
     });
-
+    /**
+     * Método post para añadir publicaciones
+     */
     app.post('/publications/add', function (req, res) {
         logger.info("POST /publications/add");
         console.log(req.body.titulo + req.body.texto);
@@ -49,7 +55,9 @@ module.exports = function (app, publicationsRepository, amistadesRepository) {
             });
         });
     });
-
+    /**
+     * Método get que devuelve las publicaciones para un usuario
+     */
     app.get("/publications/list/:email", function (req, res) {
         logger.info("GET /publications/list/:email");
         let filter = {
