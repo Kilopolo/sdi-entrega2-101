@@ -14,23 +14,40 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         res.render("users/signup.twig");
     });
 
+    app.get('/users/login', function (req, res) {
+        res.render("users/login.twig");
+    });
+
     app.get('/users', function (req, res) {
         let filter = {};
+        filter = {
+            email: {$ne: req.session.user.email},
+            rol: {$ne: "ADMIN"}
+        }
         if (req.query.search != null && typeof (req.query.search) != "undefined" &&
             req.query.search != "") {
-            filter = {
-                "$or": [
-                    {"name": {$regex: ".*" + req.query.search + ".*"}},
-                    {"surname": {$regex: ".*" + req.query.search + ".*"}},
-                    {"email": {$regex: ".*" + req.query.search + ".*"}}
-                ]
-            };
+
+
+
+            // console.log(req.session.user.email)
+            // console.log(req.session.user.email)
+
+            // filter = [{
+            //     "$or": [
+            //         {"name": {$regex: ".*" + req.query.search + ".*"}},
+            //         {"surname": {$regex: ".*" + req.query.search + ".*"}},
+            //         {"email": {$regex: ".*" + req.query.search + ".*"}}
+            //     ]
+            // },{
+            //     email: {$ne:req.session.user.email}
+            // }];
         }
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
-        usersRepository.getUsersPage(filter, {}, page,4).then(result => {
+        usersRepository.getUsersPage(filter, {}, page, 4).then(result => {
+            // usersRepository.findUsers(filter, {}).then(result => {
             let lastPage = result.total / 4;
             if (result.total % 4 > 0) {
                 lastPage++;
@@ -41,17 +58,17 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                     pages.push(i);
                 }
             }
-            usersRepository.findUsers(filter,{}).then(users => {
+            usersRepository.findUsers(filter, {}).then(users => {
                 /*let filter2 = {
                     email : req.session.user.email,
                 }*/
                 //usersRepository.findUser(filter2, {}).then(user=>{
-                if (users == null || users.length===0 ) {
-                    res.redirect("/users/login" + "?message=Usuario no identificado"+ "&messageType=alert-danger ");
+                if (users == null || users.length === 0) {
+                    res.redirect("/users/login" + "?message=Usuario no identificado" + "&messageType=alert-danger ");
 
                 } else {
                     let roleUserSession = req.session.user.rol;
-                    if(roleUserSession === "ADMIN"){
+                    if (roleUserSession === "ADMIN") {
                         res.render("users/list.twig",
                             {
                                 users: users,
@@ -60,9 +77,15 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                                 currentPage: page,
                                 userRol: roleUserSession
                             });
-                    }
-                    else {
-                        renderUserList(req,res,req.session.user,users,pages,page);
+                    } else {
+                        for (i = 0; i < result.users.length; i++) {
+                            if (result.users[i].email === req.session.user.email || result.users[i].email === "admin@email.com") {
+                                result.users.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        renderUserList(req, res, req.session.user, result.users, pages, page);
+                        // renderUserList(req,res,req.session.user,users,pages,page);
                         /*res.render("users/list.twig",
                             {
                                 users: result.users,
@@ -81,56 +104,14 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 });*/
             }).catch(err => {
                 res.render("error.twig", {
-                    mensaje : "Se ha producido un error al buscar los usuarios",
-                    elError : err
+                    mensaje: "Se ha producido un error al buscar los usuarios",
+                    elError: err
                 });
             });
         }).catch(err => {
             res.render("error.twig", {
-                mensaje : "Se ha producido un error al buscar los usuarios",
-                elError : err
-            });
-        });
-    })
-    app.post("/users/delete", function (req, res) {
-        let toDeleteUsers = req.body.checkEliminar;
-        if (!Array.isArray(toDeleteUsers)) {
-            let aux = toDeleteUsers;
-            toDeleteUsers = [];
-            toDeleteUsers.push(aux);
-        }
-        let filter = {email: {$in: toDeleteUsers}};
-        let filter2 = { $or : [{"user1" :{$in: toDeleteUsers}}, {"user2":{$in: toDeleteUsers}}]};
-        peticionesRepository.deletePeticiones(filter2,{}).then(peticion=>{
-            if(peticion==null){
-                res.redirect("/users" + "?message=Se ha producido un error al eliminar envitaciones" + "&messageType=alert-danger");
-            }
-            else{
-                amistadesRepository.deleteAmistades(filter2,{}).then(amistades=>{
-                    if(amistades==null){
-                        res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
-                    }
-                    else{
-                        usersRepository.deleteUsers(filter,{}).then(users => {
-                            res.redirect("/users");
-                        }).catch(error => {
-                            res.render("error.twig", {
-                                mensaje : "Se ha producido un error al listar los usuarios del sistema",
-                                elError : error
-                            });
-                        });
-                    }
-                }).catch(error => {
-                    res.render("error.twig", {
-                        mensaje : "Se ha producido un error al eliminar los amigos",
-                        elError : error
-                    });
-                });
-            }
-        }).catch(error => {
-            res.render("error.twig", {
-                mensaje : "Se ha producido un error al eliminar las invitaciones del sistema",
-                elError : error
+                mensaje: "Se ha producido un error al buscar los usuarios",
+                elError: err
             });
         });
     })
@@ -194,6 +175,47 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         });*/
     }
 
+    app.post("/users/delete", function (req, res) {
+        let toDeleteUsers = req.body.checkEliminar;
+        if (!Array.isArray(toDeleteUsers)) {
+            let aux = toDeleteUsers;
+            toDeleteUsers = [];
+            toDeleteUsers.push(aux);
+        }
+        let filter = {email: {$in: toDeleteUsers}};
+        let filter2 = {$or: [{"user1": {$in: toDeleteUsers}}, {"user2": {$in: toDeleteUsers}}]};
+        peticionesRepository.deletePeticiones(filter2, {}).then(peticion => {
+            if (peticion == null) {
+                res.redirect("/users" + "?message=Se ha producido un error al eliminar envitaciones" + "&messageType=alert-danger");
+            } else {
+                amistadesRepository.deleteAmistades(filter2, {}).then(amistades => {
+                    if (amistades == null) {
+                        res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
+                    } else {
+                        usersRepository.deleteUsers(filter, {}).then(users => {
+                            res.redirect("/users");
+                        }).catch(error => {
+                            res.render("error.twig", {
+                                mensaje: "Se ha producido un error al listar los usuarios del sistema",
+                                elError: error
+                            });
+                        });
+                    }
+                }).catch(error => {
+                    res.render("error.twig", {
+                        mensaje: "Se ha producido un error al eliminar los amigos",
+                        elError: error
+                    });
+                });
+            }
+        }).catch(error => {
+            res.render("error.twig", {
+                mensaje: "Se ha producido un error al eliminar las invitaciones del sistema",
+                elError: error
+            });
+        });
+    })
+
     app.post('/users/signup', function (req, res) {
         if (req.body.password != req.body.passwordConfirm) {
             res.redirect("/users/signup" +
@@ -234,10 +256,20 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
         }
     });
+    //TODO authorrouternova
+    //no ver admin ni
+    //descomentar setInterval
+    /*
+    for(i=0;i<result.users.length;i++){
+                            if(result.users[i].email === req.session.user.email||result.users[i].email === "admin@email.com"){
+                                result.users.splice(i,1);
+                                i--;
+                            }
+                        }
+     */
 
-    app.get('/users/login', function (req, res) {
-        res.render("users/login.twig");
-    });
+
+
 
     app.post('/users/login', function (req, res) {
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
@@ -280,10 +312,10 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         res.render("index.twig");
     });
 
-    function getEmailFromList(list,req) {
+    function getEmailFromList(list, req) {
         let resultList = [];
-        for (let i = 0; i< list.length; i++){
-            if(list[i].user1 === req.session.user.email){
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].user1 === req.session.user.email) {
                 resultList.push(list[i].user2);
             } else {
                 resultList.push(list[i].user1);
