@@ -250,9 +250,12 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(13)
     void Prueba13() {
-        InitDB.insertUser("zzz","zzz","zzz","USER","zzz");
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_RegisterView.fillForm(driver, "zzz@email.com", "Randall", "Boggs"
+                , "user01", "user01");
+        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
-        WebElement check = driver.findElement(By.id("checkbox_zzz"));
+        WebElement check = driver.findElement(By.id("checkbox_zzz@email.com"));
         check.click();
         WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
         eliminarBtn.click();
@@ -273,15 +276,24 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(14)
     void Prueba14() {
-        InitDB.insertUser("zzz","zzz","zzz","USER","zzz");
-        InitDB.insertUser("zzz1","zzz1","zzz1","USER","zzz1");
-        InitDB.insertUser("zzz2","zzz2","zzz2","USER","zzz2");
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_RegisterView.fillForm(driver, "zzz1@email.com", "Randall1", "Boggs1"
+                , "user01", "user01");
+        PO_HomeView.desconect(driver);
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_RegisterView.fillForm(driver, "zzz2@email.com", "Randall2", "Boggs2"
+                , "user01", "user01");
+        PO_HomeView.desconect(driver);
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_RegisterView.fillForm(driver, "zzz3@email.com", "Randall3", "Boggs3"
+                , "user01", "user01");
+        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
-        WebElement check = driver.findElement(By.id("checkbox_zzz"));
+        WebElement check = driver.findElement(By.id("checkbox_zzz1@email.com"));
         check.click();
-        WebElement check1 = driver.findElement(By.id("checkbox_zzz1"));
+        WebElement check1 = driver.findElement(By.id("checkbox_zzz2@email.com"));
         check1.click();
-        WebElement check2 = driver.findElement(By.id("checkbox_zzz2"));
+        WebElement check2 = driver.findElement(By.id("checkbox_zzz3@email.com"));
         check2.click();
         WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
         eliminarBtn.click();
@@ -397,17 +409,29 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(19)
     void Prueba19() {
-        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
-        var elements = PO_View.checkElementBy(driver, "text", "user00@email.com");
-        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/user00@email.com']");
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_RegisterView.fillForm(driver, "a1@email.com", "Randall1", "Boggs1"
+                , "user01", "user01");
+        PO_HomeView.desconect(driver);
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_RegisterView.fillForm(driver, "a2@email.com", "Randall2", "Boggs2"
+                , "user02", "user02");
+        PO_HomeView.desconect(driver);
+        PO_PrivateView.login(driver, "a1@email.com", "user01", "user-list");
+        var pageBtn = driver.findElement(By.id("page"+3));
+        pageBtn.click();
+        pageBtn = driver.findElement(By.id("page"+5));
+        pageBtn.click();
+        var elements = PO_View.checkElementBy(driver, "text", "a2@email.com");
+        elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/a2@email.com']");
         elements.get(0).click();
         SeleniumUtils.waitSeconds(driver,5);
         PO_HomeView.desconect(driver);
-        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+        PO_PrivateView.login(driver, "a2@email.com", "user02", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
-        String checkText = "user11@email.com";
-        var result = PO_View.checkElementBy(driver, "text", "user11@email.com");
+        String checkText = "a1@email.com";
+        var result = PO_View.checkElementBy(driver, "text", "a1@email.com");
         Assertions.assertEquals(checkText, result.get(0).getText());
     }
 
@@ -419,8 +443,12 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(20)
     void Prueba20() {
-        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
-        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/user00@email.com']", PO_View.getTimeout());
+        PO_PrivateView.login(driver, "a1@email.com", "user01", "user-list");
+        var pageBtn = driver.findElement(By.id("page"+3));
+        pageBtn.click();
+        pageBtn = driver.findElement(By.id("page"+5));
+        pageBtn.click();
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/a2@email.com']", PO_View.getTimeout());
         PO_HomeView.desconect(driver);
     }
 
@@ -431,7 +459,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(21)
     void Prueba21() {
-        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+        PO_PrivateView.login(driver, "a2@email.com", "user02", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
@@ -445,14 +473,14 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(22)
     void Prueba22() {
-        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+        PO_PrivateView.login(driver, "a2@email.com", "user02", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
         PO_Peticiones.checkListaDePeticiones(driver,1);
-        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/aceptar/user11@email.com']");
+        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/aceptar/a1@email.com']");
         elements.get(0).click();
-        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/a1@email.com']", PO_View.getTimeout());
     }
 
     /**
@@ -462,14 +490,22 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(23)
     void Prueba23() {
-        PO_PrivateView.login(driver, "user11@email.com", "user11", "user-list");
+        PO_PrivateView.login(driver, "a1@email.com", "user01", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/amistades").get(0).click();
 
         //Contamos el numero de filas de los usuarios
         List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-        Assertions.assertEquals(4, amistadesList.size());
-        PO_DataBase.deleteAmistadByEmails("user00@email.com","user11@email.com");
+        Assertions.assertEquals(1, amistadesList.size());
+
+        PO_HomeView.desconect(driver);
+        PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
+        WebElement check = driver.findElement(By.id("checkbox_a1@email.com"));
+        check.click();
+        WebElement check1 = driver.findElement(By.id("checkbox_a2@email.com"));
+        check1.click();
+        WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
+        eliminarBtn.click();
     }
 
 
