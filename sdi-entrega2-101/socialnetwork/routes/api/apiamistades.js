@@ -3,6 +3,10 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
 
     let logger = app.get("log4js")
 
+    /**
+     * Función que recupera la lista de amistades del usuario autenticado, con el último mensaje entre ellos.
+     * En caso de no estar autenticado, se reenviará al login.
+     */
     app.get("/api/v1.0/friends/list", function (req, res) {
 
 
@@ -128,10 +132,13 @@ module.exports = function (app, usersRepository, amistadesRepository, messageRep
             res.status(500);
             res.json({error: "Se ha producido un error al recuperar las amistades."})
         });
-
-
     });
 
+    /**
+     * Método auxiliar que parsea la fecha del mensaje a partir del string almacenado
+     * @param fechaStr La fecha en formato String
+     * @returns {Date} La fecha real a recuperar
+     */
     function parseDateFromMssg(fechaStr) {
         let a = fechaStr.split(" ");
         let dia = a[0];

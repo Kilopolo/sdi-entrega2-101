@@ -4,7 +4,8 @@ module.exports = function (app, usersRepository) {
     let logger = app.get("log4js")
 
     /**
-     * Función que autentica a un usuario en la aplicación, comprueba si esta en la base de datos, si es asi, marca al usuario como autenticado.
+     * Función que autentica a un usuario en la aplicación, comprueba si esta en la base de datos, y si es asi,
+     * marca al usuario como autenticado.
      */
     app.post("/api/v1.0/users/login", function (req, res) {
 
