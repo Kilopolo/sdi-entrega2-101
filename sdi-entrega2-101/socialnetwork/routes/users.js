@@ -215,52 +215,57 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      */
     app.post('/signup', function (req, res) {
         logger.info("POST /signup");
-        if (req.body.password != req.body.passwordConfirm) {
-            res.redirect("/signup" +
-                "?message=La contraseña no se ha repetido correctamente" +
-                "&messageType=alert-danger ");
-            // logger.error("El usuario que va a registrarse ha introducido mal su contraseña");
-        } else {
-            let securePassword = app.get("crypto")
-                .createHmac('sha256', app.get('clave'))
-                .update(req.body.password).digest('hex');
-            let user = {
-                email: req.body.email,
-                password: securePassword,
-                name: req.body.name,
-                surname: req.body.surname,
-                rol: "USER"
-            }
-
-            let filter = {email: user.email}
-            usersRepository.findUser(filter, {}).then(userFound => {
-                if (userFound == null) {
-                    //si no hay ninguno se puede registrar
-                    usersRepository.insertUser(user).then(userId => {
-                        //res.send('Usuario registrado ' + userId);
-                        res.redirect("/login", {user: user});
-                    }).catch(err => {
-                        logger.error("Error al insertar el usuario");
-                        res.render("error.twig", {
-                            mensaje: "Error al insertar el usuario",
-                            elError: error
-                        });
-                    });
-                } else {
-                    //Si ya hay un email en la BDD lanzamos el error
-                    logger.error("Ya existe un usuario registrado con ese email");
-                    res.redirect("/signup" +
-                        "?message=Ya existe un usuario registrado con ese email" +
-                        "&messageType=alert-danger ");
+        try{
+            if (req.body.password != req.body.passwordConfirm) {
+                res.redirect("/signup" +
+                    "?message=La contraseña no se ha repetido correctamente" +
+                    "&messageType=alert-danger ");
+                // logger.error("El usuario que va a registrarse ha introducido mal su contraseña");
+            } else {
+                let securePassword = app.get("crypto")
+                    .createHmac('sha256', app.get('clave'))
+                    .update(req.body.password).digest('hex');
+                let user = {
+                    email: req.body.email,
+                    password: securePassword,
+                    name: req.body.name,
+                    surname: req.body.surname,
+                    rol: "USER"
                 }
-            }).catch(err => {
-                logger.error("Error al insertar el usuario");
-                res.render("error.twig", {
-                    mensaje: "Error al insertar el usuario",
-                    elError: error
+
+                let filter = {email: user.email}
+                usersRepository.findUser(filter, {}).then(userFound => {
+                    if (userFound == null) {
+                        //si no hay ninguno se puede registrar
+                        usersRepository.insertUser(user).then(userId => {
+                            //res.send('Usuario registrado ' + userId);
+                            res.redirect("/login", {user: user});
+                        }).catch(error => {
+                            logger.error("Error al insertar el usuario");
+                            res.render("error.twig", {
+                                mensaje: "Error al insertar el usuario",
+                                elError: error
+                            });
+                        });
+                    } else {
+                        //Si ya hay un email en la BDD lanzamos el error
+                        logger.error("Ya existe un usuario registrado con ese email");
+                        res.redirect("/signup" +
+                            "?message=Ya existe un usuario registrado con ese email" +
+                            "&messageType=alert-danger ");
+                    }
+                }).catch(error => {
+                    logger.error("Error al insertar el usuario");
+                    res.render("error.twig", {
+                        mensaje: "Error al insertar el usuario",
+                        elError: error
+                    });
                 });
-            });
+            }
+        } catch (e) {
+            logger.error("POST /signup");
         }
+
     });
 
     /**

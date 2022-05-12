@@ -1,6 +1,7 @@
 package socialnetwork.pageobjects;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -45,4 +46,21 @@ public class PO_RegisterView extends PO_NavView {
         // Comprobamos que entramos en la sección privada
         checkElementBy(driver, "id", "login");
     }
+
+    public static void deleteUser(WebDriver driver, String URL, String user) {
+        driver.navigate().to(URL);
+        try {
+            PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
+            WebElement check = driver.findElement(By.id("checkbox_" + user));
+            check.click();
+            WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
+            eliminarBtn.click();
+        } catch (NoSuchElementException e) {
+            e.getMessage();
+        }
+        driver.manage().deleteAllCookies();
+
+    }
+
+
 }
