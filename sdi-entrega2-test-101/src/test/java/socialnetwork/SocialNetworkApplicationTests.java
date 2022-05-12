@@ -309,7 +309,7 @@ class SocialNetworkApplicationTests {
         // Rellenamos el formulario con un título en blanco
         PO_Publicaciones.fillForm(driver, "", "Contenido de test para PR25");
 
-        // Comprobamos que seguimos en el formulario de creacion
+        // Comprobamos que seguimos en el formulario, y se muestra el error apropiado
         PO_Publicaciones.checkElementBy(driver, "text",
                 "Ni el título ni el contenido de la publicación pueden estar vacíos");
     }
@@ -376,7 +376,13 @@ class SocialNetworkApplicationTests {
     public void Prueba28() {
         PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
 
+        // Intentamos acceder a la lista de publicaciones de un usuario no amigo, y debería impedirse
+        driver.navigate().to("http://localhost:4000/publications/list/user07@email.com");
+        //PO_View.checkElementBy(driver, "text", "Error de autorización");
 
+        // Comprobamos que se nos ha enviado al listado de amistades con el error apropiado
+        PO_Publicaciones.checkElementBy(driver, "text",
+                "No tienes permiso para acceder a estas publicaciones");
     }
 
     /**
