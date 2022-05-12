@@ -29,7 +29,6 @@ public class InitDB {
 
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
             initDB(mongoclient);
-
         }
 
     }
