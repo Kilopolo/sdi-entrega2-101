@@ -59,7 +59,7 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
      * Método get que envía una petición
      */
     app.get("/peticiones/enviar/:email", function (req, res) {
-        if( req.params.email != req.session.user.email){
+        if( req.params.email != req.session.user.email && req.params.email != "admin@email.com"){
         usersRepository.findUser({email: req.params.email}, {}).then(user => {
             if(user != null) {
             let peticion = {

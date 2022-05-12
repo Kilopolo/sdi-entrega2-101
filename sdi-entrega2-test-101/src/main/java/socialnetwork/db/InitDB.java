@@ -312,7 +312,10 @@ public class InitDB {
 
     public static void deleteTestAmistades(String user1, String user2) {
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteOne(Filters.eq("user1","user"));
+            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteOne(
+                    new Document("user1", user1)
+                            .append("user2", user2)
+            );
         }
     }
 
