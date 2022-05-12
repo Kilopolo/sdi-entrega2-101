@@ -33,20 +33,8 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         if (req.query.search != null && typeof (req.query.search) != "undefined" &&
             req.query.search != "") {
 
-
-            // console.log(req.session.user.email)
-            // console.log(req.session.user.email)
-
-            // filter = [{
-            //     "$or": [
-            //         {"name": {$regex: ".*" + req.query.search + ".*"}},
-            //         {"surname": {$regex: ".*" + req.query.search + ".*"}},
-            //         {"email": {$regex: ".*" + req.query.search + ".*"}}
-            //     ]
-            // },{
-            //     email: {$ne:req.session.user.email}
-            // }];
         }
+
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;

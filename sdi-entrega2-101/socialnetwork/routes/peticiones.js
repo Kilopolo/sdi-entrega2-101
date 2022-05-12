@@ -2,19 +2,34 @@ const usersRepository = require("../repositories/usersRepository");
 //TODO arreglar
 module.exports = function (app, peticionesRepository, usersRepository, amistadesRepository) {
 
+    let logger = app.get("log4js")
+
+
     app.get("/peticiones", function (req, res) {
+        logger.info("GET /peticiones");
         let filter = {user2: req.session.user.email};
         let options = {};
         peticionesRepository.findPeticionesByEmail(filter, options).then(peticiones => {
             getUserFromPeticiones(peticiones).then(usersPeticiones => {
                 res.render("peticiones/list.twig", {peticiones: usersPeticiones});
-            }).catch(error => "Se ha producido un error al encontrar algun usuario de las peticiones" + error);
+            }).catch(error => {
+                logger.error("Se ha producido un error al encontrar algun usuario de las peticiones" + error);
+                res.render("error.twig", {
+                    mensaje: "Se ha producido un error al encontrar algun usuario de las peticiones",
+                    elError: error
+                });
+            });
         }).catch(error => {
-            res.send("Se ha producido un error al listar las peticiones:" + error)
+            logger.error("Se ha producido un error al listar las peticiones: " + error);
+            res.render("error.twig", {
+                mensaje: "Se ha producido un error al listar las peticiones",
+                elError: error
+            });
         });
     });
 
     app.get("/peticiones/aceptar/:email", function (req, res) {
+        logger.info("GET /peticiones/aceptar/:email");
         let filter = {$and: [{user1: req.params.email}, {user2: req.session.user.email}]};
         let options = {};
         peticionesRepository.findPeticionesByEmail(filter, options).then(peticion => {
@@ -24,75 +39,106 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
                     user1: req.params.email,
                     user2: req.session.user.email
                 }
-                amistadesRepository.insertAmistad(amistad);
+                amistadesRepository.insertAmistad(amistad).catch(error => {
+                    logger.error("Se ha producido un error al insertar la amistad: " + error);
+                    res.render("error.twig", {
+                        mensaje: "Se ha producido un error al insertar la amistad",
+                        elError: error
+                    });
+                });
+            }).catch(error => {
+                logger.error("Se ha producido un error al borrar la petición: " + error);
+                res.render("error.twig", {
+                    mensaje: "Se ha producido un error al borrar la petición ",
+                    elError: error
+                });
             });
             //creear amistad
             res.redirect("/peticiones");
+        }).catch(error => {
+            logger.error("Se ha producido un error al listar las peticiones: " + error);
+            res.render("error.twig", {
+                mensaje: "Se ha producido un error al listar las peticiones",
+                elError: error
+            });
         });
     });
 
     app.get("/peticiones/enviar/:email", function (req, res) {
-        if( req.params.email != req.session.user.email){
-        usersRepository.findUser({email: req.params.email}, {}).then(user => {
-            if(user != null) {
-            let peticion = {
-                user1: req.session.user.email,
-                user2: req.params.email
-            };
-            if (req.params.email != req.session.user.email) {
-                peticionesRepository.findPeticionesByEmail(peticion, {}).then(peticionYaCreada => {
-                    if (peticionYaCreada.length <= 0) {
-                        let amistad = {
-                            $or: [
-                                {
-                                    $and: [
-                                        {user1: req.session.user.email},
-                                        {user2: req.params.email}
-                                    ]
-                                },
-                                {
-                                    $and: [
-                                        {user2: req.session.user.email},
-                                        {user1: req.params.email}]
-                                }]
-                        }
-                        amistadesRepository.findAmistadesByEmail(amistad, {}).then(amistadYaCreada => {
-                            if (amistadYaCreada.length <= 0) {
-                                let peticionInversa = {
-                                    user2: req.session.user.email,
-                                    user1: req.params.email
-                                };
-                                peticionesRepository.findPeticionesByEmail(peticionInversa, {}).then(peticionInversaCreada => {
-                                    if (peticionInversaCreada.length <= 0) {
-                                        peticionesRepository.insertPeticion(peticion, {}).then(peticion => {
-                                            res.redirect("/users");
-                                        });
-                                    } else {
-                                        amistadesRepository.insertAmistad({
-                                            user1: req.session.user.email,
-                                            user2: req.params.email
-                                        }, {}).then(peticion => {
-                                            peticionesRepository.deletePeticion({"_id": peticionInversaCreada[0]._id}).then(borrado=>{
-                                                res.redirect("/users");
-                                            });
+        logger.info("GET /peticiones/enviar/:email");
+        if (req.params.email != req.session.user.email) {
+            usersRepository.findUser({email: req.params.email}, {}).then(user => {
+                if (user != null) {
+                    let peticion = {
+                        user1: req.session.user.email,
+                        user2: req.params.email
+                    };
+                    if (req.params.email != req.session.user.email) {
+                        peticionesRepository.findPeticionesByEmail(peticion, {}).then(peticionYaCreada => {
+                            if (peticionYaCreada.length <= 0) {
+                                let amistad = {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {user1: req.session.user.email},
+                                                {user2: req.params.email}
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {user2: req.session.user.email},
+                                                {user1: req.params.email}]
+                                        }]
+                                }
+                                amistadesRepository.findAmistadesByEmail(amistad, {}).then(amistadYaCreada => {
+                                    if (amistadYaCreada.length <= 0) {
+                                        let peticionInversa = {
+                                            user2: req.session.user.email,
+                                            user1: req.params.email
+                                        };
+                                        peticionesRepository.findPeticionesByEmail(peticionInversa, {}).then(peticionInversaCreada => {
+                                            if (peticionInversaCreada.length <= 0) {
+                                                peticionesRepository.insertPeticion(peticion, {}).then(peticion => {
+                                                    res.redirect("/users");
+                                                });
+                                            } else {
+                                                amistadesRepository.insertAmistad({
+                                                    user1: req.session.user.email,
+                                                    user2: req.params.email
+                                                }, {}).then(peticion => {
+                                                    peticionesRepository.deletePeticion({"_id": peticionInversaCreada[0]._id}).then(borrado => {
+                                                        res.redirect("/users");
+                                                    });
 
-                                        });
+                                                });
+                                            }
+                                        })
+
+                                    } else {
+                                        res.redirect("/users");
                                     }
                                 })
 
-                            } else {res.redirect("/users");}
-                        })
-
+                            } else {
+                                res.redirect("/users");
+                            }
+                        }).catch()
                     }
-                    else {res.redirect("/users");}
-                }).catch()
-            }}
-            else {
+                } else {
 
-            }
+                }
 
-        });} else { res.redirect("/users");}
-        })
+            }).catch(error => {
+                logger.error("Se ha producido un error al encontrar usuarios : " + error);
+                res.render("error.twig", {
+                    mensaje: "Se ha producido un error al encontrar usuarios",
+                    elError: error
+                });
+            });
+        } else {
+            res.redirect("/users");
+        }
+    })
 };
 
 
