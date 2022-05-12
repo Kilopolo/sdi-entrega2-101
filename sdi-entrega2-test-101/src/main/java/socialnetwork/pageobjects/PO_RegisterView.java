@@ -43,6 +43,6 @@ public class PO_RegisterView extends PO_NavView {
         // Rellenamos el formulario.
         PO_RegisterView.fillForm(driver, email, "Nombre", "Apellido", password, password);
         // Comprobamos que entramos en la sección privada
-        checkElementBy(driver, "id", "login");
+        checkElementBy(driver, "id", "home");
     }
 }

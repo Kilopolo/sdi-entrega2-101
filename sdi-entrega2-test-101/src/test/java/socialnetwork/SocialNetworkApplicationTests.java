@@ -86,7 +86,7 @@ class SocialNetworkApplicationTests {
         String email = "email1@email.com";
         PO_RegisterView.registerUser(driver, email, "password");
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
-        WebElement check = driver.findElement(By.id("checkbox_aaa@email.com"));
+        WebElement check = driver.findElement(By.id("checkbox_email1@email.com"));
         check.click();
         WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
         eliminarBtn.click();
