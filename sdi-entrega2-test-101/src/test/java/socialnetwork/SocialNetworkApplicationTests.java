@@ -376,6 +376,11 @@ class SocialNetworkApplicationTests {
 
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    //////////////    Parte 2B - Cliente - Aplicación jQuery       ////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+
+
     /**
      * [Prueba32] Inicio de sesión con datos válidos.
      */
@@ -383,7 +388,7 @@ class SocialNetworkApplicationTests {
     @Order(32)
     void Prueba32() {
         driver.navigate().to(URLApiClient);
-        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, "user01@email.com", "user01", "friend-list");
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -406,7 +411,7 @@ class SocialNetworkApplicationTests {
     void Prueba34() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.getCount(driver,user,6);
 //        Assertions.fail("Not yet implemented");
     }
@@ -420,7 +425,7 @@ class SocialNetworkApplicationTests {
     void Prueba35() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.filter(driver,"user00@email.com");
         //2 por que las tr estan duplicadas por la linea de ultimo mensaje
         PO_ClienteAPIFriendList.getCount(driver,user,2);
@@ -435,7 +440,7 @@ class SocialNetworkApplicationTests {
     void Prueba36() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
         PO_ClienteAPIChat.getCountMessages(driver,3);
         Assertions.fail("Not yet implemented");
@@ -449,7 +454,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(37)
     void Prueba37() {
-
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
+        PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
+        PO_ClienteAPIFriendList.createMessage(driver,"cceder a la lista de mensajes de un amigo y crear u");
         Assertions.fail("Not yet implemented");
     }
 

@@ -34,7 +34,7 @@ userTokenRouter.use(function (req, res, next) {
             }
         });
     } else {
-        // logger.error("No hay Token")
+        logger.error("No hay Token")
         res.status(403); // Forbidden
         res.json({
             authorized: false,
