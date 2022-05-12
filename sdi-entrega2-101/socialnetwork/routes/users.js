@@ -183,6 +183,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                         res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
                     } else {
                         usersRepository.deleteUsers(filter, {}).then(users => {
+
                             res.redirect("/users");
                         }).catch(error => {
                             logger.error("Se ha producido un error al listar los usuarios del sistema");
@@ -284,6 +285,8 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                     "&messageType=alert-danger ");
             } else {
                 req.session.user = user;
+                res.cookie('userEmail', user.email);
+                res.cookie('userRol', user.rol);
                 res.redirect("/users");
             }
         }).catch(err => {

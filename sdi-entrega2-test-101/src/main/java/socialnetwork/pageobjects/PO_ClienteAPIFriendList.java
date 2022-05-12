@@ -27,9 +27,21 @@ public class PO_ClienteAPIFriendList extends PO_NavView {
         return count;
     }
 
-    public static void filter(WebDriver driver, String username) {
+    public static void filter(WebDriver driver, String busquedap) {
+        WebElement busqueda = driver.findElement(By.name("busqueda"));
+        busqueda.click();
+        busqueda.clear();
+        busqueda.sendKeys(busquedap);
 
+        //pulsamos el boton de busqueda
+//		List<WebElement> elementos = SeleniumUtils.EsperaCargaPaginaxpath(driver, "//*[@id=\"search\"]", PO_View.getTimeout());
+//		elementos.get(0).click();
 
+//        By boton = By.className("btn");
+//        driver.findElement(boton).click();
+        // assert que estamos en la pagina correcta
+//            PO_NavView.checkIdOnView(driver, "testVistaTienda");
+        PO_NavView.checkElementBy(driver, "id", "friend-list");
 
 
     }
@@ -37,7 +49,7 @@ public class PO_ClienteAPIFriendList extends PO_NavView {
     public static void goToConversation(WebDriver driver, String nombre) {
 
 
-        PO_NavView.checkElementBy(driver, "id","testClienteOfertasView");
+        PO_NavView.checkElementBy(driver, "id", "testClienteOfertasView");
 
         List<WebElement> ofertas = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
 
@@ -57,6 +69,15 @@ public class PO_ClienteAPIFriendList extends PO_NavView {
     public static void createMessage(WebDriver driver, String mensaje) {
 
 
+    }
 
+    public static int getCountMoreThan(WebDriver driver, int count) {
+        //contamos los tr
+        List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                getTimeout());
+
+        Assertions.assertTrue(elementos.size() < count, "Hay menos elementos de lo esperado");
+
+        return elementos.size();
     }
 }

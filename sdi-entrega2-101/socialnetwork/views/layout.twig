@@ -10,7 +10,7 @@
     {% block scripts %} {% endblock %}
 </head>
 <body>
-
+{#{% set user = app.session.get('user') %}#}
 <!-- Barra de Navegación superior -->
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -44,6 +44,7 @@
                             </div>
                         </li>
                     {% endif %}
+
                     {% if user.rol == 'ADMIN' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdown" role="button"
@@ -74,6 +75,29 @@
 
 <div class="container">
     <script>
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        console.log(document.cookie['userEmail']);
+        getUserSession();
+        function getUserSession(response) {
+            Cookies.set('userEmail', response.email);
+            Cookies.set('userRol', response.email);
+        }
+
         let params = new URLSearchParams(location.search);
         let message = params.get("message");
         let messageType = params.get("messageType");

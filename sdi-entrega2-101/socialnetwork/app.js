@@ -20,33 +20,33 @@ app.set('rest', rest);
 let jwt = require('jsonwebtoken');
 app.set('jwt', jwt);
 
+
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
 // Debemos especificar todas las headers que se aceptan. Content-Type , token
-  next();
+    next();
 });
+
+
 //Logger
 var log4jslet = require("log4js");
 var theAppLog = log4jslet.getLogger();
 theAppLog.level = "debug";
-app.set('log4js',theAppLog);
-theAppLog.log("debug","LOGGER INICIALIZADO")
+app.set('log4js', theAppLog);
+theAppLog.log("debug", "LOGGER INICIALIZADO")
 
 
 let expressSession = require('express-session');
 app.use(expressSession({
-  secret: 'abcdefg',
-  resave: true,
-  saveUninitialized: true
+    secret: 'abcdefg', resave: true, saveUninitialized: true
 }));
 
 let fileUpload = require('express-fileupload');
 app.use(fileUpload({
-  limits: {fileSize: 50 * 1024 * 1024},
-  createParentPath: true
+    limits: {fileSize: 50 * 1024 * 1024}, createParentPath: true
 }));
 app.set('uploadPath', __dirname)
 
@@ -64,8 +64,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
-
-
 //Seguridad
 const userSessionRouter = require('./routes/userSessionRouter.js');
 app.use("/publications/add", userSessionRouter);
@@ -79,14 +77,14 @@ const usersRepository = require("./repositories/usersRepository.js");
 //Amistades.js
 const amistadesRepository = require("./repositories/amistadesRepository.js");
 amistadesRepository.init(app, MongoClient);
-require("./routes/friends.js")(app, amistadesRepository,usersRepository);
+require("./routes/friends.js")(app, amistadesRepository, usersRepository);
 //Peticiones.js
 const peticionesRepository = require("./repositories/peticionesRepository.js");
 peticionesRepository.init(app, MongoClient);
 require("./routes/peticiones.js")(app, peticionesRepository, usersRepository, amistadesRepository);
 //Users.js
 usersRepository.init(app, MongoClient);
-require("./routes/users.js")(app, usersRepository,amistadesRepository,peticionesRepository);
+require("./routes/users.js")(app, usersRepository, amistadesRepository, peticionesRepository);
 
 //Publications.js
 const publicationsRepository = require("./repositories/publicationsRepository.js");
@@ -96,7 +94,6 @@ require("./routes/publications.js")(app, publicationsRepository, amistadesReposi
 //Messages.js
 const messagesRepository = require("./repositories/messagesRepository.js");
 messagesRepository.init(app, MongoClient);
-
 
 
 //JQuery Client
@@ -116,7 +113,7 @@ app.set('view engine', 'twig');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -125,19 +122,19 @@ app.use('/users', usersRouter);
 app.use('/publications', publicationsRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;

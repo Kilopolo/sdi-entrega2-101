@@ -21,7 +21,12 @@
     </table>
 </div>
 <script>
-
+    $('#filter-by-name').on('input', function (e) {
+        let filteredUsers = [];
+        let filterValue = $("#filter-by-name").val();
+        filteredUsers = friends.filter(friend => friend.userName.includes(filterValue));
+        updateUsersTable(filteredUsers);
+    });
     if (!autenticado) {
         console.log("usuario no autenticado")
         $("#main-container").load("widget-login.html");
@@ -33,12 +38,7 @@
     friends
     selectedMessageId;
 
-    $('#filter-by-name').on('input', function (e) {
-        let filteredUsers = [];
-        let filterValue = $("#filter-by-name").val();
-        filteredUsers = friends.filter(friend => friend.userName.includes(filterValue));
-        updateUsersTable(filteredUsers);
-    });
+
 
     function loadUsers() {
         $.ajax({

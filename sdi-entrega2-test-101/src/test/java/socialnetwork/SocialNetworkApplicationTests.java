@@ -22,10 +22,6 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-   //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
-
-    //PabloRgz
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
@@ -42,7 +38,7 @@ class SocialNetworkApplicationTests {
 
     //Común a Windows y a MACOSX
     static final String URL = "https://localhost:4000";
-    static final String URLApiClient = "https://localhost:4000/apiclient/client.html";
+    static final String URLApiClient = "http://localhost:8081/apiclient/client.html";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
@@ -216,6 +212,7 @@ class SocialNetworkApplicationTests {
 
         assertEquals(16, count);
     }
+
     /**
      * [Prueba12]Ir a la lista de usuarios, borrar el primer usuario de la lista,
      * comprobar que la lista se actualiza y dicho usuario desaparece.
@@ -223,7 +220,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(12)
     void Prueba12() {
-        InitDB.insertUser("aaa","aaa","aaa","USER","aaa");
+        InitDB.insertUser("aaa", "aaa", "aaa", "USER", "aaa");
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_aaa"));
         check.click();
@@ -239,6 +236,7 @@ class SocialNetworkApplicationTests {
 
         assertEquals(16, count);
     }
+
     /**
      * [Prueba13]Ir a la lista de usuarios, borrar el último usuario de la lista,
      * comprobar que la lista se actualiza y dicho usuario desaparece.
@@ -246,7 +244,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(13)
     void Prueba13() {
-        InitDB.insertUser("zzz","zzz","zzz","USER","zzz");
+        InitDB.insertUser("zzz", "zzz", "zzz", "USER", "zzz");
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_zzz"));
         check.click();
@@ -262,6 +260,7 @@ class SocialNetworkApplicationTests {
 
         assertEquals(16, count);
     }
+
     /**
      * [Prueba14]Ir a la lista de usuarios, borrar 3 usuarios,
      * comprobar que la lista se actualiza y dichos usuarios desaparecen.
@@ -269,9 +268,9 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(14)
     void Prueba14() {
-        InitDB.insertUser("zzz","zzz","zzz","USER","zzz");
-        InitDB.insertUser("zzz1","zzz1","zzz1","USER","zzz1");
-        InitDB.insertUser("zzz2","zzz2","zzz2","USER","zzz2");
+        InitDB.insertUser("zzz", "zzz", "zzz", "USER", "zzz");
+        InitDB.insertUser("zzz1", "zzz1", "zzz1", "USER", "zzz1");
+        InitDB.insertUser("zzz2", "zzz2", "zzz2", "USER", "zzz2");
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_zzz"));
         check.click();
@@ -291,6 +290,7 @@ class SocialNetworkApplicationTests {
 
         assertEquals(16, count);
     }
+
     /**
      * [Prueba15]Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el sistema,
      * excepto el propio usuario y aquellos que sean Administradores.
@@ -300,8 +300,8 @@ class SocialNetworkApplicationTests {
     void Prueba15() {
         PO_PrivateView.login(driver, "user14@email.com", "user14", "searchBtn");
         WebElement pageBtn;
-        for(int i = 1;i<=4;i++) {
-            pageBtn = driver.findElement(By.id("page"+i));
+        for (int i = 1; i <= 4; i++) {
+            pageBtn = driver.findElement(By.id("page" + i));
             pageBtn.click();
             List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "text", "email",
                     PO_View.getTimeout());
@@ -318,9 +318,10 @@ class SocialNetworkApplicationTests {
         }
 
     }
+
     /**
-     *[Prueba16]Hacer  una  búsqueda  con  el  campo  vacío  y  comprobar  que  se  muestra  la  página  que corresponde
-     *con el listado usuarios existentes en el sistema.
+     * [Prueba16]Hacer  una  búsqueda  con  el  campo  vacío  y  comprobar  que  se  muestra  la  página  que corresponde
+     * con el listado usuarios existentes en el sistema.
      */
     @Test
     @Order(16)
@@ -340,8 +341,9 @@ class SocialNetworkApplicationTests {
         assertEquals(4, count);
 
     }
+
     /**
-     *[Prueba17] Hacer una búsqueda escribiendo en el campo un texto que no exista y comprobar que se
+     * [Prueba17] Hacer una búsqueda escribiendo en el campo un texto que no exista y comprobar que se
      * muestra la página que corresponde, con la lista de usuarios vacía.
      */
     @Test
@@ -356,13 +358,14 @@ class SocialNetworkApplicationTests {
                 " The bee, of course, flies anyway");
         WebElement navBarBtn = driver.findElement(By.id("searchBtn"));
         navBarBtn.click();
-        PO_PrivateView.checkTextNotInView(driver,"email");
+        PO_PrivateView.checkTextNotInView(driver, "email");
 
     }
+
     /**
-     [Prueba18]Hacer  una  búsqueda  con  un texto  específico y  comprobar  que  se  muestra  la  página
-     que corresponde, con la lista de usuarios en los que el texto
-     especificado sea parte de su nombre, apellidos o de su email.
+     * [Prueba18]Hacer  una  búsqueda  con  un texto  específico y  comprobar  que  se  muestra  la  página
+     * que corresponde, con la lista de usuarios en los que el texto
+     * especificado sea parte de su nombre, apellidos o de su email.
      */
     @Test
     @Order(18)
@@ -385,7 +388,6 @@ class SocialNetworkApplicationTests {
     }
 
 
-
     /**
      * [Prueba19] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario.
      * Comprobar que la solicitud de amistad aparece en el listado de invitaciones (punto siguiente).
@@ -397,7 +399,7 @@ class SocialNetworkApplicationTests {
         var elements = PO_View.checkElementBy(driver, "text", "user00@email.com");
         elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/user00@email.com']");
         elements.get(0).click();
-        SeleniumUtils.waitSeconds(driver,5);
+        SeleniumUtils.waitSeconds(driver, 5);
         PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
@@ -431,7 +433,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
-        PO_Peticiones.checkListaDePeticiones(driver,1);
+        PO_Peticiones.checkListaDePeticiones(driver, 1);
     }
 
     /**
@@ -445,7 +447,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
-        PO_Peticiones.checkListaDePeticiones(driver,1);
+        PO_Peticiones.checkListaDePeticiones(driver, 1);
         var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/aceptar/user11@email.com']");
         elements.get(0).click();
         SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
@@ -465,16 +467,14 @@ class SocialNetworkApplicationTests {
         //Contamos el numero de filas de los usuarios
         List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
         Assertions.assertEquals(4, amistadesList.size());
-        PO_DataBase.deleteAmistadByEmails("user00@email.com","user11@email.com");
+        PO_DataBase.deleteAmistadByEmails("user00@email.com", "user11@email.com");
     }
-
-
 
 
     /**
      * [Prueba24] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
      * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
-     *
+     * <p>
      * TODO IMPORTANTE: borrar publicación tras ejecutar las pruebas
      */
     @Test
@@ -553,7 +553,7 @@ class SocialNetworkApplicationTests {
     /**
      * [Prueba27] Mostrar el listado de publicaciones de un usuario amigo y comprobar que se muestran todas
      * las que existen para dicho usuario.
-     *
+     * <p>
      * AVISO: su correcto funcionamiento depende de la prueba 24
      */
     @Test
@@ -659,7 +659,7 @@ class SocialNetworkApplicationTests {
     @Order(33)
     void Prueba33() {
         driver.navigate().to(URLApiClient);
-        PO_PrivateView.loginAPI(driver, "usuarioNOexistente@email.com", "1111111", "friend-list");
+        PO_PrivateView.loginAPI(driver, "usuarioNOexistente@email.com", "1111111", "login");
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -672,7 +672,7 @@ class SocialNetworkApplicationTests {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
         PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
-        PO_ClienteAPIFriendList.getCount(driver,user,12);
+        PO_ClienteAPIFriendList.getCountMoreThan(driver, 6);
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -686,9 +686,9 @@ class SocialNetworkApplicationTests {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
         PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
-        PO_ClienteAPIFriendList.filter(driver,"user00@email.com");
+        PO_ClienteAPIFriendList.filter(driver, "nameUser00");
         //2 por que las tr estan duplicadas por la linea de ultimo mensaje
-        PO_ClienteAPIFriendList.getCount(driver,user,2);
+        PO_ClienteAPIFriendList.getCount(driver, user, 2);
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -701,8 +701,8 @@ class SocialNetworkApplicationTests {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
         PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
-        PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
-        PO_ClienteAPIChat.getCountMessages(driver,3);
+        PO_ClienteAPIFriendList.goToConversation(driver, "user00@email.com");
+        PO_ClienteAPIChat.getCountMessages(driver, 3);
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -717,8 +717,8 @@ class SocialNetworkApplicationTests {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
         PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
-        PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
-        PO_ClienteAPIFriendList.createMessage(driver,"cceder a la lista de mensajes de un amigo y crear u");
+        PO_ClienteAPIFriendList.goToConversation(driver, "user00@email.com");
+        PO_ClienteAPIFriendList.createMessage(driver, "cceder a la lista de mensajes de un amigo y crear u");
 //        Assertions.fail("Not yet implemented");
     }
 
