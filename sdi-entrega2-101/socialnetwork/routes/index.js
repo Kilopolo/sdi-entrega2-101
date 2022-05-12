@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
   logger.info("GET /amistades");
   // console.log(req.session.user)
   // res.redirect('/');
-  res.render('index.twig');
+  res.render('index.twig',{userInSession: req.session.user});
 });
 
 

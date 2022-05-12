@@ -1,14 +1,4 @@
-<script>
 
-    let userEmail;
-    let userRol;
-    window.onload = function() {
-        userEmail = getCookie("userEmail");
-        userRol = getCookie("userRol");
-        document.getElementById('userEmail').innerHTML = userEmail ;
-        document.getElementById('userRol').innerHTML = userRol ;
-    };
-</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,12 +25,12 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-                {% if userEmail == null %}
+                {% if userInSession == null %}
                 {% else %}
                     <li class="nav-item ">
                         <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
                     </li>
-                    {% if userRol == 'USER' %}
+                    {% if userInSession.rol == 'USER' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown"
@@ -56,7 +46,7 @@
                         </li>
                     {% endif %}
 
-                    {% if userRol == 'ADMIN' %}
+                    {% if userInSession.rol == 'ADMIN' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdown" role="button"
                                data-toggle="dropdown"
@@ -72,7 +62,7 @@
 
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                {% if userEmail == null %}
+                {% if userInSession == null %}
                     <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
                     <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
                 {% else %}
@@ -81,50 +71,11 @@
             </ul>
         </div>
     </div>
-    {% set userEmail = getCookie %}
 </nav>
 
 
 <div class="container">
-    <script>
 
-        function getCookie(cname) {
-            let name = cname + "=";
-            let decodedCookie = decodeURIComponent(document.cookie);
-            let ca = decodedCookie.split(';');
-            for(let i = 0; i <ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                }
-                if (c.indexOf(name) == 0) {
-                    return c.substring(name.length, c.length);
-                }
-            }
-            return "";
-        }
-
-        //console.log(document.cookie['userEmail']);
-        /*getUserSession();
-        function getUserSession(response) {
-            Cookies.set('userEmail', response.email);
-            Cookies.set('userRol', response.email);
-        }*/
-
-        let params = new URLSearchParams(location.search);
-        let message = params.get("message");
-        let messageType = params.get("messageType");
-        if (message != null && message != "") {
-            if (messageType == "") {
-                messageType = 'alert-info';
-            }
-            $(".container")
-                .append("<div class='alert " + messageType + "'>" + message + " </div>");
-        }
-
-
-
-    </script>
     <!-- Contenido -->
     {% block main_container %}
         <!-- Posible contenido por defecto -->
