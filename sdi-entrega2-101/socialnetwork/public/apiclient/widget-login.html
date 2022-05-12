@@ -17,12 +17,13 @@
     <br>
     <div className="form-group">
         <div className="col-sm-offset-2 col-sm-10">
-            <button class="btn btn-info btn-rounded float-end" type="button" id="boton-login">Aceptar</button>
+            <button class="boton-login btn btn-info btn-rounded float-end" type="button" id="boton-login">Aceptar</button>
         </div>
     </div>
 </div>
 <script>
     window.history.pushState("", "", "/apiclient/client.html?w=login");
+
     $("#boton-login").click(function () {
         $.ajax({
             url: URLbase + "/users/login",

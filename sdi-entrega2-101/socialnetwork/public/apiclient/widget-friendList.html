@@ -22,14 +22,20 @@
 </div>
 <script>
 
-    if (!autenticado) {
-        console.log("usuario no autenticado")
-        $("#main-container").load("widget-login.html");
-    } else {
-        loadUsers()
-        window.history.pushState("", "", "/apiclient/client.html?w=friendList");
+    loadUsers()
 
+    window.history.pushState("", "", "/apiclient/client.html?w=friendList");
+
+    function initFriendList() {
+        if (!Cookies.get('token') != null) {
+            console.log("usuario no autenticado")
+            $("#main-container").load("widget-login.html");
+        } else {
+            loadUsers()
+            window.history.pushState("", "", "/apiclient/client.html?w=friendList");
+        }
     }
+
     friends
     selectedMessageId;
 
@@ -48,13 +54,13 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (response) {
+                console.log("LOAD FRIENDS CORRECTO")
                 friends = response.users;
                 updateUsersTable(friends);
-                console.log("LOAD USERS CORRECTO")
             },
             error: function (error) {
+                console.log("LOAD FRIENDS ERROR")
                 $("#main-container").load("widget-login.html");
-                console.log("LOAD USERS ERROR")
             }
         });
     }
@@ -90,7 +96,7 @@
         $("#main-container").load("widget-messages.html");
     }
 
-    loadUsers()
-    updateUsersTable(friends);
+    // loadUsers()
+    // updateUsersTable(friends);
 
 </script>
