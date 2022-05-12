@@ -33,6 +33,7 @@
                 password: $("#password").val()
             },
             dataType: "json",
+            headers: {"token": token},
             success: function success(response) {
                 //deberia devolver el token por consola
                 console.log("USUARIO AUTENTICADO")

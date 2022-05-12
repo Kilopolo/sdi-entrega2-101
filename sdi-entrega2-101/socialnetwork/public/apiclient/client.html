@@ -53,7 +53,8 @@
     widgetClient()
 
     function widgetClient() {
-        if (Cookies.get('token') != null) {
+        if (Cookies.get('token') != null && token != null) {
+            
             token = Cookies.get('token');
             $("#main-container").load("widget-friendList.html");
             let url = new URL(window.location.href);

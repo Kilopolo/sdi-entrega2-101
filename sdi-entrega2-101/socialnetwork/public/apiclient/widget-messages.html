@@ -64,7 +64,7 @@
     }
     chatList;
     userLoggedIn;
-    console.log(URLbase + "/messages/" + selectedMessageId );
+    console.log(URLbase + "/messages/" + selectedMessageId);
     console.log("usuario autenticado como " + userLoggedIn)
 
     //Funcion que se ejecuta al clicar el boton para enviar un mensaje, envia el mensaje
@@ -72,7 +72,7 @@
         console.log("Enviando mensaje: " + $("#contenido").val())
         if (chatList != null)
             $.ajax({
-                url: URLbase + "/messages/agregar/" + selectedMessageId ,
+                url: URLbase + "/messages/agregar/" + selectedMessageId,
                 type: "POST",
                 data: {
                     contenido: $("#contenido").val(),
@@ -88,7 +88,7 @@
                     //Limpia el formulario despues de un mensaje
                     $('input[type="text"]').val('');
                     console.log("LOAD CHAT CORRECTO")
-                },error: function (error) {
+                }, error: function (error) {
                     $("#main-container").load("widget-login.html");
                     console.log("LOAD CHAT ERROR")
                 }
@@ -96,13 +96,7 @@
     });
 
 
-
-
-
-
     function updateChatList(chatList) {
-
-
 
 
         $("#chat-table").empty(); // Vaciar la tabla
@@ -158,7 +152,8 @@
             loadChat();
         }
     }
-//TODO descomentar
+
     setInterval('actualizacion()', 5000);
+
 
 </script>
