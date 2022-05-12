@@ -96,6 +96,8 @@ const userSessionRouter = require('./routes/userSessionRouter');
 app.use("/friends", userSessionRouter);
 app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
+app.use("/peticiones", userSessionRouter);
+app.use("/amistades", userSessionRouter);
 
 //JQuery Client
 const userTokenRouter = require('./routes/userTokenRouter');

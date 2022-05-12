@@ -1,6 +1,7 @@
 package socialnetwork.db;
 
 import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,8 @@ public class InitDB {
 
     //OLD
 //    private static String connectionString = "mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    private static String connectionString = "mongodb+srv://sdi212210:Pa$$word123@cluster0.zytfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    //private static String connectionString = "mongodb+srv://sdi212210:Pa$$word123@cluster0.zytfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    private static String connectionString = "mongodb+srv://sdi:Pa$$word123@cluster0.ipd4l.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     private static String AppDBname = "socialNetwork";
     private static List<Document> users = new ArrayList<Document>();
     private static InitDB idb = new InitDB();
@@ -308,9 +310,9 @@ public class InitDB {
         }
     }
 
-    private static void deleteTestAmistades() {
+    public static void deleteTestAmistades(String user1, String user2) {
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteMany(new Document("test", true));
+            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteOne(Filters.eq("user1","user"));
         }
     }
 
@@ -331,4 +333,6 @@ public class InitDB {
             mongoclient.getDatabase(AppDBname).getCollection("users").deleteMany(new Document("email", email));
         }
     }
+
+
 }

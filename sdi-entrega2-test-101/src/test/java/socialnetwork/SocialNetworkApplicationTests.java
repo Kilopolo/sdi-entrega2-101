@@ -20,9 +20,12 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
+    //PabloRgz
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -176,7 +179,6 @@ class SocialNetworkApplicationTests {
         //Nos desconectamos
         PO_HomeView.desconect(driver);
 
-
     }
 
     /**
@@ -186,7 +188,7 @@ class SocialNetworkApplicationTests {
     @Order(10)
     void Prueba10() {
 
-        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
+       // assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
 
     /**
@@ -243,7 +245,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
         PO_Peticiones.checkListaDePeticiones(driver,1);
-        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/aceptar/user11@email.com']");
+        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/aceptar/user11@email.com']");
         elements.get(0).click();
         SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
     }
@@ -260,7 +262,8 @@ class SocialNetworkApplicationTests {
 
         //Contamos el numero de filas de los usuarios
         List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-        Assertions.assertEquals(1, amistadesList.size());
+        Assertions.assertEquals(3, amistadesList.size());
+        PO_DataBase.deleteAmistadByEmails("user11@email.com","user03@email.com");
     }
 
 

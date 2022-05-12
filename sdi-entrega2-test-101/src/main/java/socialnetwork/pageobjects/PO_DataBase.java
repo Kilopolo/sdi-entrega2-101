@@ -7,4 +7,8 @@ public class PO_DataBase {
     public static void deleteUserByEmail(String email){
         idb.deleteUserByEmail(email);
     }
+
+    public static void deleteAmistadByEmails(String user1, String user2){
+        idb.deleteTestAmistades(user1, user2);
+    }
 }
