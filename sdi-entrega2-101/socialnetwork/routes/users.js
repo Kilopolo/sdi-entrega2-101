@@ -20,7 +20,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método get para el registro en la aplicación
      */
     app.get('/signup', function (req, res) {
-        logger.info("GET /users/signup");
+        logger.info("GET /signup");
         res.render("users/signup.twig");
     });
 
@@ -28,7 +28,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método get para el inicio de sesión en la aplicación
      */
     app.get('/login', function (req, res) {
-        logger.info("GET /users/login");
+        logger.info("GET /login");
         res.render("users/login.twig");
     });
 
@@ -214,7 +214,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método post para el registro en la aplicación
      */
     app.post('/signup', function (req, res) {
-        logger.info("POST /users/signup");
+        logger.info("POST /signup");
         if (req.body.password != req.body.passwordConfirm) {
             res.redirect("/signup" +
                 "?message=La contraseña no se ha repetido correctamente" +
@@ -267,7 +267,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método post para el inicio de sesión en la aplicación
      */
     app.post('/login', function (req, res) {
-        logger.info("POST /users/login");
+        logger.info("POST /login");
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let filter = {
@@ -302,7 +302,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método get para la salida de sesión en la aplicación
      */
     app.get('/logout', function (req, res) {
-        logger.info("GET /users/logout");
+        logger.info("GET /logout");
         req.session.user = null;
         res.render("index.twig");
     });

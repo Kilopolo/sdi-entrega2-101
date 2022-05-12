@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,22 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    {% block scripts %} {% endblock %}
+    <script>
+        console.log("entra en el script");
+        let userEmail = null;
+        let userRol = null;
+        window.addEventListener('load', takeCookies, false);
+        function takeCookies()
+        {
+            console.log("entra en el método");
+            userEmail = getCookie("userEmail");
+            userRol = getCookie("userRol");
+            // document.getElementById('userEmail').innerHTML = userEmail ;
+            // document.getElementById('userRol').innerHTML = userRol ;
+        }
+    </script>
+    {% block scripts %}
+    {% endblock %}
 </head>
 <body>
 {#{% set user = app.session.get('user') %}#}
@@ -24,19 +40,19 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-                {% if user == null %}
+                {% if userEmail == null %}
                 {% else %}
                     <li class="nav-item ">
                         <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
                     </li>
-                    {% if user.rol == 'USER' %}
+                    {% if userRol == 'USER' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false"> Opciones
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="../user/list">Lista de Usuarios</a><br>
+                                <a class="dropdown-item" href="../users">Lista de Usuarios</a><br>
                                 <a class="dropdown-item" href="../peticiones">Lista de Peticiones</a><br>
                                 <a class="dropdown-item" href="../amistades">Lista de Amistades</a><br>
                                 <a class="dropdown-item" href="../publications">Ver Publicaciones</a><br>
@@ -45,23 +61,19 @@
                         </li>
                     {% endif %}
 
-                    {% if user.rol == 'ADMIN' %}
+                    {% if userRol == 'ADMIN' %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="user/list" id="adminDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="users" id="adminDropdown" role="button"
                                data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false"> Gestión de usuarios
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="../user/adminList">Lista de Usuarios</a><br>
-                                <a class="dropdown-item" href="../publications/adminList">Lista de Publicaciones</a><br>
-                            </div>
                         </li>
                     {% endif %}
                 {% endif %}
 
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                {% if user == null %}
+                {% if userEmail == null %}
                     <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
                     <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
                 {% else %}
@@ -70,11 +82,13 @@
             </ul>
         </div>
     </div>
+    {% set userEmail = getCookie %}
 </nav>
 
 
 <div class="container">
     <script>
+
         function getCookie(cname) {
             let name = cname + "=";
             let decodedCookie = decodeURIComponent(document.cookie);
@@ -91,12 +105,12 @@
             return "";
         }
 
-        console.log(document.cookie['userEmail']);
-        getUserSession();
+        //console.log(document.cookie['userEmail']);
+        /*getUserSession();
         function getUserSession(response) {
             Cookies.set('userEmail', response.email);
             Cookies.set('userRol', response.email);
-        }
+        }*/
 
         let params = new URLSearchParams(location.search);
         let message = params.get("message");
@@ -108,6 +122,9 @@
             $(".container")
                 .append("<div class='alert " + messageType + "'>" + message + " </div>");
         }
+
+
+
     </script>
     <!-- Contenido -->
     {% block main_container %}
