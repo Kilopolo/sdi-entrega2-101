@@ -227,7 +227,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
@@ -241,7 +241,7 @@ class SocialNetworkApplicationTests {
         PO_RegisterView.fillForm(driver, "aaa@email.com", "Randall", "Boggs"
                 , "user01", "user01");
         //PO_View.checkElementBy(driver, "id", "signup");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_aaa@email.com"));
         check.click();
@@ -255,7 +255,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
@@ -268,7 +268,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz@email.com", "Randall", "Boggs"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_zzz@email.com"));
         check.click();
@@ -282,7 +282,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
@@ -295,15 +295,15 @@ class SocialNetworkApplicationTests {
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz1@email.com", "Randall1", "Boggs1"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz2@email.com", "Randall2", "Boggs2"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "zzz3@email.com", "Randall3", "Boggs3"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
+//        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
         WebElement check = driver.findElement(By.id("checkbox_zzz1@email.com"));
         check.click();
@@ -321,7 +321,7 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        assertEquals(16, count);
+        assertEquals(15, count);
     }
 
     /**
