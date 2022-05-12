@@ -292,7 +292,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
     /**
      * Método get para la salida de sesión en la aplicación
      */
-    app.get('/users/logout', function (req, res) {
+    app.get('/logout', function (req, res) {
         logger.info("GET /users/login");
         req.session.user = null;
         res.render("index.twig", {userInSession: req.session.user});
