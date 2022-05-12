@@ -10,8 +10,6 @@ module.exports = function (app, messageRepository) {
      */
     app.post("/api/v1.0/messages/agregar/:id", function (req, res) {
         try {
-
-
             let emisor = res.user;
             console.log(emisor);
             let date = new Date();
@@ -33,7 +31,6 @@ module.exports = function (app, messageRepository) {
                 leido: false,
                 amistadId: req.params.id
             };
-
             console.log(mensajeNuevo)
 
             if (mensajeNuevo.emisor == mensajeNuevo.destinatario) throw err;
