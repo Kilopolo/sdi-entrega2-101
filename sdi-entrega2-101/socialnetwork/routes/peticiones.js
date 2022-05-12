@@ -5,13 +5,41 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
     app.get("/peticiones", function (req, res) {
         let filter = {user2: req.session.user.email};
         let options = {};
-        peticionesRepository.findPeticionesByEmail(filter, options).then(peticiones => {
+        let page = parseInt(req.query.page); // Es String !!!
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
+            page = 1;
+        }
+        peticionesRepository.getPeticionesPg(filter, options, page).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0) { // Sobran decimales
+                lastPage = lastPage + 1;
+            }
+            let pages = []; // paginas mostrar
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+            getUserFromPeticiones(result.peticiones).then(usersPeticiones => {
+                let response = {
+                    peticiones: usersPeticiones,
+                    pages: pages,
+                    currentPage: page
+                }
+                res.render("peticiones/list.twig", response);
+            }).catch(error => "Se ha producido un error al encontrar algun usuario de las amistades" + error);
+        }).catch(error => {
+            res.send("Se ha producido un error al listar los amigos:" + error)
+
+
+        });
+        /*peticionesRepository.findPeticionesByEmail(filter, options).then(peticiones => {
             getUserFromPeticiones(peticiones).then(usersPeticiones => {
                 res.render("peticiones/list.twig", {peticiones: usersPeticiones});
             }).catch(error => "Se ha producido un error al encontrar algun usuario de las peticiones" + error);
         }).catch(error => {
             res.send("Se ha producido un error al listar las peticiones:" + error)
-        });
+        });*/
     });
 
     app.get("/peticiones/aceptar/:email", function (req, res) {

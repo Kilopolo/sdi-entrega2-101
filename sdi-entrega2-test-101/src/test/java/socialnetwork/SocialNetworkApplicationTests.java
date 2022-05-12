@@ -20,9 +20,12 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
+    //PabloRgz
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -243,7 +246,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
         PO_Peticiones.checkListaDePeticiones(driver,1);
-        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/aceptar/user11@email.com']");
+        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/aceptar/user11@email.com']");
         elements.get(0).click();
         SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
     }
@@ -260,7 +263,8 @@ class SocialNetworkApplicationTests {
 
         //Contamos el numero de filas de los usuarios
         List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-        Assertions.assertEquals(1, amistadesList.size());
+        Assertions.assertEquals(3, amistadesList.size());
+        PO_DataBase.deleteAmistadByEmails("user11@email.com","user03@email.com");
     }
 
 
@@ -286,7 +290,7 @@ class SocialNetworkApplicationTests {
         PO_Publicaciones.fillForm(driver, "PR24", "Contenido de test para PR24");
 
         // Comprobamos que se nos envía a la lista de publicaciones
-        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+        PO_View.checkElementBy(driver, "id", "tablePublications");
 
         // Comprobamos que la nueva publicación aparece
         PO_NavView.checkElementBy(driver, "text", "PR24");
@@ -307,39 +311,42 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "@href", "/publications/add").get(0).click();
 
         // Rellenamos el formulario con un título en blanco
-        PO_Publicaciones.fillForm(driver, "   ", "Contenido de test para PR25");
+        PO_Publicaciones.fillForm(driver, "", "Contenido de test para PR25");
 
-        // Comprobamos que seguimos en el formulario de creacion
-        PO_View.checkElementBy(driver, "text", "Añadir nueva publicación");
+        // Comprobamos que seguimos en el formulario, y se muestra el error apropiado
+        PO_Publicaciones.checkElementBy(driver, "text",
+                "Ni el título ni el contenido de la publicación pueden estar vacíos");
     }
 
     /**
      * [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las que
      * existen para dicho usuario.
      */
+    @Test
+    @Order(26)
     void Prueba26() {
         // Entramos con datos válidos
-        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
 
-        //Navegamos al listad de publicaciones
+        //Navegamos al listado de publicaciones
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/publications").get(0).click();
 
-        // Comprobamos que accedemos la página correcta
-        PO_View.checkElementBy(driver, "text", "Lista de publicaciones");
+        // Comprobamos que accedemos a la página correcta
+        PO_View.checkElementBy(driver, "id", "tablePublications");
 
         // Recuperamos una lista de tr
         List<WebElement> elementos = SeleniumUtils.waitLoadElementsBy(driver, "id", "publiCount",
                 PO_View.getTimeout());
 
-        //Contamos el numero de filas de los usuarios
+        //Contamos el número de filas de los usuarios
         int count = 0;
         for (WebElement each : elementos) {
             count++;
         }
 
-        //comprobamos que existen 2
-        assertEquals(2, count);
+        //comprobamos que existe 1 (la que hemos añadido)
+        assertEquals(1, count);
     }
 
     /**
@@ -359,21 +366,73 @@ class SocialNetworkApplicationTests {
         // Accede a un amigo con publicaciones, user01
         PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
 
-        // Se deberían ver 2 filas (la cantidad de publicaciones de user00)
+        // Se debería ver 1 filas (la cantidad de publicaciones de user00)
         List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
                 "/html/body/div[1]/div[1]/table/tbody/tr");
-        assertEquals(2, elementos.size());
+        assertEquals(1, elementos.size());
     }
 
     /**
-     *
+     * [Prueba28] Utilizando un acceso vía URL u otra alternativa, tratar de listar las publicaciones de un usuario
+     * que no sea amigo del usuario identificado en sesión. Comprobar que el sistema da un error de autorización.
      */
     @Test
     @Order(28)
     public void Prueba28() {
         PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
 
+        // Intentamos acceder a la lista de publicaciones de un usuario no amigo, y debería impedirse
+        driver.navigate().to("http://localhost:4000/publications/list/user07@email.com");
+        //PO_View.checkElementBy(driver, "text", "Error de autorización");
 
+        // Comprobamos que se nos ha enviado al listado de amistades con el error apropiado
+        PO_Publicaciones.checkElementBy(driver, "text",
+                "No tienes permiso para acceder a estas publicaciones");
+    }
+
+    /**
+     * [Prueba29] Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver al
+     * formulario de login.
+     */
+    @Test
+    @Order(29)
+    public void Prueba29() {
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/users");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
+    }
+
+    /**
+     * [Prueba30] Intentar acceder sin estar autenticado a la opción de listado de invitaciones de amistad recibida
+     * de un usuario estándar. Se deberá volver al formulario de login.
+     */
+    @Test
+    @Order(30)
+    public void Prueba30() {
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/peticiones");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
+    }
+
+    /**
+     * [Prueba31] Intentar acceder estando autenticado como usuario standard a la lista de amigos de otro
+     * usuario. Se deberá mostrar un mensaje de acción indebida.
+     */
+    @Test
+    @Order(31)
+    public void Prueba31() {
+        // No es posible acceder a un listado de amistades ajeno, al no contener parámetros en la URL
+        // Por tanto, testeamos aquí el funcionamiento del router de sesión para el listado de amistades
+
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/amistades");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
     }
 
     ///////////////////////////////////////////////////////////////////////////////

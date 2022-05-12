@@ -17,6 +17,23 @@ module.exports = {
             throw (error);
         }
     },
+    getPeticionesPg: async function (filter, options, page) {
+        try {
+            const limit = 4;
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const collectionName = 'peticiones';
+            const peticionesCollection = database.collection(collectionName);
+            const counter = peticionesCollection.find(filter, options);
+            const cursor = counter.skip((page - 1) * limit).limit(limit);
+            const peticiones = await cursor.toArray();
+            const peticionesCollectionCount = await peticionesCollection.find(filter, options).toArray();
+            const result = {peticiones: peticiones, total: peticionesCollectionCount.length};
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
     deletePeticion: async function (id) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
