@@ -27,7 +27,11 @@ class SocialNetworkApplicationTests {
 
     //PabloRgz
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+
+    //PabloRgz
+//    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+//    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -80,7 +84,6 @@ class SocialNetworkApplicationTests {
     @Order(1)
     void Prueba01() {
         String email = "email1@email.com";
-        PO_DataBase.deleteUserByEmail(email);
         PO_RegisterView.registerUser(driver, email, "password");
         PO_DataBase.deleteUserByEmail(email);
 
@@ -384,7 +387,8 @@ class SocialNetworkApplicationTests {
 
 
     /**
-     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     * [Prueba19] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario.
+     * Comprobar que la solicitud de amistad aparece en el listado de invitaciones (punto siguiente).
      */
     @Test
     @Order(19)
@@ -404,7 +408,9 @@ class SocialNetworkApplicationTests {
     }
 
     /**
-     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     * [Prueba20] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario al
+     * que ya le habíamos enviado la invitación previamente. No debería dejarnos enviar la invitación, se podría
+     * ocultar el botón de enviar invitación o notificar que ya había sido enviada previamente.
      */
     @Test
     @Order(20)
@@ -415,7 +421,8 @@ class SocialNetworkApplicationTests {
     }
 
     /**
-     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     * [Prueba21] Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que
+     * contenga varias invitaciones recibidas.
      */
     @Test
     @Order(21)
@@ -428,7 +435,8 @@ class SocialNetworkApplicationTests {
     }
 
     /**
-     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     * [Prueba22] Sobre el listado de invitaciones recibidas. Hacer clic en el botón/enlace de una de ellas y
+     * comprobar que dicha solicitud desaparece del listado de invitaciones.
      */
     @Test
     @Order(22)
@@ -444,7 +452,8 @@ class SocialNetworkApplicationTests {
     }
 
     /**
-     * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado.
+     * [Prueba23] Mostrar el listado de amigos de un usuario. Comprobar que el listado contiene los amigos que
+     * deben ser.
      */
     @Test
     @Order(23)
@@ -466,7 +475,7 @@ class SocialNetworkApplicationTests {
      * [Prueba24] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
      * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
      *
-     * IMPORTANTE: borrar publicación tras ejecutar las pruebas
+     * TODO IMPORTANTE: borrar publicación tras ejecutar las pruebas
      */
     @Test
     @Order(24)
@@ -550,7 +559,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(27)
     public void Prueba27() {
-        PO_PrivateView.login(driver, "user00@email.es", "user00", "user-list");
+        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
 
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/amistades").get(0).click();
@@ -571,7 +580,7 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(28)
     public void Prueba28() {
-        PO_PrivateView.login(driver, "user00@email.es", "user00", "user-list");
+        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
 
         // Intentamos acceder a la lista de publicaciones de un usuario no amigo, y debería impedirse
         driver.navigate().to("http://localhost:4000/publications/list/user07@email.com");
