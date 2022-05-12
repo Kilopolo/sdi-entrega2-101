@@ -22,8 +22,8 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    static String PathFirefox = "/usr/bin/firefox";
+    static String Geckodriver = "/usr/bin/geckodriver";
     //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
@@ -608,18 +608,18 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(27)
     public void Prueba27() {
-        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
 
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
         PO_HomeView.checkElementBy(driver, "@href", "/amistades").get(0).click();
 
         // Accede a un amigo con publicaciones, user01
-        PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
+        PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user00@email.com").get(0).click();
 
         // Se debería ver 1 filas (la cantidad de publicaciones de user00)
         List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
                 "/html/body/div[1]/div[1]/table/tbody/tr");
-        assertEquals(1, elementos.size());
+        assertEquals(3, elementos.size());
     }
 
     /**
