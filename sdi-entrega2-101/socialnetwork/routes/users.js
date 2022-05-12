@@ -237,7 +237,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                     //si no hay ninguno se puede registrar
                     usersRepository.insertUser(user).then(userId => {
                         //res.send('Usuario registrado ' + userId);
-                        res.render("home.twig", {user: user});
+                        res.redirect("/login", {user: user});
                     }).catch(err => {
                         logger.error("Error al insertar el usuario");
                         res.render("error.twig", {
