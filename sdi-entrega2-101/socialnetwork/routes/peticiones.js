@@ -1,5 +1,5 @@
 const usersRepository = require("../repositories/usersRepository");
-//TODO arreglar
+
 module.exports = function (app, peticionesRepository, usersRepository, amistadesRepository) {
 
     let logger = app.get("log4js")
@@ -37,25 +37,7 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
 
 
         });
-        /*peticionesRepository.findPeticionesByEmail(filter, options).then(peticiones => {
-            getUserFromPeticiones(peticiones).then(usersPeticiones => {
-                res.render("peticiones/list.twig", {peticiones: usersPeticiones});
-            }).catch(error => {
-                logger.error("Se ha producido un error al encontrar algun usuario de las peticiones" + error);
-                res.render("error.twig", {
-                    mensaje: "Se ha producido un error al encontrar algun usuario de las peticiones",
-                    elError: error
-                });
-            });
-        }).catch(error => {
-            logger.error("Se ha producido un error al listar las peticiones: " + error);
-            res.render("error.twig", {
-                mensaje: "Se ha producido un error al listar las peticiones",
-                elError: error
-            });
-        });
-            res.send("Se ha producido un error al listar las peticiones:" + error)
-        });*/
+
     });
 
     app.get("/peticiones/aceptar/:email", function (req, res) {

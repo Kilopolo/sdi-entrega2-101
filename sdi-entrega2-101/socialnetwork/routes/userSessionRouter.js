@@ -5,6 +5,7 @@ userSessionRouter.use(function(req, res, next) {
     // console.log("routerUsuarioSession");
     let logger = log4jslet.getLogger();
     if ( req.session.user ) {
+        logger.info("Usuario AUTENTICADO sesion ");
 // dejamos correr la petición
         next();
     } else {

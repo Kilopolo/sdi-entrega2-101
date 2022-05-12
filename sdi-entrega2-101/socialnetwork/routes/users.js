@@ -159,8 +159,8 @@ app.get('/home', function (req, res) {
     /**
      * Método post para borrar a uno o multiples usuarios
      */
-    app.delete("/users", function (req, res) {
-        logger.info("DELETE /users");
+    app.post("/users/delete", function (req, res) {
+        logger.info("POST /users/delete");
         let toDeleteUsers = req.body.checkEliminar;
         if (!Array.isArray(toDeleteUsers)) {
             let aux = toDeleteUsers;
