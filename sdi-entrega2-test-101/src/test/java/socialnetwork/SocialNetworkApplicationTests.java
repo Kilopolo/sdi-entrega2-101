@@ -202,6 +202,7 @@ class SocialNetworkApplicationTests {
         var elements = PO_View.checkElementBy(driver, "text", "user00@email.com");
         elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/user00@email.com']");
         elements.get(0).click();
+        SeleniumUtils.waitSeconds(driver,5);
         PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();

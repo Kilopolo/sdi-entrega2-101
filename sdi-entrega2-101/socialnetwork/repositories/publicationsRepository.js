@@ -13,6 +13,7 @@ module.exports = {
             const database = client.db("socialNetwork");
             const publicationsCollection = database.collection('publications');
             const publications = await publicationsCollection.find(filter, options).toArray();
+            client.close();
             return publications;
         } catch (error) {
             throw (error);
@@ -25,6 +26,7 @@ module.exports = {
             const database = client.db("socialNetwork");
             const publicationsCollection = database.collection('publications');
             const result = await publicationsCollection.insertOne(publication);
+            client.close();
             return result.insertedId;
         } catch (error) {
             throw (error);

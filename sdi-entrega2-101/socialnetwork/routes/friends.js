@@ -9,22 +9,32 @@ module.exports = function (app, amistadesRepository, usersRepository) {
         logger.info("GET /amistades");
         let filter = {$or: [{user1: req.session.user.email}, {user2: req.session.user.email}]};
         let options = {};
-        amistadesRepository.findAmistadesByEmail(filter, options).then(amistades => {
-            getUserFromAmistades(req, amistades).then(p => {
-                res.render("amistades/list.twig", {amistades: p});
-            }).catch(error => {
-                logger.error("Se ha producido un error al encontrar algún usuario de las amistades" + error);
-                res.render("error.twig", {
-                    mensaje: "Se ha producido un error al encontrar algún usuario de las amistades",
-                    elError: error
-                });
-            });
+        ///
+        let page = parseInt(req.query.page); // Es String !!!
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
+            page = 1;
+        }
+        amistadesRepository.getAmistadesPg(filter, options, page).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0) { // Sobran decimales
+                lastPage = lastPage + 1;
+            }
+            let pages = []; // paginas mostrar
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+            getUserFromAmistades(req, result.amistades).then(p => {
+                let response = {
+                    amistades: p,
+                    pages: pages,
+                    currentPage: page
+                }
+                res.render("amistades/list.twig", response);
+            }).catch(error => "Se ha producido un error al encontrar algun usuario de las amistades" + error);
         }).catch(error => {
-            logger.error("Se ha producido un error al listar los amigos: " + error);
-            res.render("error.twig", {
-                mensaje: "Se ha producido un error al listar los amigos",
-                elError: error
-            });
+            res.send("Se ha producido un error al listar los amigos:" + error)
         });
     });
 
@@ -60,6 +70,7 @@ module.exports = function (app, amistadesRepository, usersRepository) {
                     usuarios.push(user);
                 });
             }
+            return usuarios;
         }
     }
 }

@@ -12,6 +12,7 @@ module.exports = {
             const collectionName = 'peticiones';
             const peticionesCollection = database.collection(collectionName);
             const peticiones = await peticionesCollection.find(filter, options).toArray();
+            client.close();
             return peticiones;
         } catch (error) {
             throw (error);
@@ -29,6 +30,7 @@ module.exports = {
             const peticiones = await cursor.toArray();
             const peticionesCollectionCount = await peticionesCollection.find(filter, options).toArray();
             const result = {peticiones: peticiones, total: peticionesCollectionCount.length};
+            client.close();
             return result;
         } catch (error) {
             throw (error);
@@ -41,6 +43,7 @@ module.exports = {
             const collectionName = 'peticiones';
             const peticionesCollection = database.collection(collectionName);
             const result = await peticionesCollection.deleteOne(id);
+            client.close();
             return result.insertedId;
         } catch (error) {
             throw (error);
@@ -53,6 +56,7 @@ module.exports = {
             const collectionName = 'peticiones';
             const peticionesCollection = database.collection(collectionName);
             const result = await peticionesCollection.remove(filter,options);
+            client.close();
             return result;
         } catch (error) {
             throw (error);
@@ -65,6 +69,7 @@ module.exports = {
             const collectionName = 'peticiones';
             const peticionesCollection = database.collection(collectionName);
             const result = await peticionesCollection.insertOne(peticion);
+            client.close();
             return result.insertedId;
         } catch (error) {
             throw (error);

@@ -12,6 +12,7 @@ module.exports = {
             const collectionName = 'amistades';
             const amistadesCollection = database.collection(collectionName);
             const amistades = await amistadesCollection.find(filter, options).toArray();
+            client.close();
             return amistades;
         } catch (error) {
             throw (error);
@@ -29,6 +30,7 @@ module.exports = {
             const amistades = await cursor.toArray();
             const amistadesCollectionCount = await amistadesCollection.find(filter, options).toArray();
             const result = {amistades: amistades, total: amistadesCollectionCount.length};
+            client.close();
             return result;
         } catch (error) {
             throw (error);
@@ -41,6 +43,7 @@ module.exports = {
             const collectionName = 'amistades';
             const usersCollection = database.collection(collectionName);
             const user = await usersCollection.findOne(filter, options);
+            client.close();
             return user;
         } catch (error) {
             throw (error);
@@ -52,6 +55,7 @@ module.exports = {
             const database = client.db("socialNetwork");
             const publicationsCollection = database.collection('amistades');
             const publications = await publicationsCollection.find(filter, options).toArray();
+            client.close();
             return publications;
         } catch (error) {
             throw (error);
@@ -64,6 +68,7 @@ module.exports = {
             const collectionName = 'amistades';
             const amistadesCollection = database.collection(collectionName);
             const result = await amistadesCollection.remove(filter,options);
+            client.close();
             return result;
         } catch (error) {
             throw (error);
@@ -76,6 +81,7 @@ module.exports = {
             const collectionName = 'amistades';
             const usersCollection = database.collection(collectionName);
             const result = await usersCollection.insertOne(amistad);
+            client.close();
             return result.insertedId;
         } catch (error) {
             throw (error);

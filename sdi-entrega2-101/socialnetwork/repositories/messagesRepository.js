@@ -12,6 +12,7 @@ module.exports = {
             const collectionName = 'messages';
             const usersCollection = database.collection(collectionName);
             const user = await usersCollection.findOne(filter, options);
+            client.close();
             return user;
         } catch (error) {
             throw (error);
@@ -23,6 +24,7 @@ module.exports = {
             const database = client.db("socialNetwork");
             const publicationsCollection = database.collection('messages');
             const publications = await publicationsCollection.find(filter, options).toArray();
+            client.close();
             return publications;
         } catch (error) {
             throw (error);
@@ -35,6 +37,7 @@ module.exports = {
             const collectionName = 'messages';
             const usersCollection = database.collection(collectionName);
             const result = await usersCollection.insertOne(message);
+            client.close();
             return result.insertedId;
         } catch (error) {
             throw (error);
@@ -47,6 +50,7 @@ module.exports = {
             const collectionName = 'messages';
             const songsCollection = database.collection(collectionName);
             const result = await songsCollection.updateOne(filter, {$set: newMessage}, options);
+            client.close();
             return result;
         } catch (error) {
             throw (error);
@@ -59,6 +63,7 @@ module.exports = {
             const collectionName = 'messages';
             const songsCollection = database.collection(collectionName);
             const result = await songsCollection.deleteOne(filter, options);
+            client.close();
             return result;
         } catch (error) {
             throw (error);
