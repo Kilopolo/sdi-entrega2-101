@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 public class InitDB {
 
     //OLD
-//    private static String connectionString = "mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    private static String connectionString = "mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     //private static String connectionString = "mongodb+srv://sdi212210:Pa$$word123@cluster0.zytfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    private static String connectionString = "mongodb+srv://sdi:Pa$$word123@cluster0.ipd4l.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    //private static String connectionString = "mongodb+srv://sdi:Pa$$word123@cluster0.ipd4l.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     private static String AppDBname = "socialNetwork";
 
     public static void main(String[] args) {
