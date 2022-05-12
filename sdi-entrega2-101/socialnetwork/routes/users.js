@@ -1,5 +1,7 @@
 module.exports = function (app, usersRepository, amistadesRepository, peticionesRepository, logger) {
-
+    /**
+     * Método get para la página de inicio de la aplicación
+     */
     app.get('/home', function (req, res) {
         let user = req.session.user
         if (user == undefined) {
@@ -9,15 +11,21 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         res.render("home.twig", {user: user});//
 
     });
-
+    /**
+     * Método get para el registro en la aplicación
+     */
     app.get('/users/signup', function (req, res) {
         res.render("users/signup.twig");
     });
-
+    /**
+     * Método get para el inicio de sesión en la aplicación
+     */
     app.get('/users/login', function (req, res) {
         res.render("users/login.twig");
     });
-
+    /**
+     * Método get que devuelve una lista de usuarios
+     */
     app.get('/users', function (req, res) {
         let filter = {};
         filter = {
@@ -116,7 +124,15 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         });
     })
 
-
+    /**
+     * Método auxiliar que pone el botón de enviar petición de amistad solo a los no amigos
+     * @param req
+     * @param res
+     * @param user
+     * @param users
+     * @param pages
+     * @param page
+     */
     function renderUserList(req, res, user, users, pages, page) {
         let filter = {
             rol: 'USER',
@@ -175,6 +191,9 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         });*/
     }
 
+    /**
+     * Método post para borrar a uno o multiples usuarios
+     */
     app.post("/users/delete", function (req, res) {
         let toDeleteUsers = req.body.checkEliminar;
         if (!Array.isArray(toDeleteUsers)) {
@@ -215,7 +234,9 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             });
         });
     })
-
+    /**
+     * Método post para el registro en la aplicación
+     */
     app.post('/users/signup', function (req, res) {
         if (req.body.password != req.body.passwordConfirm) {
             res.redirect("/users/signup" +
@@ -270,7 +291,9 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
 
 
-
+    /**
+     * Método post para el inicio de sesión en la aplicación
+     */
     app.post('/users/login', function (req, res) {
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -306,7 +329,9 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 "&messageType=alert-danger ");
         });
     });
-
+    /**
+     * Método get para la salida de sesión en la aplicación
+     */
     app.get('/users/logout', function (req, res) {
         req.session.user = null;
         res.render("index.twig");
