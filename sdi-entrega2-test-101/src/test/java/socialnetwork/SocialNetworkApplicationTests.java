@@ -21,16 +21,16 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
     //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
 
 
     // //PabloRgz
-    //  static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //  static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+      static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+      static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -89,14 +89,6 @@ class SocialNetworkApplicationTests {
         check.click();
         WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
         eliminarBtn.click();
-
-        // String email = "email1@email.com";
-        // PO_DataBase.deleteUserByEmail(email);
-//        PO_RegisterView.deleteUser(driver, URL, email );
-//        driver.navigate().to(URL);
-        // PO_RegisterView.registerUser(driver, email, "password");
-//        driver.manage().deleteAllCookies();
-//        PO_RegisterView.deleteUser(driver, URL, email );
 
     }
 
@@ -424,18 +416,16 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(19)
     void Prueba19() {
-        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+       PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "a1@email.com", "Randall1", "Boggs1"
                 , "user01", "user01");
-        PO_HomeView.desconect(driver);
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         PO_RegisterView.fillForm(driver, "a2@email.com", "Randall2", "Boggs2"
                 , "user02", "user02");
-        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "a1@email.com", "user01", "user-list");
         var pageBtn = driver.findElement(By.id("page" + 3));
         pageBtn.click();
-        pageBtn = driver.findElement(By.id("page" + 5));
+        pageBtn = driver.findElement(By.id("page" + 4));
         pageBtn.click();
         var elements = PO_View.checkElementBy(driver, "text", "a2@email.com");
         elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/enviar/a2@email.com']");
@@ -461,7 +451,7 @@ class SocialNetworkApplicationTests {
         PO_PrivateView.login(driver, "a1@email.com", "user01", "user-list");
         var pageBtn = driver.findElement(By.id("page" + 3));
         pageBtn.click();
-        pageBtn = driver.findElement(By.id("page" + 5));
+        pageBtn = driver.findElement(By.id("page" + 4));
         pageBtn.click();
         SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticiones/enviar/a2@email.com']", PO_View.getTimeout());
         PO_HomeView.desconect(driver);
