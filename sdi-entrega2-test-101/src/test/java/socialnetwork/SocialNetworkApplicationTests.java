@@ -171,7 +171,7 @@ class SocialNetworkApplicationTests {
     @Order(8)
     void Prueba08() {
         //Compribamos que no hemos entrado
-        PO_PrivateView.login(driver, "user01@email.com", "malapassword", "login");
+        assertEquals(true, PO_HomeView.checkTextNotInView(driver, "nav.Desconectar"));
     }
 
     /**
