@@ -28,7 +28,7 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
                     pages: pages,
                     currentPage: page
                 }
-                res.render("peticiones/list.twig", response);
+                res.render("peticiones/list.twig", {response:response ,userInSession: req.session.user});
             }).catch(error => "Se ha producido un error al encontrar algun usuario de las amistades" + error);
         }).catch(error => {
             res.send("Se ha producido un error al listar los amigos:" + error)

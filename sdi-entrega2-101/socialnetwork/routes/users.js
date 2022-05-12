@@ -12,26 +12,23 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             user.name = 'ANONIMO'
             user.rol = 'ANONIMO'
         }
-        res.render("home.twig", {user: user});//
+        res.render("home.twig", {user: user, userInSession: req.session.user});//
 
     });
-
     /**
      * Método get para el registro en la aplicación
      */
     app.get('/signup', function (req, res) {
-        logger.info("GET /signup");
+        logger.info("GET /users/signup");
         res.render("users/signup.twig");
     });
-
     /**
      * Método get para el inicio de sesión en la aplicación
      */
     app.get('/login', function (req, res) {
-        logger.info("GET /login");
-        res.render("users/login.twig");
+        logger.info("GET /users/login");
+        res.render("users/login.twig", {userInSession: req.session.user});
     });
-
     /**
      * Método get que devuelve una lista de usuarios
      */
@@ -44,13 +41,13 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         }
         if (req.query.search != null && typeof (req.query.search) != "undefined" &&
             req.query.search != "") {
-                filter = {
-                    "$or": [
-                        {"name": {$regex: ".*" + req.query.search + ".*"}},
-                        {"surname": {$regex: ".*" + req.query.search + ".*"}},
-                        {"email": {$regex: ".*" + req.query.search + ".*"}}
-                    ]
-                };
+            filter = {
+                "$or": [
+                    {"name": {$regex: ".*" + req.query.search + ".*"}},
+                    {"surname": {$regex: ".*" + req.query.search + ".*"}},
+                    {"email": {$regex: ".*" + req.query.search + ".*"}}
+                ]
+            };
         }
 
         let page = parseInt(req.query.page);
@@ -58,6 +55,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             page = 1;
         }
         usersRepository.getUsersPage(filter, {}, page, 4).then(result => {
+            // usersRepository.findUsers(filter, {}).then(result => {
             let lastPage = result.total / 4;
             if (result.total % 4 > 0) {
                 lastPage++;
@@ -69,9 +67,13 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 }
             }
             usersRepository.findUsers(filter, {}).then(users => {
+                /*let filter2 = {
+                    email : req.session.user.email,
+                }*/
+                //usersRepository.findUser(filter2, {}).then(user=>{
                 if (users == null || users.length === 0) {
                     logger.error("GET /users => Usuario no identificado");
-                    res.redirect("/login" + "?message=Usuario no identificado" + "&messageType=alert-danger ");
+                    res.redirect("/users/login" + "?message=Usuario no identificado" + "&messageType=alert-danger ");
 
                 } else {
                     let roleUserSession = req.session.user.rol;
@@ -83,6 +85,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                                 pages: pages,
                                 currentPage: page,
                                 userRol: roleUserSession
+                                , userInSession: req.session.user
                             });
                     } else {
                         for (i = 0; i < result.users.length; i++) {
@@ -99,14 +102,14 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 logger.error("Se ha producido un error al buscar los usuarios");
                 res.render("error.twig", {
                     mensaje: "Se ha producido un error al buscar los usuarios",
-                    elError: err
+                    elError: err, userInSession: req.session.user
                 });
             });
         }).catch(err => {
             logger.error("Se ha producido un error al buscar los usuarios");
             res.render("error.twig", {
                 mensaje: "Se ha producido un error al buscar los usuarios",
-                elError: err
+                elError: err, userInSession: req.session.user
             });
         });
     })
@@ -140,27 +143,26 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                         pages: pages,
                         currentPage: page,
                         userRol: user.rol,
-                        user: user
+                        user: user, userInSession: req.session.user
                     });
                 }).catch(error => {
                     logger.error("Se ha producido un error al buscar las peticiones");
                     res.render("error.twig", {
                         mensaje: "Se ha producido un error al buscar las peticiones",
-                        elError: error
+                        elError: error, userInSession: req.session.user
                     });
                 });
             }).catch(error => {
                 logger.error("Sucedió un error buscando las amistades");
                 res.render("error.twig", {
                     mensaje: "Sucedió un error buscando las amistades",
-                    elError: error
+                    elError: error, userInSession: req.session.user
                 });
             });
 
 
         }
     }
-
     /**
      * Método post para borrar a uno o multiples usuarios
      */
@@ -183,13 +185,12 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                         res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
                     } else {
                         usersRepository.deleteUsers(filter, {}).then(users => {
-
                             res.redirect("/users");
                         }).catch(error => {
                             logger.error("Se ha producido un error al listar los usuarios del sistema");
                             res.render("error.twig", {
                                 mensaje: "Se ha producido un error al listar los usuarios del sistema",
-                                elError: error
+                                elError: error, userInSession: req.session.user
                             });
                         });
                     }
@@ -197,7 +198,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                     logger.error("Se ha producido un error al eliminar los amigos");
                     res.render("error.twig", {
                         mensaje: "Se ha producido un error al eliminar los amigos",
-                        elError: error
+                        elError: error, userInSession: req.session.user
                     });
                 });
             }
@@ -205,65 +206,61 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             logger.error("Se ha producido un error al eliminar las invitaciones del sistema");
             res.render("error.twig", {
                 mensaje: "Se ha producido un error al eliminar las invitaciones del sistema",
-                elError: error
+                elError: error, userInSession: req.session.user
             });
         });
-    });
-
+    })
     /**
      * Método post para el registro en la aplicación
      */
     app.post('/signup', function (req, res) {
         logger.info("POST /signup");
-        try{
-            if (req.body.password != req.body.passwordConfirm) {
-                res.redirect("/signup" +
-                    "?message=La contraseña no se ha repetido correctamente" +
-                    "&messageType=alert-danger ");
-                // logger.error("El usuario que va a registrarse ha introducido mal su contraseña");
-            } else {
-                let securePassword = app.get("crypto")
-                    .createHmac('sha256', app.get('clave'))
-                    .update(req.body.password).digest('hex');
-                let user = {
-                    email: req.body.email,
-                    password: securePassword,
-                    name: req.body.name,
-                    surname: req.body.surname,
-                    rol: "USER"
-                }
 
-                let filter = {email: user.email}
-                usersRepository.findUser(filter, {}).then(userFound => {
-                    if (userFound == null) {
-                        //si no hay ninguno se puede registrar
-                        usersRepository.insertUser(user).then(userId => {
-                            //res.send('Usuario registrado ' + userId);
-                            res.redirect("/login", {user: user});
-                        }).catch(error => {
-                            logger.error("Error al insertar el usuario");
-                            res.render("error.twig", {
-                                mensaje: "Error al insertar el usuario",
-                                elError: error
-                            });
-                        });
-                    } else {
-                        //Si ya hay un email en la BDD lanzamos el error
-                        logger.error("Ya existe un usuario registrado con ese email");
-                        res.redirect("/signup" +
-                            "?message=Ya existe un usuario registrado con ese email" +
-                            "&messageType=alert-danger ");
-                    }
-                }).catch(error => {
-                    logger.error("Error al insertar el usuario");
-                    res.render("error.twig", {
-                        mensaje: "Error al insertar el usuario",
-                        elError: error
-                    });
-                });
+        if (req.body.password != req.body.passwordConfirm) {
+            res.redirect("/signup" +
+                "?message=La contraseña no se ha repetido correctamente" +
+                "&messageType=alert-danger ");
+            // logger.error("El usuario que va a registrarse ha introducido mal su contraseña");
+        } else {
+            let securePassword = app.get("crypto")
+                .createHmac('sha256', app.get('clave'))
+                .update(req.body.password).digest('hex');
+            let user = {
+                email: req.body.email,
+                password: securePassword,
+                name: req.body.name,
+                surname: req.body.surname,
+                rol: "USER"
             }
-        } catch (e) {
-            logger.error("POST /signup");
+
+            let filter = {email: user.email}
+            usersRepository.findUser(filter, {}).then(userFound => {
+                if (userFound == null) {
+                    //si no hay ninguno se puede registrar
+                    usersRepository.insertUser(user).then(userId => {
+                        //res.send('Usuario registrado ' + userId);
+                        res.render("home.twig", {user: user});
+                    }).catch(err => {
+                        logger.error("Error al insertar el usuario");
+                        res.render("error.twig", {
+                            mensaje: "Error al insertar el usuario",
+                            elError: error, userInSession: req.session.user
+                        });
+                    });
+                } else {
+                    //Si ya hay un email en la BDD lanzamos el error
+                    logger.error("Ya existe un usuario registrado con ese email");
+                    res.redirect("/signup" +
+                        "?message=Ya existe un usuario registrado con ese email" +
+                        "&messageType=alert-danger ");
+                }
+            }).catch(err => {
+                logger.error("Error al insertar el usuario");
+                res.render("error.twig", {
+                    mensaje: "Error al insertar el usuario",
+                    elError: error, userInSession: req.session.user
+                });
+            });
         }
 
     });
@@ -272,7 +269,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método post para el inicio de sesión en la aplicación
      */
     app.post('/login', function (req, res) {
-        logger.info("POST /login");
+        logger.info("POST /users/login");
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let filter = {
@@ -285,31 +282,28 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
             if (user == null) {
                 req.session.user = null;
-                res.redirect("/login" +
+                res.redirect("/users/login" +
                     "?message=Email o password incorrecto" +
                     "&messageType=alert-danger ");
             } else {
                 req.session.user = user;
-                res.cookie('userEmail', user.email);
-                res.cookie('userRol', user.rol);
                 res.redirect("/users");
             }
         }).catch(err => {
             logger.error("Se ha producido un error al buscar el usuario");
             req.session.user = null;
-            res.redirect("/login" +
+            res.redirect("/users/login" +
                 "?message=Se ha producido un error al buscar el usuario" +
                 "&messageType=alert-danger ");
         });
     });
-
     /**
      * Método get para la salida de sesión en la aplicación
      */
-    app.get('/logout', function (req, res) {
-        logger.info("GET /logout");
+    app.get('/users/logout', function (req, res) {
+        logger.info("GET /users/login");
         req.session.user = null;
-        res.render("index.twig");
+        res.render("index.twig", {userInSession: req.session.user});
     });
 
     function getEmailFromList(list, req) {
@@ -326,4 +320,3 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
 
 }
-

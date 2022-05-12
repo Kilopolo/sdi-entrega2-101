@@ -26,13 +26,11 @@ class SocialNetworkApplicationTests {
     //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
-    //PabloRgz
-    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
-    //PabloRgz
-    // static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    // static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+
+    // //PabloRgz
+    //  static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //  static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -84,12 +82,19 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(1)
     void Prueba01() {
-
         String email = "email1@email.com";
-        PO_DataBase.deleteUserByEmail(email);
+        PO_RegisterView.registerUser(driver, email, "password");
+        PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
+        WebElement check = driver.findElement(By.id("checkbox_email1@email.com"));
+        check.click();
+        WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
+        eliminarBtn.click();
+
+        // String email = "email1@email.com";
+        // PO_DataBase.deleteUserByEmail(email);
 //        PO_RegisterView.deleteUser(driver, URL, email );
 //        driver.navigate().to(URL);
-        PO_RegisterView.registerUser(driver, email, "password");
+        // PO_RegisterView.registerUser(driver, email, "password");
 //        driver.manage().deleteAllCookies();
 //        PO_RegisterView.deleteUser(driver, URL, email );
 

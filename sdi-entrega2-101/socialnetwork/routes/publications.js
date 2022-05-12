@@ -10,13 +10,13 @@ module.exports = function (app, publicationsRepository, amistadesRepository) {
         let options = {};
 
         publicationsRepository.findPublications(filter, options).then(publications => {
-            res.render("publications/list.twig", {publications: publications});
+            res.render("publications/list.twig", {publications: publications,userInSession: req.session.user});
         }).catch((error) => {
             logger.error("Error al listar las publicaciones" + error);
             res.render("error.twig", {
                 mensaje: "Error al listar las publicaciones",
                 elError: error
-            });
+            ,userInSession: req.session.user});
         });
 
     });
@@ -25,7 +25,7 @@ module.exports = function (app, publicationsRepository, amistadesRepository) {
      */
     app.get('/publications/add', function (req, res) {
         logger.info("GET /publications/add");
-        res.render("publications/add.twig");
+        res.render("publications/add.twig",{userInSession: req.session.user});
     });
     /**
      * Método post para añadir publicaciones
@@ -52,7 +52,7 @@ module.exports = function (app, publicationsRepository, amistadesRepository) {
             res.render("error.twig", {
                 mensaje: "Error al añadir las publicaciones",
                 elError: error
-            });
+            ,userInSession: req.session.user});
         });
     });
     /**
@@ -70,13 +70,13 @@ module.exports = function (app, publicationsRepository, amistadesRepository) {
                 filter = {email: req.params.email};
                 console.log(req.params.email)
                 publicationsRepository.findPublications(filter, options).then(publications => {
-                    res.render("publications/friendList.twig", {friend: req.params.email, publications: publications});
+                    res.render("publications/friendList.twig", {friend: req.params.email, publications: publications,userInSession: req.session.user});
                 }).catch((error) => {
                     logger.error("Error al listar las publicaciones" + error);
                     res.render("error.twig", {
                         mensaje: "Error al listar las publicaciones",
                         elError: error
-                    });
+                    ,userInSession: req.session.user});
                 });
             } else {
                 res.redirect("/amistades" +
@@ -88,7 +88,7 @@ module.exports = function (app, publicationsRepository, amistadesRepository) {
             res.render("error.twig", {
                 mensaje: "Error al listar las publicaciones",
                 elError: error
-            });
+            ,userInSession: req.session.user});
         });
     });
 

@@ -4,7 +4,6 @@ import org.openqa.selenium.WebDriver;
 
 public class PO_PrivateView extends PO_NavView {
 
-
     static public void login(WebDriver driver, String email, String password, String check) {
 
         // Vamos al formulario de logueo.
