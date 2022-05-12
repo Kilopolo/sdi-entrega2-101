@@ -40,7 +40,6 @@ module.exports = function (app, usersRepository) {
                         token: token
                     });
 
-
                 }
             }).catch(error => {
                 logger.error("Se ha producido un error al verificar credenciales");
