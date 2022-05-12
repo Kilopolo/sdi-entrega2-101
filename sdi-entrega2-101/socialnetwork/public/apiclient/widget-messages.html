@@ -110,7 +110,7 @@
             for (let i = 0; i < chatList.length; i++) {
                 $("#chat-table").append(
                     "<img src=\"https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp\" alt=\"avatar\" className=\"rounded-circle d-flex align-self-left me-3 shadow-1-strong\" width=\"60\">" +
-                    "            <div class=\"card\">" +
+                    "            <div id=\"mensaje\" class=\"card\">" +
                     "              <div class=\"card-header d-flex justify-content-between p-3\">" +
                     "                <p class=\"text-muted small mb-0\">" + "De: " + chatList[i].emisor + " a las" + "</p>" +
                     "                <p class=\"text-muted small mb-0\"><i class=\"far fa-clock\"></i> " + chatList[i].fecha + "</p>" +
