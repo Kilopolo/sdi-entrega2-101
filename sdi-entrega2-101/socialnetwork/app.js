@@ -66,6 +66,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 
+//Seguridad
+const userSessionRouter = require('./routes/userSessionRouter.js');
+app.use("/publications/add", userSessionRouter);
+app.use("/publications", userSessionRouter);
+app.use("/peticiones", userSessionRouter);
+app.use("/amistades", userSessionRouter);
+app.use("/users", userSessionRouter);
+
 
 const usersRepository = require("./repositories/usersRepository.js");
 //Amistades.js
@@ -91,16 +99,8 @@ messagesRepository.init(app, MongoClient);
 
 
 
-//Seguridad
-const userSessionRouter = require('./routes/userSessionRouter');
-app.use("/friends", userSessionRouter);
-app.use("/publications/add", userSessionRouter);
-app.use("/publications", userSessionRouter);
-app.use("/peticiones", userSessionRouter);
-app.use("/amistades", userSessionRouter);
-
 //JQuery Client
-const userTokenRouter = require('./routes/userTokenRouter');
+const userTokenRouter = require('./routes/userTokenRouter.js');
 app.use("/api/v1.0/friends/list", userTokenRouter);
 app.use("/api/v1.0/messages", userTokenRouter);
 

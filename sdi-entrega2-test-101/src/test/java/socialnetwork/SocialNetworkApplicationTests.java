@@ -313,7 +313,7 @@ class SocialNetworkApplicationTests {
         // Rellenamos el formulario con un título en blanco
         PO_Publicaciones.fillForm(driver, "", "Contenido de test para PR25");
 
-        // Comprobamos que seguimos en el formulario de creacion
+        // Comprobamos que seguimos en el formulario, y se muestra el error apropiado
         PO_Publicaciones.checkElementBy(driver, "text",
                 "Ni el título ni el contenido de la publicación pueden estar vacíos");
     }
@@ -322,9 +322,11 @@ class SocialNetworkApplicationTests {
      * [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las que
      * existen para dicho usuario.
      */
+    @Test
+    @Order(26)
     void Prueba26() {
         // Entramos con datos válidos
-        PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
+        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
 
         //Navegamos al listado de publicaciones
         PO_HomeView.checkElementBy(driver, "text", "Opciones").get(0).click();
@@ -343,8 +345,8 @@ class SocialNetworkApplicationTests {
             count++;
         }
 
-        //comprobamos que existen 2
-        assertEquals(2, count);
+        //comprobamos que existe 1 (la que hemos añadido)
+        assertEquals(1, count);
     }
 
     /**
@@ -364,22 +366,79 @@ class SocialNetworkApplicationTests {
         // Accede a un amigo con publicaciones, user01
         PO_HomeView.checkElementBy(driver, "@href", "/publications/list/user01@email.com").get(0).click();
 
-        // Se deberían ver 2 filas (la cantidad de publicaciones de user00)
+        // Se debería ver 1 filas (la cantidad de publicaciones de user00)
         List<WebElement> elementos = PO_Publicaciones.checkElementBy(driver, "free",
                 "/html/body/div[1]/div[1]/table/tbody/tr");
-        assertEquals(2, elementos.size());
+        assertEquals(1, elementos.size());
     }
 
     /**
-     *
+     * [Prueba28] Utilizando un acceso vía URL u otra alternativa, tratar de listar las publicaciones de un usuario
+     * que no sea amigo del usuario identificado en sesión. Comprobar que el sistema da un error de autorización.
      */
     @Test
     @Order(28)
     public void Prueba28() {
         PO_PrivateView.login(driver, "user00@uniovi.es", "user00", "user-list");
 
+        // Intentamos acceder a la lista de publicaciones de un usuario no amigo, y debería impedirse
+        driver.navigate().to("http://localhost:4000/publications/list/user07@email.com");
+        //PO_View.checkElementBy(driver, "text", "Error de autorización");
 
+        // Comprobamos que se nos ha enviado al listado de amistades con el error apropiado
+        PO_Publicaciones.checkElementBy(driver, "text",
+                "No tienes permiso para acceder a estas publicaciones");
     }
+
+    /**
+     * [Prueba29] Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver al
+     * formulario de login.
+     */
+    @Test
+    @Order(29)
+    public void Prueba29() {
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/users");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
+    }
+
+    /**
+     * [Prueba30] Intentar acceder sin estar autenticado a la opción de listado de invitaciones de amistad recibida
+     * de un usuario estándar. Se deberá volver al formulario de login.
+     */
+    @Test
+    @Order(30)
+    public void Prueba30() {
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/peticiones");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
+    }
+
+    /**
+     * [Prueba31] Intentar acceder estando autenticado como usuario standard a la lista de amigos de otro
+     * usuario. Se deberá mostrar un mensaje de acción indebida.
+     */
+    @Test
+    @Order(31)
+    public void Prueba31() {
+        // No es posible acceder a un listado de amistades ajeno, al no contener parámetros en la URL
+        // Por tanto, testeamos aquí el funcionamiento del router de sesión para el listado de amistades
+
+        // Intentamos acceder al listado de usuarios sin estar autenticados
+        driver.navigate().to("http://localhost:4000/amistades");
+
+        // Se nos debería enviar de vuelta al login
+        PO_View.checkElementBy(driver, "id", "login");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    //////////////    Parte 2B - Cliente - Aplicación jQuery       ////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+
 
     /**
      * [Prueba32] Inicio de sesión con datos válidos.
@@ -388,7 +447,7 @@ class SocialNetworkApplicationTests {
     @Order(32)
     void Prueba32() {
         driver.navigate().to(URLApiClient);
-        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, "user01@email.com", "user01", "friend-list");
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -411,7 +470,7 @@ class SocialNetworkApplicationTests {
     void Prueba34() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.getCount(driver,user,6);
 //        Assertions.fail("Not yet implemented");
     }
@@ -425,7 +484,7 @@ class SocialNetworkApplicationTests {
     void Prueba35() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.filter(driver,"user00@email.com");
         //2 por que las tr estan duplicadas por la linea de ultimo mensaje
         PO_ClienteAPIFriendList.getCount(driver,user,2);
@@ -440,7 +499,7 @@ class SocialNetworkApplicationTests {
     void Prueba36() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
         PO_ClienteAPIChat.getCountMessages(driver,3);
         Assertions.fail("Not yet implemented");
@@ -454,7 +513,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(37)
     void Prueba37() {
-
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
+        PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
+        PO_ClienteAPIFriendList.createMessage(driver,"cceder a la lista de mensajes de un amigo y crear u");
         Assertions.fail("Not yet implemented");
     }
 
