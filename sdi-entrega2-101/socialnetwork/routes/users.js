@@ -215,6 +215,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      */
     app.post('/signup', function (req, res) {
         logger.info("POST /signup");
+
         if (req.body.password != req.body.passwordConfirm) {
             res.redirect("/signup" +
                 "?message=La contraseña no se ha repetido correctamente" +
@@ -261,6 +262,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 });
             });
         }
+
     });
 
     /**

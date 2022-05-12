@@ -1,7 +1,10 @@
 package socialnetwork.db;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.*;
+import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -421,8 +424,17 @@ public class InitDB {
     }
 
     public void deleteUserByEmail(String email) {
+
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-            mongoclient.getDatabase(AppDBname).getCollection("users").deleteMany(new Document("email", email));
+            MongoCollection<Document> collection = mongoclient.getDatabase(AppDBname).getCollection("users");
+            Bson query = eq("email", email);
+            collection.deleteMany(new Document("email", email));
+            try {
+                DeleteResult result = collection.deleteOne(query);
+                System.out.println("Deleted document count: " + result.getDeletedCount());
+            } catch (MongoException me) {
+                System.err.println("Unable to delete due to an error: " + me);
+            }
         }
     }
 
