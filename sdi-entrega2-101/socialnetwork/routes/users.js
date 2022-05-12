@@ -58,7 +58,6 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             page = 1;
         }
         usersRepository.getUsersPage(filter, {}, page, 4).then(result => {
-            // usersRepository.findUsers(filter, {}).then(result => {
             let lastPage = result.total / 4;
             if (result.total % 4 > 0) {
                 lastPage++;
@@ -70,10 +69,6 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 }
             }
             usersRepository.findUsers(filter, {}).then(users => {
-                /*let filter2 = {
-                    email : req.session.user.email,
-                }*/
-                //usersRepository.findUser(filter2, {}).then(user=>{
                 if (users == null || users.length === 0) {
                     logger.error("GET /users => Usuario no identificado");
                     res.redirect("/login" + "?message=Usuario no identificado" + "&messageType=alert-danger ");

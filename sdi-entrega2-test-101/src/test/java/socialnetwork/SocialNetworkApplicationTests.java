@@ -22,6 +22,10 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
+   //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+
+    //PabloRgz
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
@@ -80,7 +84,6 @@ class SocialNetworkApplicationTests {
     @Order(1)
     void Prueba01() {
         String email = "email1@email.com";
-        PO_DataBase.deleteUserByEmail(email);
         PO_RegisterView.registerUser(driver, email, "password");
         PO_DataBase.deleteUserByEmail(email);
 
