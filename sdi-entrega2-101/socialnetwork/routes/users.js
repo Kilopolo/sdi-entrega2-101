@@ -269,7 +269,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método post para el inicio de sesión en la aplicación
      */
     app.post('/login', function (req, res) {
-        logger.info("POST /users/login");
+        logger.info("POST /login");
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let filter = {
@@ -282,7 +282,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
 
             if (user == null) {
                 req.session.user = null;
-                res.redirect("/users/login" +
+                res.redirect("/login" +
                     "?message=Email o password incorrecto" +
                     "&messageType=alert-danger ");
             } else {
@@ -292,7 +292,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         }).catch(err => {
             logger.error("Se ha producido un error al buscar el usuario");
             req.session.user = null;
-            res.redirect("/users/login" +
+            res.redirect("/login" +
                 "?message=Se ha producido un error al buscar el usuario" +
                 "&messageType=alert-danger ");
         });
@@ -301,7 +301,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
      * Método get para la salida de sesión en la aplicación
      */
     app.get('/logout', function (req, res) {
-        logger.info("GET /users/login");
+        logger.info("GET /login");
         req.session.user = null;
         res.render("index.twig", {userInSession: req.session.user});
     });
