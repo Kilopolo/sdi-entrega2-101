@@ -53,7 +53,9 @@ module.exports = function(app, publicationsRepository, amistadesRepository) {
                 });
             }
             else {
-                res.redirect("/amistades");
+                res.redirect("/amistades" +
+                    "?message=No tienes permiso para acceder a estas publicaciones" +
+                    "&messageType=alert-danger");
             }
         }).catch(() => {
             res.send("Error al obtener relación de amistad");
