@@ -18,6 +18,13 @@ module.exports = function(app, publicationsRepository, amistadesRepository) {
     });
 
     app.post('/publications/add', function (req, res) {
+        console.log(req.body.titulo + req.body.texto);
+        if (req.body.titulo === "" || req.body.titulo === null
+            || req.body.texto === "" || req.body.texto === null) {
+            res.redirect("/publications/add" +
+                "?message=Ni el título ni el contenido de la publicación pueden estar vacíos" +
+                "&messageType=alert-danger ");
+        }
         let publication = {
             email: req.session.user.email,
             titulo: req.body.titulo,

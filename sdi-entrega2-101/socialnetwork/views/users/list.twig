@@ -11,7 +11,7 @@
                            placeholder="Buscar..."
                            name="search"/>
                     <span class="input-group-btn">
-                        <button class="btn" type="submit">
+                        <button class="btn" type="submit" id="searchBtn">
                             <span class="glyphicon glyphicon-search">
                             </span>
                         </button>
@@ -61,7 +61,7 @@
 
                     {% else %}
                         {% if user.rol != "ADMIN" %}
-                            <td><input type="checkbox" name="checkEliminar" value="{{ user.email}}"></td>
+                            <td><input type="checkbox" id="checkbox_{{ user.email }}" name="checkEliminar" value="{{ user.email}}"></td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.name }}</td>
                             <td>{{ user.surname }}</td>
@@ -89,7 +89,7 @@
             <ul class="pagination">
                 {% for page in pages %}
                     <li class="page-item" id="pi-{{ page }}">
-                        <a class="page-link" href="\users\?page={{ page }}">{{ page }}</a>
+                        <a id="page{{ page }}" class="page-link" href="\users\?page={{ page }}">{{ page }}</a>
                     </li>
                 {% endfor %}
                 <script>
