@@ -27,6 +27,7 @@ module.exports = function (app, amistadesRepository, usersRepository) {
             });
         });
     });
+
     /**
      * Método que devuelve el email del usuario amigo al que está en sesión
      * @param req
@@ -59,5 +60,6 @@ module.exports = function (app, amistadesRepository, usersRepository) {
                     usuarios.push(user);
                 });
             }
-        };
-    };
+        }
+    }
+}
