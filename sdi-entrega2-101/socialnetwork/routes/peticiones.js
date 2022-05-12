@@ -32,6 +32,7 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
     });
 
     app.get("/peticiones/enviar/:email", function (req, res) {
+        if( req.params.email != req.session.user.email){
         usersRepository.findUser({email: req.params.email}, {}).then(user => {
             if(user != null) {
             let peticion = {
@@ -64,27 +65,33 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
                                 peticionesRepository.findPeticionesByEmail(peticionInversa, {}).then(peticionInversaCreada => {
                                     if (peticionInversaCreada.length <= 0) {
                                         peticionesRepository.insertPeticion(peticion, {}).then(peticion => {
+                                            res.redirect("/users");
                                         });
                                     } else {
                                         amistadesRepository.insertAmistad({
                                             user1: req.session.user.email,
                                             user2: req.params.email
                                         }, {}).then(peticion => {
-                                            peticionesRepository.deletePeticion({"_id": peticionInversaCreada[0]._id});
+                                            peticionesRepository.deletePeticion({"_id": peticionInversaCreada[0]._id}).then(borrado=>{
+                                                res.redirect("/users");
+                                            });
+
                                         });
                                     }
                                 })
 
-                            }
+                            } else {res.redirect("/users");}
                         })
 
                     }
+                    else {res.redirect("/users");}
                 }).catch()
             }}
+            else {
 
+            }
 
-        });
-        res.redirect("/users");
+        });} else { res.redirect("/users");}
         })
 };
 
