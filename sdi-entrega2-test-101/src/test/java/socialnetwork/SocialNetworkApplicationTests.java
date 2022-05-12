@@ -66,7 +66,7 @@ class SocialNetworkApplicationTests {
     //Antes de la primera prueba
     @BeforeAll
     static public void begin() {
-
+        PO_View.setTimeout(3);
     }
 
     //Al finalizar la última prueba
