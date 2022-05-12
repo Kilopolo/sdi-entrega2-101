@@ -26,12 +26,12 @@ class SocialNetworkApplicationTests {
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //PabloRgz
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //PabloRgz
-//    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-//    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -223,9 +223,13 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(12)
     void Prueba12() {
-        InitDB.insertUser("aaa","aaa","aaa","USER","aaa");
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_RegisterView.fillForm(driver, "aaa@email.com", "Randall", "Boggs"
+                , "user01", "user01");
+        //PO_View.checkElementBy(driver, "id", "signup");
+        PO_HomeView.desconect(driver);
         PO_PrivateView.login(driver, "admin@email.com", "admin", "searchBtn");
-        WebElement check = driver.findElement(By.id("checkbox_aaa"));
+        WebElement check = driver.findElement(By.id("checkbox_aaa@email.com"));
         check.click();
         WebElement eliminarBtn = driver.findElement(By.name("eliminar"));
         eliminarBtn.click();
