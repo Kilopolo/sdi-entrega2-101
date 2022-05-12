@@ -425,8 +425,6 @@ public class InitDB {
 
     public void deleteUserByEmail(String email) {
 
-
-
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
             MongoCollection<Document> collection = mongoclient.getDatabase(AppDBname).getCollection("users");
             Bson query = eq("email", email);
