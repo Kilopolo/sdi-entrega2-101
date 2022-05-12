@@ -22,12 +22,12 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //PabloRgz
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+//    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+//    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -337,8 +337,8 @@ class SocialNetworkApplicationTests {
 
     }
     /**
-     *[Prueba16]Hacer  una  búsqueda  con  el  campo  vacío  y  comprobar  que  se  muestra  la  página  que corresponde
-     *con el listado usuarios existentes en el sistema.
+     *[Prueba17] Hacer una búsqueda escribiendo en el campo un texto que no exista y comprobar que se
+     * muestra la página que corresponde, con la lista de usuarios vacía.
      */
     @Test
     @Order(17)
@@ -616,7 +616,7 @@ class SocialNetworkApplicationTests {
     @Order(31)
     public void Prueba31() {
         // No es posible acceder a un listado de amistades ajeno, al no contener parámetros en la URL
-        // Por tanto, testeamos aquí el funcionamiento del router de sesión para el listado de amistades
+        // Por tanto, testeamos aquí el funcionamiento del router de sesión para el listado de usuarios
 
         // Intentamos acceder al listado de usuarios sin estar autenticados
         driver.navigate().to("http://localhost:4000/amistades");
@@ -661,7 +661,7 @@ class SocialNetworkApplicationTests {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
         PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
-        PO_ClienteAPIFriendList.getCount(driver,user,6);
+        PO_ClienteAPIFriendList.getCount(driver,user,12);
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -692,7 +692,7 @@ class SocialNetworkApplicationTests {
         PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
         PO_ClienteAPIChat.getCountMessages(driver,3);
-        Assertions.fail("Not yet implemented");
+//        Assertions.fail("Not yet implemented");
     }
 
 
@@ -708,7 +708,7 @@ class SocialNetworkApplicationTests {
         PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
         PO_ClienteAPIFriendList.createMessage(driver,"cceder a la lista de mensajes de un amigo y crear u");
-        Assertions.fail("Not yet implemented");
+//        Assertions.fail("Not yet implemented");
     }
 
 
