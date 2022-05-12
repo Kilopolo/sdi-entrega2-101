@@ -27,9 +27,36 @@ public class PO_ClienteAPIFriendList extends PO_NavView {
         return count;
     }
 
-    public static void filter(WebDriver driver, String s) {
+    public static void filter(WebDriver driver, String username) {
+
+
+
+
     }
 
-    public static void goToConversation(WebDriver driver, String s) {
+    public static void goToConversation(WebDriver driver, String nombre) {
+
+
+        PO_NavView.checkElementBy(driver, "id","testClienteOfertasView");
+
+        List<WebElement> ofertas = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
+
+        for (WebElement webElement : ofertas) {
+            List<WebElement> hijos = webElement.findElements(By.xpath("./child::*"));
+            if (hijos.get(0).getText().equals(nombre)) {
+                hijos.get(3).findElements(By.xpath("./child::*")).get(0).click();
+                return;
+            }
+
+        }
+
+
+        PO_View.checkElementBy(driver, "text", nombre);
+    }
+
+    public static void createMessage(WebDriver driver, String mensaje) {
+
+
+
     }
 }
