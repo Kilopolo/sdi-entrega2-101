@@ -41,6 +41,10 @@
     let token;
     let URLbase = "http://localhost:8081/api/v1.0";
     let autenticado = false;
+    let actualizar = false;
+
+
+
     $("#main-container").load("widget-login.html");
     if (!autenticado) {
         console.log("usuario no autenticado")
@@ -57,16 +61,24 @@
             let url = new URL(window.location.href);
             let w = url.searchParams.get("w");
             if (w == "login") {
+                actualizar = false;
                 $("#main-container").load("widget-login.html");
+                console.log("USUARIO.load(\"widget-login.html\");")
             }
             if (w == "friendList") {
+                actualizar = false;
                 $("#main-container").load("widget-friendList.html");
+                console.log("USUARIO.load(\"widget-friendList.html\");")
             }
             if (w == "messages") {
+                actualizar = true;
                 $("#main-container").load("widget-messages.html");
+                console.log("USUARIO.load(\"widget-messages.html\");")
             }
         } else {
+            actualizar = false;
             $("#main-container").load("widget-login.html");
+            console.log("ERROR: Cookies.get('token') == null")
         }
     }
 

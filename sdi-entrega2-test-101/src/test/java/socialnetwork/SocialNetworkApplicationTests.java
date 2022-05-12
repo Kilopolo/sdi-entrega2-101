@@ -20,9 +20,12 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "/usr/bin/firefox";
-    static String Geckodriver = "/usr/bin/geckodriver";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
+    //PabloRgz
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -243,7 +246,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
         PO_Peticiones.checkListaDePeticiones(driver,1);
-        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/aceptar/user11@email.com']");
+        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/aceptar/user11@email.com']");
         elements.get(0).click();
         SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
     }
@@ -260,7 +263,8 @@ class SocialNetworkApplicationTests {
 
         //Contamos el numero de filas de los usuarios
         List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-        Assertions.assertEquals(1, amistadesList.size());
+        Assertions.assertEquals(3, amistadesList.size());
+        PO_DataBase.deleteAmistadByEmails("user11@email.com","user03@email.com");
     }
 
 
@@ -318,8 +322,6 @@ class SocialNetworkApplicationTests {
      * [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las que
      * existen para dicho usuario.
      */
-    @Test
-    @Order(26)
     void Prueba26() {
         // Entramos con datos válidos
         PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
@@ -385,6 +387,11 @@ class SocialNetworkApplicationTests {
                 "No tienes permiso para acceder a estas publicaciones");
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    //////////////    Parte 2B - Cliente - Aplicación jQuery       ////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+
+
     /**
      * [Prueba32] Inicio de sesión con datos válidos.
      */
@@ -392,7 +399,7 @@ class SocialNetworkApplicationTests {
     @Order(32)
     void Prueba32() {
         driver.navigate().to(URLApiClient);
-        PO_PrivateView.login(driver, "user01@email.com", "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, "user01@email.com", "user01", "friend-list");
 //        Assertions.fail("Not yet implemented");
     }
 
@@ -415,7 +422,7 @@ class SocialNetworkApplicationTests {
     void Prueba34() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.getCount(driver,user,6);
 //        Assertions.fail("Not yet implemented");
     }
@@ -429,7 +436,7 @@ class SocialNetworkApplicationTests {
     void Prueba35() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.filter(driver,"user00@email.com");
         //2 por que las tr estan duplicadas por la linea de ultimo mensaje
         PO_ClienteAPIFriendList.getCount(driver,user,2);
@@ -444,7 +451,7 @@ class SocialNetworkApplicationTests {
     void Prueba36() {
         driver.navigate().to(URLApiClient);
         String user = "user01@email.com";
-        PO_PrivateView.login(driver, user, "user01", "user-list");
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
         PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
         PO_ClienteAPIChat.getCountMessages(driver,3);
         Assertions.fail("Not yet implemented");
@@ -458,7 +465,11 @@ class SocialNetworkApplicationTests {
     @Test
     @Order(37)
     void Prueba37() {
-
+        driver.navigate().to(URLApiClient);
+        String user = "user01@email.com";
+        PO_PrivateView.loginAPI(driver, user, "user01", "friend-list");
+        PO_ClienteAPIFriendList.goToConversation(driver,"user00@email.com");
+        PO_ClienteAPIFriendList.createMessage(driver,"cceder a la lista de mensajes de un amigo y crear u");
         Assertions.fail("Not yet implemented");
     }
 

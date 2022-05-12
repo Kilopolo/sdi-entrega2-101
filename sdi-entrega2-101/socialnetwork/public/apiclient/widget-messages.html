@@ -1,9 +1,9 @@
 <div id="widget-messages">
 
-    <h2>Chat</h2>
-<!--    <button onclick="updateChatList()" type="button"-->
-<!--            class="btn btn-info btn-rounded float-end">Actualizar-->
-<!--    </button>-->
+    <h2 id="chat">Chat</h2>
+    <!--    <button onclick="updateChatList()" type="button"-->
+    <!--            class="btn btn-info btn-rounded float-end">Actualizar-->
+    <!--    </button>-->
 
     <section style="background-color: #eee;">
         <div class="container py-5">
@@ -22,7 +22,8 @@
 
                                 <li id="chat-table" class="d-flex justify-content-between mb-4">
                                     <!--Contenido-->
-                                    <div class="card-header d-flex justify-content-between p-3"><p> Cargando contenido </p></div>
+                                    <div class="card-header d-flex justify-content-between p-3"><p> Cargando
+                                        contenido </p></div>
                                 </li>
                                 <li class="bg-white mb-3">
                                     <div class="form-outline">
@@ -53,16 +54,17 @@
         console.log("usuario no autenticado")
         $("#main-container").load("widget-login.html");
     } else {
-        window.history.pushState("", "", "/apiclient/client.html?w=messages");
+
+        // actualizar = false;
         actualizar = false;
         loadChat();
-
+        window.history.pushState("", "", "/apiclient/client.html?w=messages");
 
 
     }
     chatList;
     userLoggedIn;
-    console.log(URLbase + "/messages/" + selectedMessageId + "/" + chatList[0].destinatario);
+    console.log(URLbase + "/messages/" + selectedMessageId );
     console.log("usuario autenticado como " + userLoggedIn)
 
     //Funcion que se ejecuta al clicar el boton para enviar un mensaje, envia el mensaje
@@ -70,24 +72,38 @@
         console.log("Enviando mensaje: " + $("#contenido").val())
         if (chatList != null)
             $.ajax({
-                url: URLbase + "/messages/agregar/" + selectedMessageId + "/" + chatList[0].destinatario,
+                url: URLbase + "/messages/agregar/" + selectedMessageId ,
                 type: "POST",
                 data: {
-                    contenido: $("#contenido").val()
+                    contenido: $("#contenido").val(),
+                    emisor: userLoggedIn,
+                    mensaje: chatList[0]
                 },
                 dataType: 'json',
+                headers: {"token": token},
                 success: function (respuesta) {
                     actualizar = true
                     updateChatList(respuesta);
                     loadChat();
                     //Limpia el formulario despues de un mensaje
                     $('input[type="text"]').val('');
-
-                },
+                    console.log("LOAD CHAT CORRECTO")
+                },error: function (error) {
+                    $("#main-container").load("widget-login.html");
+                    console.log("LOAD CHAT ERROR")
+                }
             });
     });
 
+
+
+
+
+
     function updateChatList(chatList) {
+
+
+
 
         $("#chat-table").empty(); // Vaciar la tabla
         if (chatList != null)
@@ -108,8 +124,6 @@
                 );
             }
     }
-
-
 
 
     function loadChat() {
@@ -144,7 +158,7 @@
             loadChat();
         }
     }
-
-    setInterval('actualizacion()', 2000);
+//TODO descomentar
+    //setInterval('actualizacion()', 2000);
 
 </script>
