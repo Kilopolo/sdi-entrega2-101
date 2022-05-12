@@ -20,9 +20,12 @@ class SocialNetworkApplicationTests {
 
 
     //Pablo Diaz
-    static String PathFirefox = "/usr/bin/firefox";
-    static String Geckodriver = "/usr/bin/geckodriver";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
+    //PabloRgz
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Users\\pablo\\Desktop\\uni\\cuartocurso\\segundo\\SDI\\sesion5\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
     //Para MACOSX
     //static String PathFirefox = "/Applications/Firefox 2.app/Contents/MacOS/firefox-bin";
@@ -243,7 +246,7 @@ class SocialNetworkApplicationTests {
         PO_HomeView.checkElementBy(driver, "@href", "/peticiones").get(0).click();
         //Esto para la vista nueva
         PO_Peticiones.checkListaDePeticiones(driver,1);
-        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticion/aceptar/user11@email.com']");
+        var elements = PO_View.checkElementBy(driver, "free", "//a[@href='/peticiones/aceptar/user11@email.com']");
         elements.get(0).click();
         SeleniumUtils.waitTextIsNotPresentOnPage(driver, "//a[@href='/peticion/aceptar/user11@email.com']", PO_View.getTimeout());
     }
@@ -260,7 +263,8 @@ class SocialNetworkApplicationTests {
 
         //Contamos el numero de filas de los usuarios
         List<WebElement> amistadesList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-        Assertions.assertEquals(1, amistadesList.size());
+        Assertions.assertEquals(3, amistadesList.size());
+        PO_DataBase.deleteAmistadByEmails("user11@email.com","user03@email.com");
     }
 
 
@@ -318,8 +322,6 @@ class SocialNetworkApplicationTests {
      * [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las que
      * existen para dicho usuario.
      */
-    @Test
-    @Order(26)
     void Prueba26() {
         // Entramos con datos válidos
         PO_PrivateView.login(driver, "user00@email.com", "user00", "user-list");
