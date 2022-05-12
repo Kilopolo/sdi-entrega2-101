@@ -42,10 +42,6 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                 }
             }
             usersRepository.findUsers(filter,{}).then(users => {
-                /*let filter2 = {
-                    email : req.session.user.email,
-                }*/
-                //usersRepository.findUser(filter2, {}).then(user=>{
                 if (users == null || users.length===0 ) {
                     res.redirect("/users/login" + "?message=Usuario no identificado"+ "&messageType=alert-danger ");
 
@@ -63,22 +59,9 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                     }
                     else {
                         renderUserList(req,res,req.session.user,users,pages,page);
-                        /*res.render("users/list.twig",
-                            {
-                                users: result.users,
-                                user: req.session.user,
-                                pages: pages,
-                                currentPage: page,
-                                userRol: roleUserSession
-                            });*/
+
                     }
                 }
-                /*}).catch(err=>{
-                    res.render("error.twig", {
-                        mensaje : "Se ha producido un error al bucar el usuario",
-                        elError : err
-                    });
-                });*/
             }).catch(err => {
                 res.render("error.twig", {
                     mensaje : "Se ha producido un error al buscar los usuarios",
@@ -92,6 +75,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             });
         });
     })
+
     app.post("/users/delete", function (req, res) {
         let toDeleteUsers = req.body.checkEliminar;
         if (!Array.isArray(toDeleteUsers)) {
@@ -142,9 +126,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             email: {$ne: req.session.user.email}
         };
         let options = {};
-        /*usersRepository.findUsers(filter, options).then(users => {*/
         if (users == null) {
-            //algun error
         } else {
             //TODO {user1 : req.session.user.email},{user2:1, _id:0} forma de hacerlo mejor?
             amistadesRepository.findAmistadesByEmail({$or: [{user1: req.session.user.email}, {user2: req.session.user.email}]}, {}).then(amistades => {
@@ -164,34 +146,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
             }).catch(error => "Sucedió un error buscando las amistades" + error);
 
 
-        } /*else {
-        amistadesRepository.deleteAmistades(filter2,{}).then(amistades=>{
-            if(amistades==null){
-                res.redirect("/users" + "?message=Se ha producido un error al eliminar los amigos" + "&messageType=alert-danger");
-            }
-            else{
-                usersRepository.deleteUsers(filter,{}).then(users => {
-                    res.redirect("/users");
-                }).catch(error => {
-                    res.render("error.twig", {
-                        mensaje : "Se ha producido un error al listar los usuarios del sistema",
-                        elError : error
-                    });
-                });
-            }
-        }).catch(error => {
-            res.render("error.twig", {
-                mensaje : "Se ha producido un error al eliminar los amigos",
-                elError : error
-            });
-        });
-    }*/
-        /*}).catch(error => {
-            res.render("error.twig", {
-                mensaje: "Se ha producido un error al eliminar las invitaciones del sistema",
-                elError: error
-            });
-        });*/
+        }
     }
 
     app.post('/users/signup', function (req, res) {
