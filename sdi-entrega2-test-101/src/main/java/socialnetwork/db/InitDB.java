@@ -167,7 +167,7 @@ public class InitDB {
 
     }
 
-    private static void insertUser(String userEmail, String name, String surname, String rol, String password) {
+    public static void insertUser(String userEmail, String name, String surname, String rol, String password) {
 
         String securePassword = AES.encrypt(password);
 //            System.out.println(securePassword);

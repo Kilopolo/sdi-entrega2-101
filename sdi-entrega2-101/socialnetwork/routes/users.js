@@ -46,10 +46,6 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                     email : req.session.user.email,
                 }*/
                 //usersRepository.findUser(filter2, {}).then(user=>{
-                if (users == null || users.length===0 ) {
-                    res.redirect("/users/login" + "?message=Usuario no identificado"+ "&messageType=alert-danger ");
-
-                } else {
                     let roleUserSession = req.session.user.rol;
                     if(roleUserSession === "ADMIN"){
                         res.render("users/list.twig",
@@ -62,7 +58,13 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                             });
                     }
                     else {
-                        renderUserList(req,res,req.session.user,users,pages,page);
+                        for(i=0;i<result.users.length;i++){
+                            if(result.users[i].email === req.session.user.email||result.users[i].email === "admin@email.com"){
+                                result.users.splice(i,1);
+                                i--;
+                            }
+                        }
+                        renderUserList(req,res,req.session.user,result.users,pages,page);
                         /*res.render("users/list.twig",
                             {
                                 users: result.users,
@@ -72,7 +74,7 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
                                 userRol: roleUserSession
                             });*/
                     }
-                }
+
                 /*}).catch(err=>{
                     res.render("error.twig", {
                         mensaje : "Se ha producido un error al bucar el usuario",
