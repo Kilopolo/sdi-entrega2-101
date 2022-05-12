@@ -1,12 +1,10 @@
 const usersRepository = require("../repositories/usersRepository");
 
 module.exports = function (app, peticionesRepository, usersRepository, amistadesRepository) {
-
-    let logger = app.get("log4js")
-
-
+    /**
+     * Método get que devuelve la lista de peticiones
+     */
     app.get("/peticiones", function (req, res) {
-        logger.info("GET /peticiones");
         let filter = {user2: req.session.user.email};
         let options = {};
         let page = parseInt(req.query.page); // Es String !!!
@@ -37,11 +35,11 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
 
 
         });
-
     });
-
+    /**
+     * Método get que acepta una petición
+     */
     app.get("/peticiones/aceptar/:email", function (req, res) {
-        logger.info("GET /peticiones/aceptar/:email");
         let filter = {$and: [{user1: req.params.email}, {user2: req.session.user.email}]};
         let options = {};
         peticionesRepository.findPeticionesByEmail(filter, options).then(peticion => {
@@ -51,106 +49,77 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
                     user1: req.params.email,
                     user2: req.session.user.email
                 }
-                amistadesRepository.insertAmistad(amistad).catch(error => {
-                    logger.error("Se ha producido un error al insertar la amistad: " + error);
-                    res.render("error.twig", {
-                        mensaje: "Se ha producido un error al insertar la amistad",
-                        elError: error
-                    });
-                });
-            }).catch(error => {
-                logger.error("Se ha producido un error al borrar la petición: " + error);
-                res.render("error.twig", {
-                    mensaje: "Se ha producido un error al borrar la petición ",
-                    elError: error
-                });
+                amistadesRepository.insertAmistad(amistad);
             });
             //creear amistad
             res.redirect("/peticiones");
-        }).catch(error => {
-            logger.error("Se ha producido un error al listar las peticiones: " + error);
-            res.render("error.twig", {
-                mensaje: "Se ha producido un error al listar las peticiones",
-                elError: error
-            });
         });
     });
-
+    /**
+     * Método get que envía una petición
+     */
     app.get("/peticiones/enviar/:email", function (req, res) {
-        logger.info("GET /peticiones/enviar/:email");
-        if (req.params.email != req.session.user.email) {
-            usersRepository.findUser({email: req.params.email}, {}).then(user => {
-                if (user != null) {
-                    let peticion = {
-                        user1: req.session.user.email,
-                        user2: req.params.email
-                    };
-                    if (req.params.email != req.session.user.email) {
-                        peticionesRepository.findPeticionesByEmail(peticion, {}).then(peticionYaCreada => {
-                            if (peticionYaCreada.length <= 0) {
-                                let amistad = {
-                                    $or: [
-                                        {
-                                            $and: [
-                                                {user1: req.session.user.email},
-                                                {user2: req.params.email}
-                                            ]
-                                        },
-                                        {
-                                            $and: [
-                                                {user2: req.session.user.email},
-                                                {user1: req.params.email}]
-                                        }]
-                                }
-                                amistadesRepository.findAmistadesByEmail(amistad, {}).then(amistadYaCreada => {
-                                    if (amistadYaCreada.length <= 0) {
-                                        let peticionInversa = {
-                                            user2: req.session.user.email,
-                                            user1: req.params.email
-                                        };
-                                        peticionesRepository.findPeticionesByEmail(peticionInversa, {}).then(peticionInversaCreada => {
-                                            if (peticionInversaCreada.length <= 0) {
-                                                peticionesRepository.insertPeticion(peticion, {}).then(peticion => {
-                                                    res.redirect("/users");
-                                                });
-                                            } else {
-                                                amistadesRepository.insertAmistad({
-                                                    user1: req.session.user.email,
-                                                    user2: req.params.email
-                                                }, {}).then(peticion => {
-                                                    peticionesRepository.deletePeticion({"_id": peticionInversaCreada[0]._id}).then(borrado => {
-                                                        res.redirect("/users");
-                                                    });
-
-                                                });
-                                            }
-                                        })
-
+        if( req.params.email != req.session.user.email){
+        usersRepository.findUser({email: req.params.email}, {}).then(user => {
+            if(user != null) {
+            let peticion = {
+                user1: req.session.user.email,
+                user2: req.params.email
+            };
+            if (req.params.email != req.session.user.email) {
+                peticionesRepository.findPeticionesByEmail(peticion, {}).then(peticionYaCreada => {
+                    if (peticionYaCreada.length <= 0) {
+                        let amistad = {
+                            $or: [
+                                {
+                                    $and: [
+                                        {user1: req.session.user.email},
+                                        {user2: req.params.email}
+                                    ]
+                                },
+                                {
+                                    $and: [
+                                        {user2: req.session.user.email},
+                                        {user1: req.params.email}]
+                                }]
+                        }
+                        amistadesRepository.findAmistadesByEmail(amistad, {}).then(amistadYaCreada => {
+                            if (amistadYaCreada.length <= 0) {
+                                let peticionInversa = {
+                                    user2: req.session.user.email,
+                                    user1: req.params.email
+                                };
+                                peticionesRepository.findPeticionesByEmail(peticionInversa, {}).then(peticionInversaCreada => {
+                                    if (peticionInversaCreada.length <= 0) {
+                                        peticionesRepository.insertPeticion(peticion, {}).then(peticion => {
+                                            res.redirect("/users");
+                                        });
                                     } else {
-                                        res.redirect("/users");
+                                        amistadesRepository.insertAmistad({
+                                            user1: req.session.user.email,
+                                            user2: req.params.email
+                                        }, {}).then(peticion => {
+                                            peticionesRepository.deletePeticion({"_id": peticionInversaCreada[0]._id}).then(borrado=>{
+                                                res.redirect("/users");
+                                            });
+
+                                        });
                                     }
                                 })
 
-                            } else {
-                                res.redirect("/users");
-                            }
-                        }).catch()
+                            } else {res.redirect("/users");}
+                        })
+
                     }
-                } else {
+                    else {res.redirect("/users");}
+                }).catch()
+            }}
+            else {
 
-                }
+            }
 
-            }).catch(error => {
-                logger.error("Se ha producido un error al encontrar usuarios : " + error);
-                res.render("error.twig", {
-                    mensaje: "Se ha producido un error al encontrar usuarios",
-                    elError: error
-                });
-            });
-        } else {
-            res.redirect("/users");
-        }
-    })
+        });} else { res.redirect("/users");}
+        })
 };
 
 
