@@ -10,7 +10,7 @@ userSessionRouter.use(function(req, res, next) {
         next();
     } else {
         console.log("va a: " + req.originalUrl);
-        res.redirect("/users/login");
+        res.redirect("/login");
         logger.warn("redirect routerUsuarioSession");
     }
 

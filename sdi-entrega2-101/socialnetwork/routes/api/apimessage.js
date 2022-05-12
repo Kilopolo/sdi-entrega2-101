@@ -3,6 +3,11 @@ module.exports = function (app, messageRepository) {
 
     let logger = app.get("log4js")
 
+    /**
+     * Función que agrega un nuevo mensaje con la información proporcionada por un usuario en su conversación
+     * con otro. Se incluirá, además del texto del mensaje, la fecha de envío y la información de ambos emisor
+     * y destinatario.
+     */
     app.post("/api/v1.0/messages/agregar/:id", function (req, res) {
         try {
 
@@ -52,6 +57,9 @@ module.exports = function (app, messageRepository) {
         }
     });
 
+    /**
+     * Función que recupera el listado de mensajes entre dos usuarios, ordenados por fecha.
+     */
     app.get("/api/v1.0/messages/:id", function (req, res) {
         let user = res.user;
         // console.log(user);

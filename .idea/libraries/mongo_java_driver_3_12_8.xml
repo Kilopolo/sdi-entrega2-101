@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="mongo-java-driver-3.12.8">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/sdi-entrega2-test-101/lib/mongo-java-driver-3.12.8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
