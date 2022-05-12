@@ -72,7 +72,7 @@ app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
 app.use("/peticiones", userSessionRouter);
 app.use("/amistades", userSessionRouter);
-//app.use("/users", userSessionRouter);
+// app.use("/users", userSessionRouter);
 
 
 const usersRepository = require("./repositories/usersRepository.js");
@@ -104,7 +104,10 @@ const userTokenRouter = require('./routes/userTokenRouter.js');
 app.use("/api/v1.0/friends/list", userTokenRouter);
 app.use("/api/v1.0/messages", userTokenRouter);
 
-const jQueryClient = require("./routes/api/socialnetworkv1.0.js")(app,usersRepository,amistadesRepository,messagesRepository);
+require("./routes/api/socialnetworkv1.0.js")(app);
+require("./routes/api/apiamistades.js")(app, usersRepository, amistadesRepository, messagesRepository);
+require("./routes/api/apimessage.js")(app, messagesRepository);
+require("./routes/api/apilogin")(app, usersRepository);
 
 
 // view engine setup

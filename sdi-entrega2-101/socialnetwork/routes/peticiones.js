@@ -1,7 +1,9 @@
 const usersRepository = require("../repositories/usersRepository");
-//TODO arreglar
-module.exports = function (app, peticionesRepository, usersRepository, amistadesRepository) {
 
+module.exports = function (app, peticionesRepository, usersRepository, amistadesRepository) {
+    /**
+     * Método get que devuelve la lista de peticiones
+     */
     app.get("/peticiones", function (req, res) {
         let filter = {user2: req.session.user.email};
         let options = {};
@@ -34,7 +36,9 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
 
         });
     });
-
+    /**
+     * Método get que acepta una petición
+     */
     app.get("/peticiones/aceptar/:email", function (req, res) {
         let filter = {$and: [{user1: req.params.email}, {user2: req.session.user.email}]};
         let options = {};
@@ -51,7 +55,9 @@ module.exports = function (app, peticionesRepository, usersRepository, amistades
             res.redirect("/peticiones");
         });
     });
-
+    /**
+     * Método get que envía una petición
+     */
     app.get("/peticiones/enviar/:email", function (req, res) {
         if( req.params.email != req.session.user.email && req.params.email != "admin@email.com"){
         usersRepository.findUser({email: req.params.email}, {}).then(user => {
