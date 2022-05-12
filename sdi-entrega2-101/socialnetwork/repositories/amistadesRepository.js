@@ -17,6 +17,23 @@ module.exports = {
             throw (error);
         }
     },
+    getAmistadesPg: async function (filter, options, page) {
+        try {
+            const limit = 4;
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("socialNetwork");
+            const collectionName = 'amistades';
+            const amistadesCollection = database.collection(collectionName);
+            const counter = amistadesCollection.find(filter, options);
+            const cursor = counter.skip((page - 1) * limit).limit(limit);
+            const amistades = await cursor.toArray();
+            const amistadesCollectionCount = await amistadesCollection.find(filter, options).toArray();
+            const result = {amistades: amistades, total: amistadesCollectionCount.length};
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
     findAmistad: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
