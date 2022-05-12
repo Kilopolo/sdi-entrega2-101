@@ -28,7 +28,7 @@ public class PO_ClienteAPIFriendList extends PO_NavView {
     }
 
     public static void filter(WebDriver driver, String busquedap) {
-        WebElement busqueda = driver.findElement(By.name("busqueda"));
+        WebElement busqueda = driver.findElement(By.id("filter-by-name"));
         busqueda.click();
         busqueda.clear();
         busqueda.sendKeys(busquedap);
@@ -49,26 +49,30 @@ public class PO_ClienteAPIFriendList extends PO_NavView {
     public static void goToConversation(WebDriver driver, String nombre) {
 
 
-        PO_NavView.checkElementBy(driver, "id", "testClienteOfertasView");
+        PO_NavView.checkElementBy(driver, "id", nombre);
 
-        List<WebElement> ofertas = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
+        List<WebElement> elements = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"" + nombre + "\"]",
+                getTimeout());
 
-        for (WebElement webElement : ofertas) {
-            List<WebElement> hijos = webElement.findElements(By.xpath("./child::*"));
-            if (hijos.get(0).getText().equals(nombre)) {
-                hijos.get(3).findElements(By.xpath("./child::*")).get(0).click();
-                return;
-            }
+        String a = elements.get(0).getText();
 
-        }
+        elements.get(0).click();
 
-
+        PO_View.checkElementBy(driver, "id", "chat");
         PO_View.checkElementBy(driver, "text", nombre);
+
+
     }
 
     public static void createMessage(WebDriver driver, String mensaje) {
 
-
+//        PO_View.checkElementBy(driver, "id", "boton-enviar");
+        WebElement textArea = driver.findElement(By.name("contenido"));
+        textArea.click();
+        textArea.clear();
+        textArea.sendKeys(mensaje);
+        By boton = By.className("btn");
+        driver.findElement(boton).click();
     }
 
     public static int getCountMoreThan(WebDriver driver, int count) {

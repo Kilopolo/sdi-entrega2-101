@@ -1,5 +1,5 @@
 <div id="widget-friendList">
-    <h1  id="friend-list">Lista de amistades</h1>
+    <h1 id="friend-list">Lista de amistades</h1>
     <input type="text" class="form-control" placeholder="Filtrar por nombre" id="filter-by-name"/>
 
     <!--    <button onclick="loadUsers()" class="btn" >Actualizar</button>-->
@@ -39,7 +39,6 @@
     selectedMessageId;
 
 
-
     function loadUsers() {
         $.ajax({
             url: URLbase + "/friends/list",
@@ -65,7 +64,7 @@
             for (let i = 0; i < friends.length; i++) {
                 $("#friendsTableBody").append(
                     "<tr id=" + friends[i].friendshipId + ">" +
-                    "<td>" + friends[i].userEmail + "</td>" +
+                    "<td >" + friends[i].userEmail + "</td>" +
                     "<td>" + friends[i].userName + "</td>" +
                     "<td>" + friends[i].userSurname + "</td>" +
                     "<td>" + "</td>" +
@@ -76,9 +75,10 @@
                     "<td>" + friends[i].mssgText + "</td>" +
                     "<td>" + "</td>" +
                     "<td>" +
-                    "<a onclick=userMessages('" + friends[i].friendshipId + "')>Ir a la conversación</a><br>" +
+                    "<a id=" + friends[i].userEmail + "\ + " +
+                    "onclick=userMessages('" + friends[i].friendshipId + "')>Ir a la conversación</a><br>" +
                     "</td>" +
-                    "</tr>"
+                    "</a>"
                 );
 //la id tiene que ir entre comillas ' '
             }
