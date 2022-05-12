@@ -44,7 +44,13 @@ module.exports = function (app, usersRepository, amistadesRepository, peticiones
         }
         if (req.query.search != null && typeof (req.query.search) != "undefined" &&
             req.query.search != "") {
-
+                filter = {
+                    "$or": [
+                        {"name": {$regex: ".*" + req.query.search + ".*"}},
+                        {"surname": {$regex: ".*" + req.query.search + ".*"}},
+                        {"email": {$regex: ".*" + req.query.search + ".*"}}
+                    ]
+                };
         }
 
         let page = parseInt(req.query.page);

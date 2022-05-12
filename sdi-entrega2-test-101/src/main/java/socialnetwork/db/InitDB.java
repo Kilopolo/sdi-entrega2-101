@@ -1,6 +1,7 @@
 package socialnetwork.db;
 
 import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import java.time.LocalDateTime;
@@ -15,34 +16,72 @@ import java.util.logging.Logger;
 public class InitDB {
 
     //OLD
-    //private static String connectionString = "mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    private static String connectionString = "mongodb+srv://sdi2022101:Pa$$1234@sdi-node-101.axwk6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     //private static String connectionString = "mongodb+srv://sdi212210:Pa$$word123@cluster0.zytfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     //private static String connectionString = "mongodb+srv://sdi:Pa$$word123@cluster0.ipd4l.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-   private static String connectionString = "mongodb+srv://sdi212210:Pa$$word123@cluster0.zytfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     private static String AppDBname = "socialNetwork";
-    private static List<Document> users = new ArrayList<Document>();
-    private static InitDB idb = new InitDB();
 
     public static void main(String[] args) {
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
 
+        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+            initDB(mongoclient);
+        }
 
-        initDB();
-//        deleteTestUsers();
-        insertUser("admin@email.com", "admin", "admin", "ADMIN", "admin");
-//        deleteTestAmistades();
-        insertAmistades();
-
-        deleteTestMessages();
-        insertMessages();
-        //idb.createUsers();
-//        deleteTestConversaciones();
-        createConversaciones();
-        showDataOfDB();
     }
 
+    private static void initDB(MongoClient mongoclient) {
 
-    private static void insertMessages() {
+        InitDB idb = new InitDB();
+
+        DeleteAllTestDB(mongoclient);
+        insertUser("admin@email.com", "admin", "admin", "ADMIN", "admin");
+        idb.insertUsers(mongoclient, getUsers());
+        idb.insertMessages(mongoclient, getMessages());
+        idb.insertAmistades(mongoclient, getAmistades());
+        //CONVERSACIONES NO ESTA BIEN
+        //Faltaría publicaciones
+        showDataOfDB();
+
+    }
+
+    private void insertUsers(MongoClient mongoclient, List<Document> users) {
+        mongoclient.getDatabase(AppDBname).getCollection("users").insertMany(users);
+    }
+
+    private void insertMessages(MongoClient mongoclient, List<Document> mensajes) {
+        mongoclient.getDatabase(AppDBname).getCollection("messages").insertMany(mensajes);
+    }
+
+    private static void insertAmistades(MongoClient mongoclient, List<Document> amistades) {
+        mongoclient.getDatabase(AppDBname).getCollection("amistades").insertMany(amistades);
+    }
+
+    private static List<Document> getMessages() {
+        List<Document> mensajes = new ArrayList<>();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        now = now.minusHours(1);
+        //conversacion de 00 con 01
+        mensajes.add(getMessage("user00@email.com", "user01@email.com", "Lorem ipsum dolor sit amet...", dtf.format(now), false));
+        now = now.minusHours(1);
+        mensajes.add(getMessage("user01@email.com", "user00@email.com", "Lorem ipsum dolor sit amet...", dtf.format(now), false));
+        now = now.minusHours(1);
+        mensajes.add(getMessage("user00@email.com", "user01@email.com", "Lorem ipsum dolor sit amet...", dtf.format(now), false));
+        now = now.minusHours(1);
+        //conversacion de 02 con 01
+        mensajes.add(getMessage("user02@email.com", "user01@email.com", "Lorem ipsum dolor sit amet...", dtf.format(now), false));
+        now = now.minusHours(1);
+        mensajes.add(getMessage("user01@email.com", "user02@email.com", "Lorem ipsum dolor sit amet...", dtf.format(now), false));
+        now = now.minusHours(1);
+        mensajes.add(getMessage("user02@email.com", "user01@email.com", "Lorem ipsum dolor sit amet...", dtf.format(now), false));
+        now = now.minusHours(1);
+        mensajes.add(getMessage("user01@email.com", "user02@email.com", "Lorem ipsum dolor sit amet...", dtf.format(now), false));
+
+        return mensajes;
+    }
+
+    private static void insertMessagesOneByOne() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         now = now.minusHours(1);
@@ -115,7 +154,38 @@ public class InitDB {
     }
 
 
-    private static void insertAmistades() {
+    private static List<Document> getAmistades() {
+
+
+        List<Document> amistades = new ArrayList<Document>();
+
+
+        //00
+        amistades.add(getAmistad("user00@email.com", "user01@email.com"));
+        amistades.add(getAmistad("user00@email.com", "user02@email.com"));
+        amistades.add(getAmistad("user00@email.com", "user03@email.com"));
+        //01
+        amistades.add(getAmistad("user01@email.com", "user02@email.com"));
+        amistades.add(getAmistad("user01@email.com", "user04@email.com"));
+        amistades.add(getAmistad("user01@email.com", "user05@email.com"));
+        amistades.add(getAmistad("user01@email.com", "user06@email.com"));
+        amistades.add(getAmistad("user01@email.com", "user07@email.com"));
+        //02
+        amistades.add(getAmistad("user02@email.com", "user08@email.com"));
+        amistades.add(getAmistad("user02@email.com", "user09@email.com"));
+        amistades.add(getAmistad("user02@email.com", "user10@email.com"));
+        amistades.add(getAmistad("user02@email.com", "user11@email.com"));
+        amistades.add(getAmistad("user02@email.com", "user12@email.com"));
+        //03
+        amistades.add(getAmistad("user03@email.com", "user13@email.com"));
+        amistades.add(getAmistad("user03@email.com", "user14@email.com"));
+
+        return amistades;
+
+    }
+
+    private static void insertAmistadesOneByOne() {
+
 
         //00
         insertAmistad("user00@email.com", "user01@email.com");
@@ -141,14 +211,8 @@ public class InitDB {
     }
 
 
-    private static void initDB() {
-
-        idb.createUsers();
-        idb.insertUsers();
-    }
-
-    private void createUsers() {
-
+    private static List<Document> getUsers() {
+        List<Document> users = new ArrayList<Document>();
         for (int i = 0; i < 15; i++) {
             //user01@email.com, user01
             String numero = i < 10 ? "0" + String.valueOf(i) : String.valueOf(i);
@@ -159,73 +223,83 @@ public class InitDB {
             String password = "user" + numero;
             String securePassword = AES.encrypt(password);
 //            System.out.println(securePassword);
-            users.add(new Document("email", userEmail)
-                    .append("password", securePassword)
-                    .append("name", name)
-                    .append("surname", surname)
-                    .append("rol", rol)
-                    .append("test", true));
+            users.add(getUser(userEmail, name, surname, rol, password));
         }
-
+        return users;
     }
 
-    public static void insertUser(String userEmail, String name, String surname, String rol, String password) {
 
+    private static void insertUser(MongoClient mongoclient, String userEmail, String name, String surname, String rol, String password) {
+        Document user = getUser(userEmail, name, surname, rol, password);
+        mongoclient.getDatabase(AppDBname).getCollection("users").insertOne(user);
+    }
+
+    private static void insertUser(String userEmail, String name, String surname, String rol, String password) {
+        Document user = getUser(userEmail, name, surname, rol, password);
+        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+            mongoclient.getDatabase(AppDBname).getCollection("users").insertOne(user);
+        }
+    }
+
+    private static Document getUser(String userEmail, String name, String surname, String rol, String password) {
         String securePassword = AES.encrypt(password);
-//            System.out.println(securePassword);
         Document user = new Document("email", userEmail)
                 .append("password", securePassword)
                 .append("name", name)
                 .append("surname", surname)
                 .append("rol", rol)
                 .append("test", true);
+        return user;
+    }
 
-        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+    private static Document getAmistad(String user1, String user2) {
 
-            mongoclient.getDatabase(AppDBname).getCollection("users").insertOne(user);
-
-        }
+        Document amistad = new Document("user1", user1)
+                .append("user2", user2)
+                .append("test", true);
+        return amistad;
 
     }
 
+    private static void insertAmistad(MongoClient mongoclient, String user1, String user2) {
+
+        Document user = getAmistad(user1, user2);
+        mongoclient.getDatabase(AppDBname).getCollection("amistades").insertOne(user);
+
+    }
 
     private static void insertAmistad(String user1, String user2) {
 
-        //[7:15 p. m., 22/4/2022] Pablo: Se anyade Mensaje {emisor:User, destinatario:User, textoMensaje:String, leido:boolean}
-        //[7:18 p. m., 22/4/2022] Pablo: A Amistad se le pone que tiene una conversacion:List<Mensaje>
 
-//        List<Document> conversaciones = getDocumentsFrom("conversaciones");
-//        List<Document> mensajes = getDocumentsFrom("messages");
-//
-//        String conversacionId = "";
-//        for (Document conversacion :conversaciones) {
-//
-//        }
-
-        Document user = new Document("user1", user1)
-                .append("user2", user2)
-//                .append("conversacionId",conversacionId)
-                .append("test", true);
-
+        Document user = getAmistad(user1, user2);
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
             mongoclient.getDatabase(AppDBname).getCollection("amistades").insertOne(user);
 
         }
 
-//        Document conversacion = new Document();
-//        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-//            mongoclient.getDatabase(AppDBname).getCollection("conversaciones").insertOne(conversacion);
-//
-//            mongoclient.getDatabase(AppDBname).getCollection("conversaciones").find(new Document("":));
-//        }
-
 
     }
 
-    private static void insertMessage(String emailEmisor, String emailDestinatario, String textoMensaje, String fecha, boolean leido) {
+    private static Document getMessage(String emailEmisor, String emailDestinatario, String textoMensaje, String fecha, boolean leido) {
+        Document mssg = createMessage(emailEmisor, emailDestinatario, textoMensaje, fecha, leido);
+        return mssg;
+    }
 
-        //[7:15 p. m., 22/4/2022] Pablo: Se anyade Mensaje {emisor:User, destinatario:User, textoMensaje:String, leido:boolean}
-        //[7:18 p. m., 22/4/2022] Pablo: A Amistad se le pone que tiene una conversacion:List<Mensaje>
+    private static void insertMessage(MongoClient mongoclient, String emailEmisor, String emailDestinatario, String textoMensaje, String fecha, boolean leido) {
+        Document user = createMessage(emailEmisor, emailDestinatario, textoMensaje, fecha, leido);
+        mongoclient.getDatabase(AppDBname).getCollection("messages").insertOne(user);
+    }
+
+
+    private static void insertMessage(String emailEmisor, String emailDestinatario, String textoMensaje, String fecha, boolean leido) {
+        Document user = createMessage(emailEmisor, emailDestinatario, textoMensaje, fecha, leido);
+        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+            mongoclient.getDatabase(AppDBname).getCollection("messages").insertOne(user);
+        }
+    }
+
+    private static Document createMessage(String emailEmisor, String emailDestinatario, String textoMensaje, String fecha, boolean leido) {
+
         String amistadId = "";
         List<Document> amistades = getDocumentsFrom("amistades");
         for (Document amistad : amistades) {
@@ -244,13 +318,10 @@ public class InitDB {
                 .append("leido", leido)
                 .append("amistadId", amistadId)
                 .append("test", true);
-
-        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-            mongoclient.getDatabase(AppDBname).getCollection("messages").insertOne(user);
-
-        }
+        return user;
 
     }
+
 
     private static List<Document> getDocumentsFrom(String collection) {
         List<Document> tmp = new ArrayList<Document>();
@@ -267,18 +338,17 @@ public class InitDB {
     }
 
 
-    private void insertUsers() {
-        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-
-            mongoclient.getDatabase(AppDBname).getCollection("users").insertMany(users);
-
-        } catch (Exception e) {
-
-        }
-    }
+//    private void insertUsers() {
+//        try (MongoClient mongoclient = MongoClients.create(connectionString)) {
+//            mongoclient.getDatabase(AppDBname).getCollection("users").insertMany(users);
+//        }
+//    }
+//
+//    private void insertUsers(MongoClient mongoclient) {
+//        mongoclient.getDatabase(AppDBname).getCollection("users").insertMany(users);
+//    }
 
     public static void showDataOfDB() {
-        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
 
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
             List<String> databases = mongoclient.listDatabaseNames().into(new ArrayList<>());
@@ -304,6 +374,20 @@ public class InitDB {
         }
     }
 
+    private static void DeleteAllTestDB(MongoClient mongoclient) {
+        MongoIterable<String> it = mongoclient.getDatabase(AppDBname).listCollectionNames();
+        MongoCursor<String> cursor = it.cursor();
+        while (cursor.hasNext()) {
+            String item = cursor.next();
+            mongoclient.getDatabase(AppDBname).getCollection(item).deleteMany(new Document("test", true));
+
+        }
+    }
+
+    private static void deleteTestFromCollection(MongoClient mongoclient, String collection) {
+        mongoclient.getDatabase(AppDBname).getCollection(collection).deleteMany(new Document("test", true));
+    }
+
     private static void deleteTestConversaciones() {
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
             mongoclient.getDatabase(AppDBname).getCollection("conversaciones").deleteMany(new Document("test", true));
@@ -312,10 +396,7 @@ public class InitDB {
 
     public static void deleteTestAmistades(String user1, String user2) {
         try (MongoClient mongoclient = MongoClients.create(connectionString)) {
-            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteOne(
-                    new Document("user1", user2)
-                            .append("user2", user1)
-            );
+            mongoclient.getDatabase(AppDBname).getCollection("amistades").deleteOne(Filters.eq("user1","user"));
         }
     }
 
